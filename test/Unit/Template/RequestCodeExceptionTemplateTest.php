@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Test\Unit\Template;
 
-use Emul\OpenApiClientGenerator\Template\RequestCodeExceptionTemplate;
-use Emul\OpenApiClientGenerator\Template\ErrorPropertyTemplate;
+use Emul\OpenApiClientGenerator\Template\Exception\RequestCodeExceptionTemplate;
+use Emul\OpenApiClientGenerator\Template\Exception\RequestExceptionPropertyTemplate;
 use Emul\OpenApiClientGenerator\Test\Unit\TestCaseAbstract;
 use Mockery;
 
@@ -19,7 +19,7 @@ class RequestCodeExceptionTemplateTest extends TestCaseAbstract
         $property1 = $this->expectErrorPropertyUsed('public function getOne(){}');
         $property2 = $this->expectErrorPropertyUsed('public function getTwo(){}');
 
-        $result = (string)$this->getSut($property1, $property2);
+        $result         = (string)$this->getSut($property1, $property2);
         $expectedResult = <<<'EXPECTED'
             <?php
             declare(strict_types=1);
@@ -41,15 +41,15 @@ class RequestCodeExceptionTemplateTest extends TestCaseAbstract
         $this->assertSame($expectedResult, $result);
     }
 
-    private function expectErrorPropertyUsed(string $getter): ErrorPropertyTemplate
+    private function expectErrorPropertyUsed(string $getter): RequestExceptionPropertyTemplate
     {
-        return Mockery::mock(ErrorPropertyTemplate::class)
+        return Mockery::mock(RequestExceptionPropertyTemplate::class)
             ->shouldReceive('getGetter')
             ->andReturn($getter)
             ->getMock();
     }
 
-    private function getSut(ErrorPropertyTemplate ...$properties): RequestCodeExceptionTemplate
+    private function getSut(RequestExceptionPropertyTemplate ...$properties): RequestCodeExceptionTemplate
     {
         return new RequestCodeExceptionTemplate($this->rootNamespace, $this->errorCode, ...$properties);
     }

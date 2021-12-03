@@ -4,29 +4,54 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Generator;
 
+use Emul\OpenApiClientGenerator\Configuration\Configuration;
+use Emul\OpenApiClientGenerator\File\FileHandler;
+
 class Generator
 {
-    private string $apiDocPath;
-    private string $targetRootPath;
-    private string $rootNamespace;
+    private FileHandler   $fileHandler;
+    private Configuration $configuration;
+    private Factory       $factory;
 
-    public function __construct(string $apiDocPath, string $targetRootPath, string $rootNamespace)
-    {
-        $this->apiDocPath     = $apiDocPath;
-        $this->targetRootPath = $targetRootPath;
-        $this->rootNamespace  = $rootNamespace;
+    public function __construct(
+        FileHandler $fileHandler,
+        Configuration $configuration,
+        Factory $factory
+    ) {
+        $this->fileHandler   = $fileHandler;
+        $this->configuration = $configuration;
+        $this->factory       = $factory;
+
+        $this->fileHandler->createDirectory($this->configuration->getPaths()->getSrcPath());
     }
 
     public function generate(): void
     {
-        $apiDoc               = $this->getDecodedApiDoc();
-        $modelGenerator = new ModelGenerator($apiDoc, $this->targetRootPath, $this->rootNamespace);
+        foreach ($this->getGenerators() as $generator) {
+            $generator->generate();
+        }
 
-        $modelGenerator->generate();
+        $this->fixCodingStandards();
     }
 
-    private function getDecodedApiDoc(): array
+    /**
+     * @return GeneratorInterface[]
+     */
+    private function getGenerators(): array
     {
-        return json_decode(file_get_contents($this->apiDocPath), true);
+        return [
+            $this->factory->getModelGenerator(),
+            $this->factory->getExceptionGenerator(),
+            $this->factory->getApiGenerator(),
+            $this->factory->getCommonGenerator(),
+        ];
+    }
+
+    private function fixCodingStandards()
+    {
+        $command = ROOT . '/vendor/bin/php-cs-fixer --config=' . ROOT
+            . '/.php-cs-fixer.generated.php fix '
+            . $this->configuration->getPaths()->getTargetRootPath();
+        exec($command);
     }
 }

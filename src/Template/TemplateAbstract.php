@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template;
 
+use Emul\OpenApiClientGenerator\Helper\LocationHelper;
+use Emul\OpenApiClientGenerator\Helper\StringHelper;
+
 abstract class TemplateAbstract
 {
-    private string $rootNamespace;
+    private LocationHelper $locationHelper;
+    private StringHelper   $stringHelper;
 
-    public function __construct(string $rootNamespace)
+    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper)
     {
-        $this->rootNamespace = $rootNamespace;
+        $this->locationHelper = $locationHelper;
+        $this->stringHelper   = $stringHelper;
     }
 
-    protected function getModelNamespace(): string
+    protected function getLocationHelper(): LocationHelper
     {
-        return $this->rootNamespace . '\\Model';
+        return $this->locationHelper;
     }
 
-    protected function getRootNamespace(): string
+    protected function getStringHelper(): StringHelper
     {
-        return $this->rootNamespace;
+        return $this->stringHelper;
     }
-
 }

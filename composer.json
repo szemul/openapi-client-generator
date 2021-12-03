@@ -5,8 +5,9 @@
     "license": "MIT",
     "require": {
         "php": ">=7.4",
+        "ext-iconv": "*",
         "ext-json": "*",
-        "nesbot/carbon": "^2.53",
+        "nesbot/carbon": "^2.0",
         "emulgeator/enum": "^1.0",
         "emulgeator/array-to-class-mapper": "^0.1.2",
         "guzzlehttp/guzzle": "^7.4",

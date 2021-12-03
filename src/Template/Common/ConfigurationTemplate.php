@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Common;
 
-use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
+use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
-class ConfigurationTemplate extends TemplateAbstract
+class ConfigurationTemplate extends ClassTemplateAbstract
 {
     public function __toString(): string
     {
@@ -15,9 +15,9 @@ class ConfigurationTemplate extends TemplateAbstract
             
             declare(strict_types=1);
             
-            namespace {$this->getRootNamespace()};
+            namespace {$this->getNamespace()};
             
-            class Configuration
+            class {$this->getClassName()}
             {
                 public const API_KEY_HEADER_NAME = 'X-API-KEY';
             
@@ -67,6 +67,20 @@ class ConfigurationTemplate extends TemplateAbstract
                 }
             }
             CONFIGURATION;
+    }
 
+    public function getDirectory(): string
+    {
+        return $this->getLocationHelper()->getSrcPath();
+    }
+
+    public function getNamespace(): string
+    {
+        return $this->getLocationHelper()->getRootNamespace();
+    }
+
+    protected function getShortClassName(): string
+    {
+        return 'Configuration';
     }
 }

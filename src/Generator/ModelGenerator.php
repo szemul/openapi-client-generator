@@ -4,108 +4,86 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Generator;
 
+use Emul\OpenApiClientGenerator\Configuration\Configuration;
 use Emul\OpenApiClientGenerator\Exception\GeneratorNotNeededException;
-use Emul\OpenApiClientGenerator\PropertyType\Type;
-use Emul\OpenApiClientGenerator\Template\ModelPropertyTemplate;
-use Emul\OpenApiClientGenerator\Template\ModelTemplate;
-use Exception;
-use InvalidArgumentException;
+use Emul\OpenApiClientGenerator\File\FileHandler;
+use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
+use Emul\OpenApiClientGenerator\Template\Model\Factory;
 
-class ModelGenerator
+class ModelGenerator implements GeneratorInterface
 {
-    private string $moduleDirectoryPath;
-    private string $rootNamespace;
-    private array  $schemas = [];
+    private FileHandler   $fileHandler;
+    private Factory       $templateFactory;
+    private Configuration $configuration;
+    private TypeMapper    $typeMapper;
 
-    public function __construct(array $apiDoc, string $targetRootPath, string $rootNamespace)
-    {
-        if (empty($apiDoc['components']['schemas'])) {
+    public function __construct(
+        FileHandler $fileHandler,
+        Configuration $configuration,
+        Factory $templateFactory,
+        TypeMapper $typeMapper
+    ) {
+        if (empty($configuration->getApiDoc()['components']['schemas'])) {
             throw new GeneratorNotNeededException();
         }
 
-        $this->schemas             = $apiDoc['components']['schemas'];
-        $this->moduleDirectoryPath = rtrim($targetRootPath, '/') . '/Model/';
-        $this->rootNamespace       = $rootNamespace;
-
-        $this->initializeDirectory();
+        $this->fileHandler     = $fileHandler;
+        $this->configuration   = $configuration;
+        $this->templateFactory = $templateFactory;
+        $this->typeMapper      = $typeMapper;
     }
 
     public function generate(): void
     {
-        foreach ($this->schemas as $schemaName => $schema) {
+        $this->generateModelAbstract();
+
+        foreach ($this->configuration->getApiDoc()['components']['schemas'] as $schemaName => $schema) {
             $this->generateModel($schemaName, $schema);
         }
     }
 
+    private function generateModelAbstract(): void
+    {
+        $model    = $this->templateFactory->getModelAbstractTemplate();
+        $filePath = $model->getDirectory() . $model->getClassName() . '.php';
+
+        $this->fileHandler->saveFile($filePath, (string)$model);
+    }
+
     private function generateModel(string $schemaName, array $schema)
     {
-        $modelPropertyTemplates = [];
+        $propertyTemplates = [];
 
         foreach ($schema['properties'] as $propertyName => $details) {
-            $type        = $this->getType($details);
+            $type        = $this->typeMapper->mapApiDocDetailsToPropertyType($propertyName, $details);
             $description = $details['description'] ?? null;
 
-            $modelPropertyTemplates[] = new ModelPropertyTemplate(
-                $this->rootNamespace,
+            $propertyTemplates[] = $this->templateFactory->getModelPropertyTemplate(
                 $propertyName,
                 $type,
                 $this->isRequired($schema, $propertyName),
-                $description
+                $description,
             );
+
+            if (!empty($details['enum'])) {
+                $this->generateEnum($propertyName, $details);
+            }
         }
 
-        $modelTemplate = new ModelTemplate($this->rootNamespace, $schemaName, ...$modelPropertyTemplates);
+        $template = $this->templateFactory->getModelTemplate($schemaName, ...$propertyTemplates);
+        $filePath = $template->getDirectory() . $template->getClassName() . '.php';
 
-        file_put_contents($this->moduleDirectoryPath . $schemaName . '.php', (string)$modelTemplate);
+        $this->fileHandler->saveFile($filePath, (string)$template);
+        $this->configuration->getClassPaths()->addModelClass($template->getClassName(true));
     }
 
-    private function getType(array $details): Type
+    private function generateEnum(string $propertyName, array $details): void
     {
-        // Handling the unnecessary usage of onOf at nullable objects
-        if (!empty($details['oneOf'])) {
-            $details['$ref'] = $details['oneOf'][0]['$ref'];
-        }
-        $typeString  = $details['type'] ?? null;
-        $scalarTypes = ['string', 'integer', 'number', 'boolean'];
+        $template = $this->templateFactory->getEnumTemplate($propertyName, ...$details['enum']);
+        $filePath = $template->getDirectory() . $template->getClassName() . '.php';
 
-        if (!empty($details['$ref'])) {
-            $subModelName = basename($details['$ref']);
-            $type         = Type::object($this->rootNamespace . '\\Model\\' . $subModelName);
-        } elseif ($typeString === 'array') {
-            if (!empty($details['items'])) {
-                $arrayItemType = $this->getType($details['items']);
-            } else {
-                $arrayItemType = Type::string();
-            }
-
-            $type = Type::array($arrayItemType);
-        } elseif ($typeString === 'object') {
-            $type = Type::array(Type::string());
-        } elseif (in_array($typeString, $scalarTypes)) {
-            switch ($typeString) {
-                case 'string':
-                    $type = Type::string();
-                    break;
-
-                case 'integer':
-                    $type = Type::int();
-                    break;
-
-                case 'number':
-                    $type = Type::float();
-                    break;
-
-                case 'boolean':
-                    $type = Type::bool();
-                    break;
-            }
-        } else {
-            var_dump($details);
-            exit;
-            throw new InvalidArgumentException('Unknown type: ' . $typeString);
-        }
-
-        return $type;
+        $this->fileHandler->saveFile($filePath, (string)$template);
+        $this->configuration->getClassPaths()->addEntityClass($template->getClassName(true));
     }
 
     private function isRequired(array $schema, string $propertyName): bool
@@ -115,18 +93,5 @@ class ModelGenerator
         }
 
         return in_array($propertyName, $schema['required']);
-    }
-
-    private function initializeDirectory(): void
-    {
-        if (file_exists($this->moduleDirectoryPath)) {
-            return;
-        }
-
-        $directoryCreated = mkdir($this->moduleDirectoryPath);
-
-        if (!$directoryCreated) {
-            throw new Exception('Failed to create ' . $this->moduleDirectoryPath);
-        }
     }
 }
