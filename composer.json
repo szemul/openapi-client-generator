@@ -1,5 +1,5 @@
 {
-    "name": "emulgeator/openapi-client-generator",
+    "name": "szemul/openapi-client-generator",
     "description": "A tool to generate a PHP client out of an openapi documentation",
     "minimum-stability": "stable",
     "license": "MIT",
