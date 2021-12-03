@@ -33,7 +33,7 @@ class Factory
         return new ConfigurationTemplate($this->locationHelper, $this->stringHelper);
     }
 
-    public function getTJsonSerializableTemplate(): JsonSerializableTraitTemplate
+    public function getJsonSerializableTraitTemplate(): JsonSerializableTraitTemplate
     {
         return new JsonSerializableTraitTemplate($this->locationHelper, $this->stringHelper);
     }

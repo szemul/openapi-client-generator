@@ -21,7 +21,7 @@ class ModelAbstractTemplateTest extends TemplateTestCaseAbstract
             
             namespace Root\Model;
             
-            use Root\TJsonSerializable;
+            use Root\JsonSerializableTrait;
             use Root\Exception\PropertyNotInitializedException;
             use JsonSerializable;
             use ReflectionException;
@@ -29,7 +29,7 @@ class ModelAbstractTemplateTest extends TemplateTestCaseAbstract
             
             abstract class ModelAbstract implements JsonSerializable
             {
-                use TJsonSerializable;
+                use JsonSerializableTrait;
             
                 /**
                  * @throws PropertyNotInitializedException

@@ -4,11 +4,22 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Test\Unit\Template\Model;
 
+use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 use Emul\OpenApiClientGenerator\Template\Model\ModelTemplate;
 use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;
+use Mockery;
 
 class ModelTemplateTest extends TemplateTestCaseAbstract
 {
+    private TypeMapper $typeMapper;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->typeMapper = new TypeMapper($this->locationHelper, $this->stringHelper);
+    }
+
     public function testToString_shouldGenerateClass()
     {
         $sut = $this->getSut();
@@ -21,7 +32,7 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
             
             namespace Root\Model;
             
-            use Root\TJsonSerializable;
+            use Root\JsonSerializableTrait;
             use Root\Exception\PropertyNotInitializedException;
             use JsonSerializable;
             use ReflectionException;
@@ -29,7 +40,7 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
             
             abstract class ModelAbstract implements JsonSerializable
             {
-                use TJsonSerializable;
+                use JsonSerializableTrait;
             
                 /**
                  * @throws PropertyNotInitializedException

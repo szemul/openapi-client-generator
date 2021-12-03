@@ -17,7 +17,7 @@ class ModelAbstractTemplate extends ClassTemplateAbstract
             
             namespace {$this->getNamespace()};
             
-            use {$this->getLocationHelper()->getRootNamespace()}\TJsonSerializable;
+            use {$this->getLocationHelper()->getRootNamespace()}\JsonSerializableTrait;
             use {$this->getLocationHelper()->getExceptionNamespace()}\PropertyNotInitializedException;
             use JsonSerializable;
             use ReflectionException;
@@ -25,7 +25,7 @@ class ModelAbstractTemplate extends ClassTemplateAbstract
             
             abstract class {$this->getClassName()} implements JsonSerializable
             {
-                use TJsonSerializable;
+                use JsonSerializableTrait;
             
                 /**
                  * @throws PropertyNotInitializedException

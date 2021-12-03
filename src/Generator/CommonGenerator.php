@@ -26,7 +26,7 @@ class CommonGenerator implements GeneratorInterface
         $this->generateArrayMapperFactory();
         $this->generateComposerJson();
         $this->generateConfiguration();
-        $this->generateTJsonSerializable();
+        $this->generateJsonSerializableTrait();
     }
 
     private function generateArrayMapperFactory(): void
@@ -56,9 +56,9 @@ class CommonGenerator implements GeneratorInterface
         $this->fileHandler->saveClassTemplateToFile($template);
     }
 
-    private function generateTJsonSerializable(): void
+    private function generateJsonSerializableTrait(): void
     {
-        $template = $this->templateFactory->getTJsonSerializableTemplate();
+        $template = $this->templateFactory->getJsonSerializableTraitTemplate();
         $this->fileHandler->saveClassTemplateToFile($template);
     }
 }

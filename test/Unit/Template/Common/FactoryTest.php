@@ -48,9 +48,9 @@ class FactoryTest extends TestCaseAbstract
         $this->assertInstanceOf(ConfigurationTemplate::class, $result);
     }
 
-    public function testGetTJsonSerializableTemplate()
+    public function testGetJsonSerializableTraitTemplate()
     {
-        $result = $this->getSut()->getTJsonSerializableTemplate();
+        $result = $this->getSut()->getJsonSerializableTraitTemplate();
 
         $this->assertInstanceOf(JsonSerializableTraitTemplate::class, $result);
     }
