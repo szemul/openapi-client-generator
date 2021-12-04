@@ -25,16 +25,16 @@ define('ROOT', realpath(__DIR__ . '/../'));
 
 $args = (new Cli())
     ->description('Generates an API client from the given documentation')
-    ->opt('apiJsonPath', 'Path to the api documentation JSON', true)
-    ->opt('clientPath', 'Path of the client to generate', true)
-    ->opt('vendorName', 'Name of the vendor the generated client belongs to', true)
-    ->opt('projectName', 'Name of the project the generated client belongs to', true)
-    ->opt('rootNamespace', 'Root Namespace of the project', true)
+    ->opt('api-json-path', 'Path to the api documentation JSON', true)
+    ->opt('client-path', 'Path of the client to generate', true)
+    ->opt('vendor-name', 'Name of the vendor the generated client belongs to', true)
+    ->opt('project-name', 'Name of the project the generated client belongs to', true)
+    ->opt('root-namespace', 'Root Namespace of the project', true)
     ->parse($argv);
 
-$composer         = new Composer($args['vendorName'], $args['projectName']);
-$paths            = new Paths($args['apiJsonPath'], $args['clientPath']);
-$classPaths       = new ClassPaths($args['rootNamespace']);
+$composer         = new Composer($args['vendor-name'], $args['project-name']);
+$paths            = new Paths($args['api-json-path'], $args['client-path']);
+$classPaths       = new ClassPaths($args['root-namespace']);
 $fileHandler      = new FileHandler();
 $configuration    = new Configuration($fileHandler, $composer, $paths, $classPaths);
 $locationHelper   = new LocationHelper($configuration);
