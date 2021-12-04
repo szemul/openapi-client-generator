@@ -59,6 +59,7 @@ class ApiActionTemplate extends TemplateAbstract
             {
                 \$headers = array_merge(
                     \$this->defaultHeaders,
+                    [
                         'Content-Type'                              => 'application/json',
                         \$this->configuration->getApiKeyHeaderName() => \$this->configuration->getApiKey(),
                     ],
