@@ -9,7 +9,6 @@ use Emul\OpenApiClientGenerator\Entity\PropertyType;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\Model\ModelPropertyTemplate;
-use Exception;
 use InvalidArgumentException;
 
 class TypeMapper
@@ -23,7 +22,7 @@ class TypeMapper
         $this->stringHelper   = $stringHelper;
     }
 
-    public function mapApiDocDetailsToPropertyType(string $name, array $details): PropertyType
+    public function mapApiDocDetailsToPropertyType(string $name, array $details, string $operationId = ''): PropertyType
     {
         // Handling the unnecessary usage of onOf at nullable objects
         if (!empty($details['oneOf'])) {
@@ -47,8 +46,13 @@ class TypeMapper
             $type = PropertyType::array(PropertyType::string());
         } elseif (in_array($typeString, $scalarTypes)) {
             if (!empty($details['enum'])) {
-                $enumName = $this->stringHelper->convertToClassName($name);
-                $type     = PropertyType::object($this->locationHelper->getEnumNamespace() . '\\' . $enumName);
+                $enumName        = $this->stringHelper->convertToClassName($name);
+                $namespaceSuffix = '' === $operationId
+                    ? ''
+                    : ('\\' . $this->stringHelper->convertToClassName($operationId));
+                $type = PropertyType::object(
+                    $this->locationHelper->getEnumNamespace() . $namespaceSuffix . '\\' . $enumName
+                );
             } elseif (!empty($details['format']) && $details['format'] === 'date-time') {
                 $type = PropertyType::object(CarbonInterface::class);
             } else {

@@ -16,6 +16,7 @@ class ModelGenerator implements GeneratorInterface
     private Factory       $templateFactory;
     private Configuration $configuration;
     private TypeMapper    $typeMapper;
+    private array         $parameterEnums = [];
 
     public function __construct(
         FileHandler $fileHandler,
@@ -23,14 +24,42 @@ class ModelGenerator implements GeneratorInterface
         Factory $templateFactory,
         TypeMapper $typeMapper
     ) {
-        if (empty($configuration->getApiDoc()['components']['schemas'])) {
-            throw new GeneratorNotNeededException();
-        }
-
         $this->fileHandler     = $fileHandler;
         $this->configuration   = $configuration;
         $this->templateFactory = $templateFactory;
         $this->typeMapper      = $typeMapper;
+
+        $this->populateParameterEnums();
+
+        if (!$this->isGeneratorNeeded()) {
+            throw new GeneratorNotNeededException();
+        }
+    }
+
+    private function populateParameterEnums(): void
+    {
+        foreach ($this->configuration->getApiDoc()['paths'] as $path) {
+            foreach ($path as $method) {
+                if (empty($method['parameters'])) {
+                    continue;
+                }
+
+                foreach ($method['parameters'] as $parameter) {
+                    if (!empty($parameter['schema']['enum'])) {
+                        $this->parameterEnums[] = [
+                            'name'        => $parameter['name'],
+                            'operationId' => $method['operationId'],
+                            'schema'      => $parameter['schema'],
+                        ];
+                    }
+                }
+            }
+        }
+    }
+
+    private function isGeneratorNeeded(): bool
+    {
+        return !empty($this->parameterEnums) || !empty($this->configuration->getApiDoc()['components']['schemas']);
     }
 
     public function generate(): void
@@ -39,6 +68,10 @@ class ModelGenerator implements GeneratorInterface
 
         foreach ($this->configuration->getApiDoc()['components']['schemas'] as $schemaName => $schema) {
             $this->generateModel($schemaName, $schema);
+        }
+
+        foreach ($this->parameterEnums as $enum) {
+            $this->generateEnum($enum['name'], $enum['operationId'], $enum['schema']);
         }
     }
 
@@ -66,7 +99,7 @@ class ModelGenerator implements GeneratorInterface
             );
 
             if (!empty($details['enum'])) {
-                $this->generateEnum($propertyName, $details);
+                $this->generateEnum($propertyName, '', $details);
             }
         }
 
@@ -77,9 +110,9 @@ class ModelGenerator implements GeneratorInterface
         $this->configuration->getClassPaths()->addModelClass($template->getClassName(true));
     }
 
-    private function generateEnum(string $propertyName, array $details): void
+    private function generateEnum(string $propertyName, string $namespace, array $details): void
     {
-        $template = $this->templateFactory->getEnumTemplate($propertyName, ...$details['enum']);
+        $template = $this->templateFactory->getEnumTemplate($propertyName, $namespace, ...$details['enum']);
         $filePath = $template->getDirectory() . $template->getClassName() . '.php';
 
         $this->fileHandler->saveFile($filePath, (string)$template);

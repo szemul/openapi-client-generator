@@ -6,12 +6,12 @@ namespace Emul\OpenApiClientGenerator\Template\Model;
 
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
-use Emul\OpenApiClientGenerator\Template\RepresentsClassInterface;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class EnumTemplate extends ClassTemplateAbstract
 {
     private string $enumName;
+    private string $enumNamespace;
     /** @var string[] */
     private array      $values;
 
@@ -19,22 +19,31 @@ class EnumTemplate extends ClassTemplateAbstract
         LocationHelper $locationHelper,
         StringHelper $stringHelper,
         string $enumName,
+        string $enumNamespace,
         string ...$values
     ) {
         parent::__construct($locationHelper, $stringHelper);
 
-        $this->enumName = $enumName;
-        $this->values   = $values;
+        $this->enumName      = $enumName;
+        $this->enumNamespace = $enumNamespace;
+        $this->values        = $values;
     }
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getEnumPath();
+        $suffix = '' === $this->enumNamespace
+            ? ''
+            : $this->getStringHelper()->convertToClassName($this->enumNamespace) . '/';
+        return $this->getLocationHelper()->getEnumPath() . $suffix;
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getEnumNamespace();
+        $suffix = '' === $this->enumNamespace
+            ? ''
+            : '\\' . $this->getStringHelper()->convertToClassName($this->enumNamespace);
+
+        return $this->getLocationHelper()->getEnumNamespace() . $suffix;
     }
 
     protected function getShortClassName(): string
@@ -95,11 +104,11 @@ class EnumTemplate extends ClassTemplateAbstract
 
     private function getPossibleValuesMethod(): string
     {
-        $constants = [];
+        $constants    = [];
         $constantList = '';
 
         foreach ($this->values as $value) {
-            $constName = $this->getStringHelper()->convertToConstantName($value);
+            $constName   = $this->getStringHelper()->convertToConstantName($value);
             $constants[] = 'self::' . $constName;
         }
         $constantList = implode(', ', $constants);

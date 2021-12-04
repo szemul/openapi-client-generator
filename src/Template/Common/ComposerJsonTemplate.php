@@ -43,8 +43,15 @@ class ComposerJsonTemplate extends TemplateAbstract
                     "emulgeator/enum": "^1.0",
                     "emulgeator/array-to-class-mapper": "^0.1",
                     "psr/http-message": "^1.0",
+                    "psr/http-message-implementation": "^1.0",
                     "psr/http-client": "^1.0",
-                    "psr/http-factory": "^1.0"
+                    "psr/http-client-implementation": "^1.0",
+                    "psr/http-factory": "^1.0",
+                    "psr/http-factory-implementation": "^1.0"
+                },
+                "require-dev": {
+                    "guzzlehttp/guzzle": "^7.4",
+                    "guzzlehttp/psr7": "^2.1.0"
                 },
                 "autoload": {
                   "psr-4": {

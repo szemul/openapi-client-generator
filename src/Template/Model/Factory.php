@@ -49,8 +49,8 @@ class Factory
         );
     }
 
-    public function getEnumTemplate(string $name, string ...$values): EnumTemplate
+    public function getEnumTemplate(string $name, string $namespace, string ...$values): EnumTemplate
     {
-        return new EnumTemplate($this->locationHelper, $this->stringHelper, $name, ...$values);
+        return new EnumTemplate($this->locationHelper, $this->stringHelper, $name, $namespace, ...$values);
     }
 }

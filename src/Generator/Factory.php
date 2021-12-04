@@ -30,7 +30,12 @@ class Factory
 
     public function getApiGenerator(): ApiGenerator
     {
-        return new ApiGenerator($this->fileHandler, $this->configuration, $this->templateFactory->getApiFactory());
+        return new ApiGenerator(
+            $this->fileHandler,
+            $this->configuration,
+            $this->templateFactory->getApiFactory(),
+            $this->typeMapper
+        );
     }
 
     public function getCommonGenerator(): CommonGenerator

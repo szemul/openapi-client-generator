@@ -50,7 +50,7 @@ return [
     'single_quote' => true,
     'space_after_semicolon' => true,
     'standardize_not_equals' => true,
-    'trailing_comma_in_multiline' => ['elements' => ['arrays', 'arguments', 'parameters']],
+    'trailing_comma_in_multiline' => ['elements' => ['arrays']],
     'trim_array_spaces' => true,
     'unary_operator_spaces' => true,
     'whitespace_after_comma_in_array' => true,

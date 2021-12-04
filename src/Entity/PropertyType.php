@@ -48,6 +48,11 @@ class PropertyType
             : substr($this->objectClassname, strrpos($this->objectClassname, '\\') + 1);
     }
 
+    public function getPhpType(): string
+    {
+        return $this->isScalar() ? $this->value : $this->getObjectClassname(false);
+    }
+
     public function __toString(): string
     {
         return $this->value;
