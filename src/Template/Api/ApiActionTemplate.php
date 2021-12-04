@@ -12,31 +12,67 @@ use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 class ApiActionTemplate extends TemplateAbstract
 {
     private string     $operationId;
-    private string     $requestModelClassName;
+    private string     $parameterClassName;
     private string     $url;
     private HttpMethod $httpMethod;
+    private ?bool      $responseIsList    = null;
+    private ?string    $responseClassName = null;
 
     public function __construct(
         LocationHelper $locationHelper,
         StringHelper $stringHelper,
         string $operationId,
-        string $requestModelClassName,
+        string $parameterClassName,
         string $url,
-        HttpMethod $httpMethod
+        HttpMethod $httpMethod,
+        ?bool $responseIsList,
+        ?string $responseClassName
     ) {
         parent::__construct($locationHelper, $stringHelper);
 
-        $this->operationId           = $operationId;
-        $this->requestModelClassName = $requestModelClassName;
-        $this->url                   = $url;
-        $this->httpMethod            = $httpMethod;
+        $this->operationId        = $operationId;
+        $this->parameterClassName = $parameterClassName;
+        $this->url                = $url;
+        $this->httpMethod         = $httpMethod;
+        $this->responseIsList     = $responseIsList;
+        $this->responseClassName  = $responseClassName;
     }
 
     public function __toString(): string
     {
+        if (empty($this->responseClassName)) {
+            $returnType       = 'string';
+            $responseHandling = <<<'RESPONSE'
+                return $response->getBody()->getContents();
+                RESPONSE;
+        } else {
+            $returnType = $this->responseClassName;
+
+            if ($this->responseIsList) {
+                $responseHandling = <<<RESPONSE
+                    \$mapper = (new ArrayMapperFactory())->getMapper();
+                    \$list   = new {$this->responseClassName}();
+
+                    foreach (json_decode(\$response->getBody()->getContents()) as \$item) {
+                        \$list->add(\$mapper->map(\$item, \$list->getItemClass()));
+                    }
+                    RESPONSE;
+            } else {
+                $responseHandling = <<<RESPONSE
+                return (new ArrayMapperFactory())
+                    ->getMapper()
+                    ->map(
+                        json_decode(\$response->getBody()->getContents()),
+                        {$this->responseClassName}::class
+                    );
+                RESPONSE;
+            }
+        }
+
         return <<<ACTION
-            public function {$this->operationId}({$this->requestModelClassName} \$request): void
+            public function {$this->operationId}({$this->parameterClassName} \$request): {$returnType}
             {
+                \$path    = '{$this->url}';
                 \$payload = json_encode(\$request);
                 \$headers = array_merge(
                     \$this->defaultHeaders,
@@ -46,9 +82,25 @@ class ApiActionTemplate extends TemplateAbstract
                     ],
                 );
 
+                foreach (\$request->getHeaderParameterGetters() as \$parameterName => \$getterName) {
+                    \$headers[\$parameterName] = \$request->\$getterName();
+                }
+
+                foreach (\$request->getPathParameterGetters() as \$parameterName => \$getterName) {
+                    \$path = str_replace('{' . \$parameterName . '}', \$request->\$getterName(), \$path);
+                }
+                \$queryParameters = [];
+                foreach (\$request->getQueryParameterGetters() as \$parameterName => \$getterName) {
+                    \$queryParameters[\$parameterName] = \$request->\$getterName();
+                }
+
+                \$path = strpos(\$path, '?') === false
+                    ? '?' . http_build_query(\$queryParameters)
+                    : '&amp;' . http_build_query(\$queryParameters);
+
                 \$request = \$this->requestFactory->createRequest(
                     '{$this->httpMethod->__toString()}',
-                    \$this->configuration->getHost() . '{$this->url}'
+                    \$this->configuration->getHost() . \$path,
                 );
 
                 foreach (\$headers as \$name => \$value) {
@@ -70,16 +122,26 @@ class ApiActionTemplate extends TemplateAbstract
                         throw new RequestException(\$responseCode, \$responseBody, \$responseHeaders);
                     }
                 } else {
-                    //TODO: Return Response
+                    {$responseHandling}
                 }
             }
             ACTION;
     }
 
-    public function getModelFullClassNames(): array
+    public function getParameterFullClassName(): string
     {
-        return [
-            $this->getLocationHelper()->getModelNamespace() . '\\' . $this->requestModelClassName,
-        ];
+        return $this->getLocationHelper()->getActionParameterNamespace() . '\\' . $this->parameterClassName;
+    }
+
+    public function getClassesToImport(): array
+    {
+        $result = [];
+
+        if (!empty($this->responseClassName)) {
+            $result[] = $this->getLocationHelper()->getRootNamespace() . '\\ArrayMapperFactory';
+            $result[] = $this->getLocationHelper()->getModelNamespace() . '\\' . $this->responseClassName;
+        }
+
+        return $result;
     }
 }

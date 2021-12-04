@@ -7,6 +7,7 @@ namespace Emul\OpenApiClientGenerator\Generator;
 use Emul\OpenApiClientGenerator\Configuration\Configuration;
 use Emul\OpenApiClientGenerator\Exception\GeneratorNotNeededException;
 use Emul\OpenApiClientGenerator\File\FileHandler;
+use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 use Emul\OpenApiClientGenerator\Template\Model\Factory;
 
@@ -16,12 +17,14 @@ class ModelGenerator implements GeneratorInterface
     private Factory       $templateFactory;
     private Configuration $configuration;
     private TypeMapper    $typeMapper;
+    private ClassHelper   $classHelper;
 
     public function __construct(
         FileHandler $fileHandler,
         Configuration $configuration,
         Factory $templateFactory,
-        TypeMapper $typeMapper
+        TypeMapper $typeMapper,
+        ClassHelper $classHelper
     ) {
         if (empty($configuration->getApiDoc()['components']['schemas'])) {
             throw new GeneratorNotNeededException();
@@ -31,23 +34,18 @@ class ModelGenerator implements GeneratorInterface
         $this->configuration   = $configuration;
         $this->templateFactory = $templateFactory;
         $this->typeMapper      = $typeMapper;
+        $this->classHelper     = $classHelper;
     }
 
     public function generate(): void
     {
-        $this->generateModelAbstract();
+        $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getModelAbstractTemplate());
+        $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getResponseListInterfaceTemplate());
+        $this->generateResponseLists();
 
         foreach ($this->configuration->getApiDoc()['components']['schemas'] as $schemaName => $schema) {
             $this->generateModel($schemaName, $schema);
         }
-    }
-
-    private function generateModelAbstract(): void
-    {
-        $model    = $this->templateFactory->getModelAbstractTemplate();
-        $filePath = $model->getDirectory() . $model->getClassName() . '.php';
-
-        $this->fileHandler->saveFile($filePath, (string)$model);
     }
 
     private function generateModel(string $schemaName, array $schema)
@@ -93,5 +91,26 @@ class ModelGenerator implements GeneratorInterface
         }
 
         return in_array($propertyName, $schema['required']);
+    }
+
+    private function generateResponseLists()
+    {
+        foreach ($this->configuration->getApiDoc()['paths'] as $methods) {
+            foreach ($methods as $details) {
+                foreach ($details['responses'] as $statusCode => $response) {
+                    if ($statusCode >= 300 || empty($response['content']['application/json']['schema']['type'])) {
+                        continue;
+                    }
+
+                    $schema = $response['content']['application/json']['schema'];
+                    if ($schema['type'] === 'array') {
+                        $className = $this->classHelper->getModelClassname(basename($schema['items']['$ref']));
+                        $template  = $this->templateFactory->getResponseListTemplate($className);
+
+                        $this->fileHandler->saveClassTemplateToFile($template);
+                    }
+                }
+            }
+        }
     }
 }

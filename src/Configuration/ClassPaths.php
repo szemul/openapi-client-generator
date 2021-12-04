@@ -7,9 +7,10 @@ namespace Emul\OpenApiClientGenerator\Configuration;
 class ClassPaths
 {
     private string $rootNamespace;
-    private array  $apiClasses    = [];
-    private array  $entityClasses = [];
-    private array  $modelClasses  = [];
+    private array  $apiClasses             = [];
+    private array  $entityClasses          = [];
+    private array  $modelClasses           = [];
+    private array  $actionParameterClasses = [];
 
     public function __construct(string $rootNamespace)
     {
@@ -36,6 +37,11 @@ class ClassPaths
         return array_unique($this->modelClasses);
     }
 
+    public function getActionParameterClasses(): array
+    {
+        return $this->actionParameterClasses;
+    }
+
     public function addApiClass(string $apiClass): self
     {
         $this->apiClasses[] = $apiClass;
@@ -57,4 +63,10 @@ class ClassPaths
         return $this;
     }
 
+    public function addActionParameterClass(string $actionParameterClass): self
+    {
+        $this->actionParameterClasses[] = $actionParameterClass;
+
+        return $this;
+    }
 }

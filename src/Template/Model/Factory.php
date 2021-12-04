@@ -53,4 +53,14 @@ class Factory
     {
         return new EnumTemplate($this->locationHelper, $this->stringHelper, $name, ...$values);
     }
+
+    public function getResponseListInterfaceTemplate(): ResponseListInterfaceTemplate
+    {
+        return new ResponseListInterfaceTemplate($this->locationHelper, $this->stringHelper);
+    }
+
+    public function getResponseListTemplate(string $itemClassName): ResponseListTemplate
+    {
+        return new ResponseListTemplate($this->locationHelper, $this->stringHelper, $itemClassName);
+    }
 }

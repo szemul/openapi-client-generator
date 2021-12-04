@@ -8,10 +8,11 @@ use Emul\OpenApiClientGenerator\Configuration\Configuration;
 
 class LocationHelper
 {
-    const NAME_API       = 'Api';
-    const NAME_EXCEPTION = 'Exception';
-    const NAME_MODEL     = 'Model';
-    const NAME_ENUM      = 'Enum';
+    const NAME_API              = 'Api';
+    const NAME_EXCEPTION        = 'Exception';
+    const NAME_MODEL            = 'Model';
+    const NAME_ENUM             = 'Enum';
+    const NAME_ACTION_PARAMETER = 'ActionParameter';
 
     private Configuration $configuration;
 
@@ -35,12 +36,17 @@ class LocationHelper
         return $this->getPath(self::NAME_MODEL);
     }
 
+    public function getActionParameterPath(): string
+    {
+        return $this->getPath(self::NAME_MODEL) . self::NAME_ACTION_PARAMETER . '/';
+    }
+
     public function getEnumPath(): string
     {
         return $this->getPath(self::NAME_MODEL) . self::NAME_ENUM . '/';
     }
 
-    public function getSrcPath(): string
+    public function getRootPath(): string
     {
         return $this->configuration->getPaths()->getSrcPath();
     }
@@ -60,6 +66,11 @@ class LocationHelper
         return $this->getNamespace(self::NAME_MODEL);
     }
 
+    public function getActionParameterNamespace(): string
+    {
+        return $this->getNamespace(self::NAME_MODEL) . '\\' . self::NAME_ACTION_PARAMETER;
+    }
+
     public function getEnumNamespace(): string
     {
         return $this->getNamespace(self::NAME_MODEL) . '\\' . self::NAME_ENUM;
@@ -72,7 +83,7 @@ class LocationHelper
 
     private function getPath(string $subDirectory): string
     {
-        return $this->configuration->getPaths()->getSrcPath() .  $subDirectory . '/';
+        return $this->configuration->getPaths()->getSrcPath() . $subDirectory . '/';
     }
 
     private function getNamespace(string $subNamespace): string

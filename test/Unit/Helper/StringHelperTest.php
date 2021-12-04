@@ -16,6 +16,8 @@ class StringHelperTest extends TestCaseAbstract
             ['with spaces', 'WITH_SPACES'],
             ['special& char', 'SPECIAL_CHAR'],
             ['camelCase', 'CAMEL_CASE'],
+            ['30days', 'DAYS_30'],
+            ['30_days', 'DAYS_30'],
         ];
     }
 
@@ -36,6 +38,7 @@ class StringHelperTest extends TestCaseAbstract
             ['with spaces in it', 'withSpacesInIt'],
             ['special& char', 'specialChar'],
             ['simpleCamelCase', 'simpleCamelCase'],
+            ['30_days', 'days30']
         ];
     }
 
@@ -44,7 +47,7 @@ class StringHelperTest extends TestCaseAbstract
      */
     public function testConvertToMethodName($input, $expectedResult)
     {
-        $result = $this->getSut()->convertToMethodName($input);
+        $result = $this->getSut()->convertToMethodOrVariableName($input);
 
         $this->assertSame($expectedResult, $result);
     }
@@ -56,6 +59,7 @@ class StringHelperTest extends TestCaseAbstract
             ['with spaces in it', 'WithSpacesInIt'],
             ['special& char', 'SpecialChar'],
             ['simpleCamelCase', 'SimpleCamelCase'],
+            ['30_days', 'Days30']
         ];
     }
 

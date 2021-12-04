@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Template\Api;
 
 use Emul\OpenApiClientGenerator\Entity\HttpMethod;
+use Emul\OpenApiClientGenerator\Entity\Parameter;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
+use Emul\OpenApiClientGenerator\Template\Model\ActionParameterTemplate;
 
 class Factory
 {
@@ -26,10 +28,35 @@ class Factory
 
     public function getApiActionTemplate(
         string $operationId,
-        string $requestModelClassName,
+        string $actionParameterClassName,
         string $url,
-        HttpMethod $httpMethod
+        HttpMethod $httpMethod,
+        ?bool $responseIsList,
+        ?string $responseClassName
     ): ApiActionTemplate {
-        return new ApiActionTemplate($this->locationHelper, $this->stringHelper, $operationId, $requestModelClassName, $url, $httpMethod);
+        return new ApiActionTemplate(
+            $this->locationHelper,
+            $this->stringHelper,
+            $operationId,
+            $actionParameterClassName,
+            $url,
+            $httpMethod,
+            $responseIsList,
+            $responseClassName
+        );
+    }
+
+    public function getActionParameterTemplate(
+        string $actionParameterClassName,
+        ?string $requestModelClassName,
+        Parameter ...$parameters
+    ): ActionParameterTemplate {
+        return new ActionParameterTemplate(
+            $this->locationHelper,
+            $this->stringHelper,
+            $actionParameterClassName,
+            $requestModelClassName,
+            ...$parameters
+        );
     }
 }

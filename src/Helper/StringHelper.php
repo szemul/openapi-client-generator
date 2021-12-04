@@ -11,7 +11,7 @@ class StringHelper
         return strtoupper($this->convertToSnakeCase($this->convertToPhpName($string)));
     }
 
-    public function convertToMethodName(string $string): string
+    public function convertToMethodOrVariableName(string $string): string
     {
         return $this->convertToCamelCase($this->convertToPhpName($string));
     }
@@ -26,7 +26,12 @@ class StringHelper
         $result = iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $string);
         $result = str_replace(' ', '_', $result);
 
-        return preg_replace('#[^A-Za-z0-9_]#', '', $result);
+        $result = preg_replace('#[^A-Za-z0-9_]#', '', $result);
+        if (preg_match('#^(\d+)(_*)(.+)$#', $result, $matches)) {
+            $result = $matches[3] . '_' . $matches[1];
+        }
+
+        return $result;
     }
 
     private function convertToCamelCase(string $string, bool $capitalizeFirstCharacter = false): string

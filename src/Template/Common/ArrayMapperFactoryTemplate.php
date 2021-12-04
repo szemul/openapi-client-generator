@@ -91,7 +91,7 @@ class ArrayMapperFactoryTemplate extends ClassTemplateAbstract
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getSrcPath();
+        return $this->getLocationHelper()->getRootPath();
     }
 
     public function getNamespace(): string

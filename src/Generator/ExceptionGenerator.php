@@ -54,20 +54,22 @@ class ExceptionGenerator implements GeneratorInterface
     private function generateRequestCodeExceptions(): void
     {
         foreach ($this->gatherErrorResponsesByCode() as $errorResponse) {
-            $errorSchema = $this->configuration->getApiDoc()['components']['schemas'][$errorResponse->getSchemaName()];
+            if (empty($this->configuration->getApiDoc()['components']['schemas'][$errorResponse->getSchemaName()])) {
+                $template = $this->templateFactory->getRequestCodeExceptionTemplate($errorResponse->getStatusCode());
+            }
+            else {
+                $errorSchema = $this->configuration->getApiDoc()['components']['schemas'][$errorResponse->getSchemaName()];
 
-            if (empty($errorResponse)) {
-                throw new Exception('Error schema ' . $errorResponse->getSchemaName() . ' not defined');
+                $properties = [];
+                foreach ($errorSchema['properties'] as $propertyName => $propertyDetails) {
+                    $type         = $this->typeMapper->mapApiDocDetailsToPropertyType($propertyName, $propertyDetails);
+                    $description  = $propertyDetails['description'] ?? null;
+                    $properties[] = $this->templateFactory->getRequestExceptionPropertyTemplate($propertyName, $type, $description);
+                }
+
+                $template = $this->templateFactory->getRequestCodeExceptionTemplate($errorResponse->getStatusCode(), ...$properties);
             }
 
-            $properties = [];
-            foreach ($errorSchema['properties'] as $propertyName => $propertyDetails) {
-                $type         = $this->typeMapper->mapApiDocDetailsToPropertyType($propertyName, $propertyDetails);
-                $description  = $propertyDetails['description'] ?? null;
-                $properties[] = $this->templateFactory->getRequestExceptionPropertyTemplate($propertyName, $type, $description);
-            }
-
-            $template = $this->templateFactory->getRequestCodeExceptionTemplate($errorResponse->getStatusCode(), ...$properties);
 
             $this->fileHandler->saveClassTemplateToFile($template);
         }

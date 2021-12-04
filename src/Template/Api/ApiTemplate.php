@@ -84,12 +84,16 @@ class ApiTemplate extends ClassTemplateAbstract
     {
         $importsArray = [];
         foreach ($this->actions as $action) {
-            foreach ($action->getModelFullClassNames() as $fullClassName) {
-                $importsArray[] = 'use ' . $fullClassName . ';';
+            $importsArray[] = 'use ' . $action->getParameterFullClassName() . ';';
+
+            foreach ($action->getClassesToImport() as $class) {
+                $importsArray[] = 'use ' . $class . ';';
             }
         }
 
-        return implode(PHP_EOL, $importsArray);
+        sort($importsArray);
+
+        return implode(PHP_EOL, array_unique($importsArray));
     }
 
     private function getActions(): string

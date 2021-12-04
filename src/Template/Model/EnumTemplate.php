@@ -13,7 +13,7 @@ class EnumTemplate extends ClassTemplateAbstract
 {
     private string $enumName;
     /** @var string[] */
-    private array      $values;
+    private array $values;
 
     public function __construct(
         LocationHelper $locationHelper,
@@ -79,7 +79,7 @@ class EnumTemplate extends ClassTemplateAbstract
         $methods = [];
 
         foreach ($this->values as $value) {
-            $methodName = $this->getStringHelper()->convertToMethodName($value);
+            $methodName = $this->getStringHelper()->convertToMethodOrVariableName($value);
             $constName  = $this->getStringHelper()->convertToConstantName($value);
 
             $methods[] = <<<CREATOR
@@ -95,11 +95,11 @@ class EnumTemplate extends ClassTemplateAbstract
 
     private function getPossibleValuesMethod(): string
     {
-        $constants = [];
+        $constants    = [];
         $constantList = '';
 
         foreach ($this->values as $value) {
-            $constName = $this->getStringHelper()->convertToConstantName($value);
+            $constName   = $this->getStringHelper()->convertToConstantName($value);
             $constants[] = 'self::' . $constName;
         }
         $constantList = implode(', ', $constants);

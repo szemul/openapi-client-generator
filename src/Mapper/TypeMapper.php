@@ -6,21 +6,23 @@ namespace Emul\OpenApiClientGenerator\Mapper;
 
 use Carbon\CarbonInterface;
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
+use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\Model\ModelPropertyTemplate;
-use Exception;
 use InvalidArgumentException;
 
 class TypeMapper
 {
     private LocationHelper $locationHelper;
     private StringHelper   $stringHelper;
+    private ClassHelper    $classHelper;
 
-    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper)
+    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper, ClassHelper $classHelper)
     {
         $this->locationHelper = $locationHelper;
         $this->stringHelper   = $stringHelper;
+        $this->classHelper    = $classHelper;
     }
 
     public function mapApiDocDetailsToPropertyType(string $name, array $details): PropertyType
@@ -33,7 +35,7 @@ class TypeMapper
         $scalarTypes = ['string', 'integer', 'number', 'boolean'];
 
         if (!empty($details['$ref'])) {
-            $subModelName = basename($details['$ref']);
+            $subModelName = $this->classHelper->getModelClassname($details['$ref']);
             $type         = PropertyType::object($this->locationHelper->getModelNamespace() . '\\' . $subModelName);
         } elseif ($typeString === 'array') {
             if (!empty($details['items'])) {
@@ -106,6 +108,34 @@ class TypeMapper
         }
 
         return $docType;
+    }
+
+    public function mapParameterToPropertyType(array $parameterDetails): PropertyType
+    {
+        if (empty($parameterDetails['schema'])) {
+            throw new InvalidArgumentException('Unable to retrieve type of ' . $parameterDetails['name']);
+        }
+        $typeString = $parameterDetails['schema']['type'];
+
+        switch ($typeString) {
+            case 'string':
+                $type = PropertyType::string();
+                break;
+
+            case 'integer':
+                $type = PropertyType::int();
+                break;
+
+            case 'number':
+                $type = PropertyType::float();
+                break;
+
+            case 'boolean':
+                $type = PropertyType::bool();
+                break;
+        }
+
+        return $type;
     }
 
     public function getArrayItemType(PropertyType $type): string

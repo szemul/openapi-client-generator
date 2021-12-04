@@ -42,6 +42,7 @@ class Generator
         return [
             $this->factory->getModelGenerator(),
             $this->factory->getExceptionGenerator(),
+            $this->factory->getActionParameterGenerator(),
             $this->factory->getApiGenerator(),
             $this->factory->getCommonGenerator(),
         ];
