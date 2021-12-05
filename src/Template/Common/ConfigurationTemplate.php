@@ -19,7 +19,7 @@ class ConfigurationTemplate extends ClassTemplateAbstract
             
             class {$this->getClassName()}
             {
-                public const API_KEY_HEADER_NAME = 'X-API-KEY';
+                public const API_KEY_HEADER_NAME = 'X-Api-Key';
             
                 private string  \$host;
                 private string  \$apiKeyHeaderName = self::API_KEY_HEADER_NAME;

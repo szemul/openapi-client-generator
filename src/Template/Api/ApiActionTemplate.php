@@ -11,7 +11,7 @@ use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 
 class ApiActionTemplate extends TemplateAbstract
 {
-    private string     $operationId;
+    private string     $actionName;
     private string     $parameterClassName;
     private string     $url;
     private HttpMethod $httpMethod;
@@ -30,7 +30,7 @@ class ApiActionTemplate extends TemplateAbstract
     ) {
         parent::__construct($locationHelper, $stringHelper);
 
-        $this->operationId        = $operationId;
+        $this->actionName         = $this->getStringHelper()->convertToMethodOrVariableName($operationId);
         $this->parameterClassName = $parameterClassName;
         $this->url                = $url;
         $this->httpMethod         = $httpMethod;
@@ -70,7 +70,7 @@ class ApiActionTemplate extends TemplateAbstract
         }
 
         return <<<ACTION
-            public function {$this->operationId}({$this->parameterClassName} \$request): {$returnType}
+            public function {$this->actionName}({$this->parameterClassName} \$request): {$returnType}
             {
                 \$path    = '{$this->url}';
                 \$payload = json_encode(\$request);

@@ -32,6 +32,7 @@ class Generator
         }
 
         $this->fixCodingStandards();
+        $this->copyDocumentation();
     }
 
     /**
@@ -54,5 +55,13 @@ class Generator
             . '/.php-cs-fixer.generated.php fix '
             . $this->configuration->getPaths()->getTargetRootPath();
         exec($command);
+    }
+
+    private function copyDocumentation(): void
+    {
+        $destinationDirectory = $this->configuration->getPaths()->getTargetRootPath() . 'doc/';
+
+        $this->fileHandler->createDirectory($destinationDirectory);
+        $this->fileHandler->copyFile($this->configuration->getPaths()->getApiDocPath(), $destinationDirectory . 'openapi.json');
     }
 }

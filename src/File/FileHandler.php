@@ -41,4 +41,9 @@ class FileHandler
     {
         return file_get_contents($path);
     }
+
+    public function copyFile(string $sourcePath, $destinationPath): void
+    {
+        copy($sourcePath, $destinationPath);
+    }
 }

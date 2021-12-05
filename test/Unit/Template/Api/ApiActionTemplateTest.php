@@ -66,6 +66,31 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
         $this->assertActionSame($responseClassName, $expectedResultHandling, $result);
     }
 
+    public function testGetParameterFullClassName()
+    {
+        $result = $this->getSut(false, null)->getParameterFullClassName();
+
+        $this->assertSame('Root\Model\ActionParameter\EntityCreateRequest', $result);
+    }
+
+    public function testGetClassesToImportWhenNoResponseClassGiven_shouldReturnEmptyArray()
+    {
+        $result = $this->getSut(false, null)->getClassesToImport();
+
+        $this->assertEmpty($result);
+    }
+
+    public function testGetClasses_shouldReturnMapperAndResponse()
+    {
+        $result         = $this->getSut(true, 'ResponseClass')->getClassesToImport();
+        $expectedResult = [
+            'Root\ArrayMapperFactory',
+            'Root\Model\ResponseClass',
+        ];
+
+        $this->assertSame($expectedResult, $result);
+    }
+
     private function assertActionSame(string $expectedReturnType, string $expectedResponseHandling, string $result)
     {
         $expectedResult = <<<EXPECTED

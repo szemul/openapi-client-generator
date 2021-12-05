@@ -17,6 +17,7 @@ class StringHelperTest extends TestCaseAbstract
             ['special& char', 'SPECIAL_CHAR'],
             ['camelCase', 'CAMEL_CASE'],
             ['30days', 'DAYS_30'],
+            ['dash-case', 'DASH_CASE'],
             ['30_days', 'DAYS_30'],
         ];
     }
@@ -38,7 +39,9 @@ class StringHelperTest extends TestCaseAbstract
             ['with spaces in it', 'withSpacesInIt'],
             ['special& char', 'specialChar'],
             ['simpleCamelCase', 'simpleCamelCase'],
-            ['30_days', 'days30']
+            ['UpperCase', 'upperCase'],
+            ['dash-case', 'dashCase'],
+            ['30_days', 'days30'],
         ];
     }
 
@@ -59,7 +62,8 @@ class StringHelperTest extends TestCaseAbstract
             ['with spaces in it', 'WithSpacesInIt'],
             ['special& char', 'SpecialChar'],
             ['simpleCamelCase', 'SimpleCamelCase'],
-            ['30_days', 'Days30']
+            ['30_days', 'Days30'],
+            ['dash-case', 'DashCase'],
         ];
     }
 
