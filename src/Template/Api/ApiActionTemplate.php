@@ -94,7 +94,7 @@ class ApiActionTemplate extends TemplateAbstract
                     \$queryParameters[\$parameterName] = \$request->\$getterName();
                 }
 
-                \$path = strpos(\$path, '?') === false
+                \$path .= strpos(\$path, '?') === false
                     ? '?' . http_build_query(\$queryParameters)
                     : '&' . http_build_query(\$queryParameters);
 
