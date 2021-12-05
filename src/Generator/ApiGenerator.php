@@ -87,7 +87,7 @@ class ApiGenerator implements GeneratorInterface
 
                 if (!empty($schema['$ref'])) {
                     $responseIsList = false;
-                    $responseClass  = basename($schema['$ref']);
+                    $responseClass  = $this->classHelper->getModelClassname($schema['$ref']);
                 } elseif ($schema['type'] === 'array') {
                     $responseIsList = true;
                     $responseClass  = $this->classHelper->getListModelClassname(basename($schema['items']['$ref']));

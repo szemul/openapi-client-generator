@@ -96,7 +96,7 @@ class ApiActionTemplate extends TemplateAbstract
 
                 \$path = strpos(\$path, '?') === false
                     ? '?' . http_build_query(\$queryParameters)
-                    : '&amp;' . http_build_query(\$queryParameters);
+                    : '&' . http_build_query(\$queryParameters);
 
                 \$request = \$this->requestFactory->createRequest(
                     '{$this->httpMethod->__toString()}',
