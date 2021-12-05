@@ -104,9 +104,9 @@ class ApiActionTemplate extends TemplateAbstract
                 );
 
                 foreach (\$headers as \$name => \$value) {
-                    \$request->withHeader(\$name, \$value);
+                    \$request = \$request->withHeader(\$name, \$value);
                 }
-                \$request->withBody(\$this->streamFactory->createStream(\$payload));
+                \$request = \$request->withBody(\$this->streamFactory->createStream(\$payload));
 
                 \$response     = \$this->httpClient->sendRequest(\$request);
                 \$responseCode = \$response->getStatusCode();
