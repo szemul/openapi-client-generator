@@ -48,7 +48,7 @@ class ComposerJsonTemplate extends TemplateAbstract
                 },
                 "autoload": {
                   "psr-4": {
-                    "{$this->getLocationHelper()->getRootNamespace()}\\\\": "src"
+                    "{$this->getLocationHelper()->getEscapedRootNamespace()}\\\\": "src"
                   }
                 }
             }

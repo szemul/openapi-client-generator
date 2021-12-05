@@ -81,6 +81,11 @@ class LocationHelper
         return $this->configuration->getClassPaths()->getRootNamespace();
     }
 
+    public function getEscapedRootNamespace(): string
+    {
+        return addcslashes($this->getRootNamespace(), '\\');
+    }
+
     private function getPath(string $subDirectory): string
     {
         return $this->configuration->getPaths()->getSrcPath() . $subDirectory . '/';
