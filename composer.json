@@ -10,7 +10,6 @@
         "nesbot/carbon": "^2.0",
         "emulgeator/enum": "^1.0",
         "emulgeator/array-to-class-mapper": "^0.1.2",
-        "guzzlehttp/guzzle": "^7.4",
         "friendsofphp/php-cs-fixer": "^3.2",
         "vanilla/garden-cli": "^3.1"
     },
@@ -26,6 +25,9 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "mockery/mockery": "^1.4"
+        "mockery/mockery": "^1.4",
+        "psr/http-message": "^1.0",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0"
     }
 }
