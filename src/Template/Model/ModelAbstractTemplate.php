@@ -42,7 +42,7 @@ class ModelAbstractTemplate extends ClassTemplateAbstract
             
                         return \$this->{\$propertyName};
                     } else {
-                        return isset(\$this->key)
+                        return isset(\$this->{\$propertyName})
                             ? \$this->{\$propertyName}
                             : null;
                     }
