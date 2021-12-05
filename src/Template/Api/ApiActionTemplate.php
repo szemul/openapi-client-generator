@@ -53,7 +53,7 @@ class ApiActionTemplate extends TemplateAbstract
                     \$mapper = (new ArrayMapperFactory())->getMapper();
                     \$list   = new {$this->responseClassName}();
 
-                    foreach (json_decode(\$response->getBody()->getContents()) as \$item) {
+                    foreach (json_decode(\$response->getBody()->getContents(), true) as \$item) {
                         \$list->add(\$mapper->map(\$item, \$list->getItemClass()));
                     }
                     RESPONSE;
@@ -62,7 +62,7 @@ class ApiActionTemplate extends TemplateAbstract
                 return (new ArrayMapperFactory())
                     ->getMapper()
                     ->map(
-                        json_decode(\$response->getBody()->getContents()),
+                        json_decode(\$response->getBody()->getContents(), true),
                         {$this->responseClassName}::class
                     );
                 RESPONSE;
