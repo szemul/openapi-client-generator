@@ -35,7 +35,7 @@ class ComposerJsonTemplateTest extends TemplateTestCaseAbstract
                 },
                 "autoload": {
                   "psr-4": {
-                    "Api\\": "src"
+                    "Root\\": "src"
                   }
                 }
             }

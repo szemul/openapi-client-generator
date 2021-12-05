@@ -11,14 +11,14 @@ class RequestExceptionTemplateTest extends TemplateTestCaseAbstract
 {
     public function testToString_shouldRenderProperly()
     {
-        $sut = new RequestExceptionTemplate($this->locationHelper, $this->stringHelper);
+        $sut = $this->getSut();
 
         $result         = (string)$sut;
         $expectedResult = <<<'EXPECTED'
             <?php
             declare(strict_types=1);
             
-            namespace Api\Exception;
+            namespace Root\Exception;
             
             use Carbon\CarbonInterface;
             use Exception;
@@ -53,6 +53,25 @@ class RequestExceptionTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
+    }
+
+    public function testGetDirectory()
+    {
+        $directory = $this->getSut()->getDirectory();
+
+        $this->assertSame('/src/Exception/', $directory);
+    }
+
+    public function testGetClassname()
+    {
+        $className = $this->getSut()->getClassName(true);
+
+        $this->assertSame('Root\Exception\RequestException', $className);
+    }
+
+    private function getSut(): RequestExceptionTemplate
+    {
+        return new RequestExceptionTemplate($this->locationHelper, $this->stringHelper);
     }
 }

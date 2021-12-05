@@ -29,7 +29,7 @@ class RequestExceptionPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedValue, $getter);
+        $this->assertRenderedStringSame($expectedValue, $getter);
     }
 
     public function testGetGetterWhenArrayOfObjectsGiven_shouldGenerateAccordingly()
@@ -48,7 +48,7 @@ class RequestExceptionPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedValue, $getter);
+        $this->assertRenderedStringSame($expectedValue, $getter);
     }
 
     public function testGetGetterWhenScalarGiven_shouldGenerateAccordingly()
@@ -64,7 +64,7 @@ class RequestExceptionPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedValue, $getter);
+        $this->assertRenderedStringSame($expectedValue, $getter);
     }
 
     public function testGetGetterWhenScalarWithDescriptionGiven_shouldGenerateAccordingly()
@@ -83,7 +83,7 @@ class RequestExceptionPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedValue, $getter);
+        $this->assertRenderedStringSame($expectedValue, $getter);
     }
 
     private function getSut(PropertyType $type, ?string $description = null): RequestExceptionPropertyTemplate

@@ -23,7 +23,8 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
 
     public function testToString_shouldGenerateTemplate()
     {
-        $this->expectModelClassNamesRetrievedFromAction('Model');
+        $this->expectParameterFullClassNameRetrieved('ActionParameter');
+        $this->expectClassesToImportRetrieved('Class1', 'Class2');
         $this->expectActionRendered('Action');
 
         $result = (string)$this->getSut();
@@ -33,14 +34,16 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
             
             declare(strict_types=1);
             
-            namespace Api\Api;
+            namespace Root\Api;
             
             use Psr\Http\Client\ClientInterface;
             use Psr\Http\Message\RequestFactoryInterface;
             use Psr\Http\Message\StreamFactoryInterface;
-            use Api\Configuration;
-            use Api\Exception\RequestException;
-            use Model;
+            use Root\Configuration;
+            use Root\Exception\RequestException;
+            use ActionParameter;
+            use Class1;
+            use Class2;
             
             class TestApi
             {
@@ -69,15 +72,7 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
-    }
-
-    private function expectModelClassNamesRetrievedFromAction(string $modelClassName): void
-    {
-        $this->action
-            ->shouldReceive('getModelFullClassNames')
-            ->once()
-            ->andReturn([$modelClassName]);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     private function expectActionRendered(string $expectedResult): void
@@ -86,6 +81,22 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
             ->shouldReceive('__toString')
             ->once()
             ->andReturn($expectedResult);
+    }
+
+    private function expectParameterFullClassNameRetrieved(string $expectedResult)
+    {
+        $this->action
+            ->shouldReceive('getParameterFullClassName')
+            ->once()
+            ->andReturn($expectedResult);
+    }
+
+    private function expectClassesToImportRetrieved(string ...$expectedClasses)
+    {
+        $this->action
+            ->shouldReceive('getClassesToImport')
+            ->once()
+            ->andReturn($expectedClasses);
     }
 
     private function getSut(): ApiTemplate

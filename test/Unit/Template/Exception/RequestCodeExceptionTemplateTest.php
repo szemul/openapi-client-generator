@@ -29,7 +29,7 @@ class RequestCodeExceptionTemplateTest extends TemplateTestCaseAbstract
             <?php
             declare(strict_types=1);
             
-            namespace Api\Exception;
+            namespace Root\Exception;
             
             class Request400Exception extends RequestException
             {
@@ -43,7 +43,7 @@ class RequestCodeExceptionTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedValue, (string)$this->getSut());
+        $this->assertRenderedStringSame($expectedValue, (string)$this->getSut());
     }
 
     public function testGetDirectory()
@@ -57,7 +57,7 @@ class RequestCodeExceptionTemplateTest extends TemplateTestCaseAbstract
     {
         $className = $this->getSut()->getClassName(true);
 
-        $this->assertSame('Api\Exception\Request400Exception', $className);
+        $this->assertSame('Root\Exception\Request400Exception', $className);
     }
 
     private function expectGetterGenerated(string $expectedResult): void

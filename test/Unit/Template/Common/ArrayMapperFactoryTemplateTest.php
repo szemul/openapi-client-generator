@@ -9,7 +9,7 @@ use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;
 
 class ArrayMapperFactoryTemplateTest extends TemplateTestCaseAbstract
 {
-    private array $entityClasses = ['\\Api\\Entity\\First', '\\Api\\Entity\\Second'];
+    private array $entityClasses = ['\\Root\\Entity\\First', '\\Root\\Entity\\Second'];
 
     public function testToString_shouldRenderProperly()
     {
@@ -22,7 +22,7 @@ class ArrayMapperFactoryTemplateTest extends TemplateTestCaseAbstract
             
             declare(strict_types=1);
             
-            namespace Api;
+            namespace Root;
             
             use Carbon\Carbon;
             use Carbon\CarbonInterface;
@@ -33,7 +33,7 @@ class ArrayMapperFactoryTemplateTest extends TemplateTestCaseAbstract
             class ArrayMapperFactory
             {
                 private Mapper $mapper;
-                private array $entityClasses = ['\\Api\\Entity\\First', '\\Api\\Entity\\Second'];
+                private array $entityClasses = ['\\Root\\Entity\\First', '\\Root\\Entity\\Second'];
             
                 public function __construct()
                 {
@@ -83,7 +83,7 @@ class ArrayMapperFactoryTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     public function testGetDirectory()
@@ -97,7 +97,7 @@ class ArrayMapperFactoryTemplateTest extends TemplateTestCaseAbstract
     {
         $className = $this->getSut()->getClassName(true);
 
-        $this->assertSame('Api\ArrayMapperFactory', $className);
+        $this->assertSame('Root\ArrayMapperFactory', $className);
     }
 
     private function getSut(): ArrayMapperFactoryTemplate

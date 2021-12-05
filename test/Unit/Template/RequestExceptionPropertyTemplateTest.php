@@ -6,12 +6,10 @@ namespace Emul\OpenApiClientGenerator\Test\Unit\Template;
 
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
 use Emul\OpenApiClientGenerator\Template\Exception\RequestExceptionPropertyTemplate;
-use Emul\OpenApiClientGenerator\Test\Unit\TestCaseAbstract;
 
-class RequestExceptionPropertyTemplateTest extends TestCaseAbstract
+class RequestExceptionPropertyTemplateTest extends TemplateTestCaseAbstract
 {
-    private string $rootNamespace = 'Root';
-    private string $name          = 'name';
+    private string $name = 'name';
 
     public function testGetGetterWhenScalarGiven_shouldGenerateGetter()
     {
@@ -66,6 +64,6 @@ class RequestExceptionPropertyTemplateTest extends TestCaseAbstract
 
     private function getSut(PropertyType $type, ?string $description = null): RequestExceptionPropertyTemplate
     {
-        return new RequestExceptionPropertyTemplate($this->rootNamespace, $this->name, $type, $description);
+        return new RequestExceptionPropertyTemplate($this->locationHelper, $this->stringHelper, $this->name, $type, $description);
     }
 }

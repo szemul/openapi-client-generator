@@ -16,7 +16,7 @@ class PropertyNotInitializedExceptionTemplateTest extends TemplateTestCaseAbstra
             
             declare(strict_types=1);
             
-            namespace Api\Exception;
+            namespace Root\Exception;
             
             use Exception;
             
@@ -25,7 +25,7 @@ class PropertyNotInitializedExceptionTemplateTest extends TemplateTestCaseAbstra
             }
             EXPECTED;
 
-        $this->assertSame($expectedValue, (string)$this->getSut());
+        $this->assertRenderedStringSame($expectedValue, (string)$this->getSut());
     }
 
     public function testGetDirectory()
@@ -39,7 +39,7 @@ class PropertyNotInitializedExceptionTemplateTest extends TemplateTestCaseAbstra
     {
         $className = $this->getSut()->getClassName(true);
 
-        $this->assertSame('Api\Exception\PropertyNotInitializedException', $className);
+        $this->assertSame('Root\Exception\PropertyNotInitializedException', $className);
     }
 
     private function getSut(): PropertyNotInitializedExceptionTemplate

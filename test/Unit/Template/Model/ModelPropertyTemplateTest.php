@@ -38,7 +38,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             protected string $name;
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     public function testToStringWhenDescriptionSet_shouldGenerateProperty()
@@ -56,7 +56,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             protected string $name;
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     public function testGetGetterWhenScalarGiven_shouldGenerateGetter()
@@ -71,7 +71,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $getter);
+        $this->assertRenderedStringSame($expectedResult, $getter);
     }
 
     public function testGetGetterWhenNullableGiven_shouldGenerateGetter()
@@ -86,7 +86,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $getter);
+        $this->assertRenderedStringSame($expectedResult, $getter);
     }
 
     public function testGetGetterWhenObjectGiven_shouldGenerateGetter()
@@ -101,7 +101,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $getter);
+        $this->assertRenderedStringSame($expectedResult, $getter);
     }
 
     public function testGetGetterWhenArrayGiven_shouldGenerateGetterWithDoc()
@@ -122,7 +122,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $getter);
+        $this->assertRenderedStringSame($expectedResult, $getter);
     }
 
     public function testGetSetterWhenScalarGiven_shouldGenerateSetter()
@@ -139,7 +139,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $setter);
+        $this->assertRenderedStringSame($expectedResult, $setter);
     }
 
     public function testGetSetterWhenNullable_shouldGenerateSetter()
@@ -156,7 +156,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $setter);
+        $this->assertRenderedStringSame($expectedResult, $setter);
     }
 
     public function testGetSetterWhenObjectGiven_shouldGenerateSetter()
@@ -173,7 +173,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $setter);
+        $this->assertRenderedStringSame($expectedResult, $setter);
     }
 
     public function testGetSetterWhenArrayGiven_shouldGenerate()
@@ -193,7 +193,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $setter);
+        $this->assertRenderedStringSame($expectedResult, $setter);
     }
 
     private function expectPropertyMappedToPhpType(ModelPropertyTemplate $property, string $expectedResult): void

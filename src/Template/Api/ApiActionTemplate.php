@@ -89,6 +89,7 @@ class ApiActionTemplate extends TemplateAbstract
                 foreach (\$request->getPathParameterGetters() as \$parameterName => \$getterName) {
                     \$path = str_replace('{' . \$parameterName . '}', \$request->\$getterName(), \$path);
                 }
+
                 \$queryParameters = [];
                 foreach (\$request->getQueryParameterGetters() as \$parameterName => \$getterName) {
                     \$queryParameters[\$parameterName] = \$request->\$getterName();

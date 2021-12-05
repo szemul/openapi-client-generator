@@ -18,7 +18,7 @@ class ApiTemplate extends ClassTemplateAbstract
     {
         parent::__construct($locationHelper, $stringHelper);
 
-        $this->apiName = implode('', array_map('ucfirst', preg_split('/[-_]+/', $apiTag)));
+        $this->apiName = $this->getStringHelper()->convertToClassName($apiTag);
         $this->actions = $actions;
     }
 

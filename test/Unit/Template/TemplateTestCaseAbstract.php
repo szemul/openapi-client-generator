@@ -9,6 +9,7 @@ use Emul\OpenApiClientGenerator\Configuration\Composer;
 use Emul\OpenApiClientGenerator\Configuration\Configuration;
 use Emul\OpenApiClientGenerator\Configuration\Paths;
 use Emul\OpenApiClientGenerator\File\FileHandler;
+use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Test\Unit\TestCaseAbstract;
@@ -19,6 +20,7 @@ class TemplateTestCaseAbstract extends TestCaseAbstract
     protected FileHandler    $fileHandler;
     protected LocationHelper $locationHelper;
     protected StringHelper   $stringHelper;
+    protected ClassHelper    $classHelper;
 
     protected function setUp(): void
     {
@@ -37,6 +39,7 @@ class TemplateTestCaseAbstract extends TestCaseAbstract
             )
         );
         $this->stringHelper   = new StringHelper();
+        $this->classHelper    = new ClassHelper($this->stringHelper);
     }
 
     private function expectApiDocRead()

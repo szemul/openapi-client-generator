@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Test\Unit\Template\Model;
 
+use Emul\OpenApiClientGenerator\Entity\PropertyType;
 use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
+use Emul\OpenApiClientGenerator\Template\Model\ModelPropertyTemplate;
 use Emul\OpenApiClientGenerator\Template\Model\ModelTemplate;
 use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;
-use Mockery;
 
 class ModelTemplateTest extends TemplateTestCaseAbstract
 {
@@ -17,56 +18,75 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
     {
         parent::setUp();
 
-        $this->typeMapper = new TypeMapper($this->locationHelper, $this->stringHelper);
+        $this->typeMapper = new TypeMapper($this->locationHelper, $this->stringHelper, $this->classHelper);
     }
 
     public function testToString_shouldGenerateClass()
     {
-        $sut = $this->getSut();
+        $properties = [
+            $this->getPropertyTemplate('property1', PropertyType::int(), true, 'First'),
+            $this->getPropertyTemplate('property2', PropertyType::array(PropertyType::string()), false, 'Second'),
+        ];
+        $sut        = $this->getSut(...$properties);
 
         $result         = (string)$sut;
         $expectedResult = <<<'EXPECTED'
             <?php
-            
             declare(strict_types=1);
             
             namespace Root\Model;
             
-            use Root\JsonSerializableTrait;
-            use Root\Exception\PropertyNotInitializedException;
-            use JsonSerializable;
-            use ReflectionException;
-            use ReflectionProperty;
-            
-            abstract class ModelAbstract implements JsonSerializable
+            class Model extends ModelAbstract
             {
-                use JsonSerializableTrait;
-            
                 /**
-                 * @throws PropertyNotInitializedException
-                 * @throws ReflectionException
+                 * @var int First
                  */
-                protected function getPropertyValue(string $propertyName, bool $throwExceptionIfNotInitialized)
+                protected int $property1;
+
+                /**
+                 * @var string[] Second
+                 */
+                protected ?array $property2;
+
+                /**
+                 * @param string[] $property2
+                 */
+                public function __construct(int $property1, ?array $property2 = null)
                 {
-                    if ($throwExceptionIfNotInitialized) {
-                        $propertyReflection = new ReflectionProperty($this, $propertyName);
+                    $this->property1 = $property1;
+                    $this->property2 = $property2;
+                }
+
+                public function getProperty1(): int
+                {
+                    return $this->property1;
+                }
+
+                /**
+                 * @return string[]|null
+                 */
+                public function getProperty2(bool $throwExceptionIfNotInitialized = false): ?array
+                {
+                    return $this->getPropertyValue('property2', $throwExceptionIfNotInitialized);
+                }
             
-                        if (!$propertyReflection->isInitialized($this)) {
-                            throw new PropertyNotInitializedException();
-                        }
+                public function setProperty1(int $property1): self
+                {
+                    $this->property1 = $property1;
             
-                        return $this->{$propertyName};
-                    } else {
-                        return isset($this->key)
-                            ? $this->{$propertyName}
-                            : null;
-                    }
+                    return $this;
+                }
+
+                public function setProperty2(string ...$property2): self
+                {
+                    $this->property2 = $property2;
+            
+                    return $this;
                 }
             }
-            
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     public function testGetDirectory()
@@ -80,11 +100,24 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
     {
         $className = $this->getSut()->getClassName(true);
 
-        $this->assertSame('Root\Model\ModelAbstract', $className);
+        $this->assertSame('Root\Model\Model', $className);
     }
 
-    private function getSut(): ModelTemplate
+    private function getPropertyTemplate(string $name, PropertyType $type, bool $isRequired, ?string $description): ModelPropertyTemplate
     {
-        return new ModelTemplate($this->locationHelper, $this->stringHelper, $this->typeMapper, 'Model');
+        return new ModelPropertyTemplate(
+            $this->locationHelper,
+            $this->stringHelper,
+            $this->typeMapper,
+            $name,
+            $type,
+            $isRequired,
+            $description
+        );
+    }
+
+    private function getSut(ModelPropertyTemplate ...$properties): ModelTemplate
+    {
+        return new ModelTemplate($this->locationHelper, $this->stringHelper, $this->typeMapper, 'Model', ...$properties);
     }
 }

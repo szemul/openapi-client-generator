@@ -43,7 +43,7 @@ class EnumTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     public function testGetDirectory()

@@ -17,7 +17,7 @@ class JsonSerializableTraitTemplateTest extends TemplateTestCaseAbstract
             <?php
             declare(strict_types=1);
             
-            namespace Api;
+            namespace Root;
             
             use Carbon\CarbonInterface;
             
@@ -43,7 +43,7 @@ class JsonSerializableTraitTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     public function testGetDirectory()
@@ -57,7 +57,7 @@ class JsonSerializableTraitTemplateTest extends TemplateTestCaseAbstract
     {
         $className = $this->getSut()->getClassName(true);
 
-        $this->assertSame('Api\JsonSerializableTrait', $className);
+        $this->assertSame('Root\JsonSerializableTrait', $className);
     }
 
     private function getSut(): JsonSerializableTraitTemplate

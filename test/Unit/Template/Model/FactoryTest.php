@@ -13,6 +13,8 @@ use Emul\OpenApiClientGenerator\Template\Model\Factory;
 use Emul\OpenApiClientGenerator\Template\Model\ModelAbstractTemplate;
 use Emul\OpenApiClientGenerator\Template\Model\ModelPropertyTemplate;
 use Emul\OpenApiClientGenerator\Template\Model\ModelTemplate;
+use Emul\OpenApiClientGenerator\Template\Model\ResponseListInterfaceTemplate;
+use Emul\OpenApiClientGenerator\Template\Model\ResponseListTemplate;
 use Emul\OpenApiClientGenerator\Test\Unit\TestCaseAbstract;
 use Mockery;
 
@@ -28,7 +30,7 @@ class FactoryTest extends TestCaseAbstract
 
         $this->typeMapper     = Mockery::mock(TypeMapper::class);
         $this->locationHelper = Mockery::mock(LocationHelper::class);
-        $this->stringHelper   = Mockery::mock(StringHelper::class);
+        $this->stringHelper   = new StringHelper();
     }
 
     public function testModelAbstractTemplate()
@@ -57,6 +59,20 @@ class FactoryTest extends TestCaseAbstract
         $result = $this->getSut()->getEnumTemplate('Enum');
 
         $this->assertInstanceOf(EnumTemplate::class, $result);
+    }
+
+    public function testResponseListInterfaceTemplate()
+    {
+        $result = $this->getSut()->getResponseListInterfaceTemplate();
+
+        $this->assertInstanceOf(ResponseListInterfaceTemplate::class, $result);
+    }
+
+    public function testResponseListTemplate()
+    {
+        $result = $this->getSut()->getResponseListTemplate('Item');
+
+        $this->assertInstanceOf(ResponseListTemplate::class, $result);
     }
 
     private function getSut(): Factory

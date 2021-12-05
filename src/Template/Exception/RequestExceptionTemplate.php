@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Exception;
 
-use Emul\OpenApiClientGenerator\Template\RepresentsClassInterface;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class RequestExceptionTemplate extends ClassTemplateAbstract

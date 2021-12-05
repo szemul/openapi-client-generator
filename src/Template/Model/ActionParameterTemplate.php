@@ -70,7 +70,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
                 {$this->getGetters()}
                 {$this->getSetters()}
                 
-                public function hasRequestModel() : bool
+                public function hasRequestModel(): bool
                 {
                     return {$hasRequestModel};
                 }
@@ -84,7 +84,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
             return '';
         }
 
-        return 'USE ' . $this->getLocationHelper()->getModelNamespace() . '\\' . $this->requestModelClassName . ';' . PHP_EOL;
+        return 'use ' . $this->getLocationHelper()->getModelNamespace() . '\\' . $this->requestModelClassName . ';' . PHP_EOL;
     }
 
     private function getProperties(): string
@@ -174,7 +174,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         $nameList = implode(', ', $getters);
 
         return <<<GETTER
-            public function get{$type}ParameterGetters(): array 
+            public function get{$type}ParameterGetters(): array
             {
                 return [{$nameList}];
             }
@@ -193,6 +193,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
                 {
                     return \$this->$propertyName;
                 }
+
                 GETTER;
         }
 
@@ -202,6 +203,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
                 {
                     return \$this->{$this->getPropertyName($parameter)};
                 }
+
                 GETTER;
         }
 
@@ -222,6 +224,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
                     
                     return \$this;
                 }
+                
                 SETTER;
         }
 
@@ -233,6 +236,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
                     return \$this;
                 }
+
                 SETTER;
         }
 

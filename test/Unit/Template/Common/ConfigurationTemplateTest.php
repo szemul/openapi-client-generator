@@ -18,7 +18,7 @@ class ConfigurationTemplateTest extends TemplateTestCaseAbstract
 
             declare(strict_types=1);
 
-            namespace Api;
+            namespace Root;
 
             class Configuration
             {
@@ -71,7 +71,7 @@ class ConfigurationTemplateTest extends TemplateTestCaseAbstract
             }
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     public function testGetDirectory()
@@ -85,7 +85,7 @@ class ConfigurationTemplateTest extends TemplateTestCaseAbstract
     {
         $className = $this->getSut()->getClassName(true);
 
-        $this->assertSame('Api\Configuration', $className);
+        $this->assertSame('Root\Configuration', $className);
     }
 
     private function getSut(): ConfigurationTemplate

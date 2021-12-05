@@ -46,7 +46,7 @@ class ModelAbstractTemplateTest extends TemplateTestCaseAbstract
             
                         return $this->{$propertyName};
                     } else {
-                        return isset($this->key)
+                        return isset($this->{$propertyName})
                             ? $this->{$propertyName}
                             : null;
                     }
@@ -55,7 +55,7 @@ class ModelAbstractTemplateTest extends TemplateTestCaseAbstract
             
             EXPECTED;
 
-        $this->assertSame($expectedResult, $result);
+        $this->assertRenderedStringSame($expectedResult, $result);
     }
 
     public function testGetDirectory()

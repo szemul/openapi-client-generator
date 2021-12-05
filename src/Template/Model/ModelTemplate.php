@@ -128,7 +128,7 @@ class ModelTemplate extends ClassTemplateAbstract
                 $documentation .= ' * @param ' . $paramDocumentation . PHP_EOL;
             }
 
-            $documentation .= '*/';
+            $documentation .= ' */' . PHP_EOL;
         }
 
         $constructor = <<<CONSTRUCTOR
@@ -136,6 +136,7 @@ class ModelTemplate extends ClassTemplateAbstract
             {
                 {$paramSettersString}
             }
+
             CONSTRUCTOR;
 
         return $documentation . $constructor;
