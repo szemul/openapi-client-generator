@@ -24,7 +24,7 @@ class StringHelper
     private function convertToPhpName(string $string): string
     {
         $result = iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $string);
-        $result = str_replace([' ', '-'], '_', $result);
+        $result = str_replace([' ', '-', '.'], '_', $result);
 
         $result = preg_replace('#[^A-Za-z0-9_]#', '', $result);
         if (preg_match('#^(\d+)(_*)(.+)$#', $result, $matches)) {

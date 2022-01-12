@@ -14,7 +14,7 @@ class FileHandler
         if (file_exists($path)) {
             return;
         }
-        $directoryCreated = mkdir($path);
+        $directoryCreated = mkdir($path, 0777, true);
 
         if (!$directoryCreated) {
             throw new Exception('Failed to create ' . $path);

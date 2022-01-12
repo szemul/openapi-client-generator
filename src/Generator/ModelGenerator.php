@@ -10,6 +10,7 @@ use Emul\OpenApiClientGenerator\File\FileHandler;
 use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 use Emul\OpenApiClientGenerator\Template\Model\Factory;
+use Exception;
 
 class ModelGenerator implements GeneratorInterface
 {
@@ -51,24 +52,33 @@ class ModelGenerator implements GeneratorInterface
     private function generateModel(string $schemaName, array $schema)
     {
         $propertyTemplates = [];
+        $schemaType        = $schema['type'];
 
-        foreach ($schema['properties'] as $propertyName => $details) {
-            $type        = $this->typeMapper->mapApiDocDetailsToPropertyType($propertyName, $details);
-            $description = $details['description'] ?? null;
+        if ($schemaType === 'array') {
+            $className = $this->classHelper->getModelClassname(basename($schema['items']['$ref']));
+            $template  = $this->templateFactory->getResponseListTemplate($className);
+        } elseif ($schemaType === 'object') {
+            foreach ($schema['properties'] as $propertyName => $details) {
+                $type        = $this->typeMapper->mapApiDocDetailsToPropertyType($propertyName, $details);
+                $description = $details['description'] ?? null;
 
-            $propertyTemplates[] = $this->templateFactory->getModelPropertyTemplate(
-                $propertyName,
-                $type,
-                $this->isRequired($schema, $propertyName),
-                $description,
-            );
+                $propertyTemplates[] = $this->templateFactory->getModelPropertyTemplate(
+                    $propertyName,
+                    $type,
+                    $this->isRequired($schema, $propertyName),
+                    $description,
+                );
 
-            if (!empty($details['enum'])) {
-                $this->generateEnum($propertyName, $details);
+                if (!empty($details['enum'])) {
+                    $this->generateEnum($propertyName, $details);
+                }
             }
+
+            $template = $this->templateFactory->getModelTemplate($schemaName, ...$propertyTemplates);
+        } else {
+            throw new Exception('Unhandled type ' . $schemaType);
         }
 
-        $template = $this->templateFactory->getModelTemplate($schemaName, ...$propertyTemplates);
         $filePath = $template->getDirectory() . $template->getClassName() . '.php';
 
         $this->fileHandler->saveFile($filePath, (string)$template);
