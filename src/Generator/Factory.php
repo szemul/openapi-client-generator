@@ -4,82 +4,39 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Generator;
 
-use Emul\OpenApiClientGenerator\Configuration\Configuration;
-use Emul\OpenApiClientGenerator\File\FileHandler;
-use Emul\OpenApiClientGenerator\Helper\ClassHelper;
-use Emul\OpenApiClientGenerator\Mapper\ParameterMapper;
-use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
-use Emul\OpenApiClientGenerator\Template\Factory as TemplateFactory;
+use DI\FactoryInterface;
 
 class Factory
 {
-    private FileHandler     $fileHandler;
-    private Configuration   $configuration;
-    private TemplateFactory $templateFactory;
-    private TypeMapper      $typeMapper;
-    private ParameterMapper $parameterMapper;
-    private ClassHelper     $classHelper;
+    private FactoryInterface $diFactory;
 
-    public function __construct(
-        FileHandler $fileHandler,
-        Configuration $configuration,
-        TemplateFactory $templateFactory,
-        TypeMapper $typeMapper,
-        ParameterMapper $parameterMapper,
-        ClassHelper $classHelper
-    ) {
-        $this->fileHandler     = $fileHandler;
-        $this->configuration   = $configuration;
-        $this->templateFactory = $templateFactory;
-        $this->typeMapper      = $typeMapper;
-        $this->parameterMapper = $parameterMapper;
-        $this->classHelper     = $classHelper;
+    public function __construct(FactoryInterface $diFactory)
+    {
+        $this->diFactory = $diFactory;
     }
 
     public function getApiGenerator(): ApiGenerator
     {
-        return new ApiGenerator(
-            $this->fileHandler,
-            $this->configuration,
-            $this->templateFactory->getApiFactory(),
-            $this->classHelper
-        );
+        return $this->diFactory->make(ApiGenerator::class);
     }
 
     public function getActionParameterGenerator(): ActionParameterGenerator
     {
-        return new ActionParameterGenerator(
-            $this->fileHandler,
-            $this->configuration,
-            $this->templateFactory->getApiFactory(),
-            $this->parameterMapper,
-            $this->classHelper
-        );
+        return $this->diFactory->make(ActionParameterGenerator::class);
     }
 
     public function getCommonGenerator(): CommonGenerator
     {
-        return new CommonGenerator($this->fileHandler, $this->configuration, $this->templateFactory->getCommonFactory());
+        return $this->diFactory->make(CommonGenerator::class);
     }
 
     public function getExceptionGenerator(): ExceptionGenerator
     {
-        return new ExceptionGenerator(
-            $this->fileHandler,
-            $this->configuration,
-            $this->templateFactory->getExceptionFactory(),
-            $this->typeMapper
-        );
+        return $this->diFactory->make(ExceptionGenerator::class);
     }
 
     public function getModelGenerator(): ModelGenerator
     {
-        return new ModelGenerator(
-            $this->fileHandler,
-            $this->configuration,
-            $this->templateFactory->getModelFactory(),
-            $this->typeMapper,
-            $this->classHelper
-        );
+        return $this->diFactory->make(ModelGenerator::class);
     }
 }

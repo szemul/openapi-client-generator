@@ -8,6 +8,7 @@ use Emul\OpenApiClientGenerator\Configuration\Configuration;
 use Emul\OpenApiClientGenerator\Exception\GeneratorNotNeededException;
 use Emul\OpenApiClientGenerator\File\FileHandler;
 use Emul\OpenApiClientGenerator\Helper\ClassHelper;
+use Emul\OpenApiClientGenerator\Helper\SchemaHelper;
 use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 use Emul\OpenApiClientGenerator\Template\Model\Factory;
 use Exception;
@@ -19,13 +20,15 @@ class ModelGenerator implements GeneratorInterface
     private Configuration $configuration;
     private TypeMapper    $typeMapper;
     private ClassHelper   $classHelper;
+    private SchemaHelper  $schemaHelper;
 
     public function __construct(
         FileHandler $fileHandler,
         Configuration $configuration,
         Factory $templateFactory,
         TypeMapper $typeMapper,
-        ClassHelper $classHelper
+        ClassHelper $classHelper,
+        SchemaHelper $schemaHelper
     ) {
         if (empty($configuration->getApiDoc()['components']['schemas'])) {
             throw new GeneratorNotNeededException();
@@ -36,6 +39,7 @@ class ModelGenerator implements GeneratorInterface
         $this->templateFactory = $templateFactory;
         $this->typeMapper      = $typeMapper;
         $this->classHelper     = $classHelper;
+        $this->schemaHelper    = $schemaHelper;
     }
 
     public function generate(): void
@@ -44,8 +48,21 @@ class ModelGenerator implements GeneratorInterface
         $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getResponseListInterfaceTemplate());
         $this->generateResponseLists();
 
-        foreach ($this->configuration->getApiDoc()['components']['schemas'] as $schemaName => $schema) {
-            $this->generateModel($schemaName, $schema);
+        $schemas = $this->configuration->getApiDoc()['components']['schemas'];
+
+        foreach ($schemas as $schemaName => $schema) {
+            if (!empty($schema['allOf'])) {
+                $schema         = $this->schemaHelper->uniteAllOfSchema($schemas, $schemaName);
+                $schema['type'] = 'object';
+            }
+
+            $schemaType = $schema['type'];
+
+            if ($schemaType === 'string' && !empty($schema['enum'])) {
+                $this->generateEnum($schemaName, $schema);
+            } else {
+                $this->generateModel($schemaName, $schema);
+            }
         }
     }
 
