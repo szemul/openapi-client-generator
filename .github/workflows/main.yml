@@ -15,6 +15,7 @@ jobs:
         uses: php-actions/phpunit@v2
         with:
           php_version: 8.0
+          php_extensions: mbstring, iconv
           bootstrap: vendor/autoload.php
           configuration: phpunit.xml
           args: --coverage-text
