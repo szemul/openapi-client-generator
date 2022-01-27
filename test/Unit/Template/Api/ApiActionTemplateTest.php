@@ -137,7 +137,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
                 \$responseCode = \$response->getStatusCode();
             
                 if (\$responseCode >= 400) {
-                    \$requestExceptionClass = 'Request' . \$responseCode . 'Exception';
+                    \$requestExceptionClass = '\Root\Exception\Request' . \$responseCode . 'Exception';
                     \$responseBody          = \$response->getBody()->getContents();
                     \$responseHeaders       = \$response->getHeaders();
             

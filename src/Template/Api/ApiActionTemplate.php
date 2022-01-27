@@ -113,7 +113,7 @@ class ApiActionTemplate extends TemplateAbstract
                 \$responseCode = \$response->getStatusCode();
 
                 if (\$responseCode >= 400) {
-                    \$requestExceptionClass = 'Request' . \$responseCode . 'Exception';
+                    \$requestExceptionClass = '\\{$this->getLocationHelper()->getExceptionNamespace()}\Request' . \$responseCode . 'Exception';
                     \$responseBody          = \$response->getBody()->getContents();
                     \$responseHeaders       = \$response->getHeaders();
 
