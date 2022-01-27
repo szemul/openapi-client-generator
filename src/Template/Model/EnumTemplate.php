@@ -6,7 +6,6 @@ namespace Emul\OpenApiClientGenerator\Template\Model;
 
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
-use Emul\OpenApiClientGenerator\Template\RepresentsClassInterface;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class EnumTemplate extends ClassTemplateAbstract

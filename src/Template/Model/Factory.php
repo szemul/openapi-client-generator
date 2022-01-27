@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Model;
 
+use DI\Container;
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
@@ -11,25 +12,30 @@ use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 
 class Factory
 {
-    private TypeMapper     $typeMapper;
-    private LocationHelper $locationHelper;
-    private StringHelper   $stringHelper;
+    private Container $diContainer;
 
-    public function __construct(TypeMapper $typeMapper, LocationHelper $locationHelper, StringHelper $stringHelper)
+    public function __construct(Container $container)
     {
-        $this->typeMapper     = $typeMapper;
-        $this->locationHelper = $locationHelper;
-        $this->stringHelper   = $stringHelper;
+        $this->diContainer = $container;
     }
 
     public function getModelAbstractTemplate(): ModelAbstractTemplate
     {
-        return new ModelAbstractTemplate($this->locationHelper, $this->stringHelper);
+        return new ModelAbstractTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class)
+        );
     }
 
     public function getModelTemplate(string $modelName, ModelPropertyTemplate ...$properties): ModelTemplate
     {
-        return new ModelTemplate($this->locationHelper, $this->stringHelper, $this->typeMapper, $modelName, ...$properties);
+        return new ModelTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $this->diContainer->get(TypeMapper::class),
+            $modelName,
+            ...$properties
+        );
     }
 
     public function getModelPropertyTemplate(
@@ -39,9 +45,9 @@ class Factory
         ?string $description = null
     ): ModelPropertyTemplate {
         return new ModelPropertyTemplate(
-            $this->locationHelper,
-            $this->stringHelper,
-            $this->typeMapper,
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $this->diContainer->get(TypeMapper::class),
             $name,
             $type,
             $isRequired,
@@ -51,16 +57,28 @@ class Factory
 
     public function getEnumTemplate(string $name, string ...$values): EnumTemplate
     {
-        return new EnumTemplate($this->locationHelper, $this->stringHelper, $name, ...$values);
+        return new EnumTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $name,
+            ...$values
+        );
     }
 
     public function getResponseListInterfaceTemplate(): ResponseListInterfaceTemplate
     {
-        return new ResponseListInterfaceTemplate($this->locationHelper, $this->stringHelper);
+        return new ResponseListInterfaceTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+        );
     }
 
     public function getResponseListTemplate(string $itemClassName): ResponseListTemplate
     {
-        return new ResponseListTemplate($this->locationHelper, $this->stringHelper, $itemClassName);
+        return new ResponseListTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $itemClassName
+        );
     }
 }

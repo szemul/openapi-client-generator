@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Api;
 
+use DI\Container;
 use Emul\OpenApiClientGenerator\Entity\HttpMethod;
 use Emul\OpenApiClientGenerator\Entity\Parameter;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
@@ -12,18 +13,21 @@ use Emul\OpenApiClientGenerator\Template\Model\ActionParameterTemplate;
 
 class Factory
 {
-    private LocationHelper $locationHelper;
-    private StringHelper   $stringHelper;
+    private Container $diContainer;
 
-    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper)
+    public function __construct(Container $container)
     {
-        $this->locationHelper = $locationHelper;
-        $this->stringHelper   = $stringHelper;
+        $this->diContainer = $container;
     }
 
     public function getApiTemplate(string $apiTag, ApiActionTemplate ...$actions): ApiTemplate
     {
-        return new ApiTemplate($this->locationHelper, $this->stringHelper, $apiTag, ...$actions);
+        return new ApiTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $apiTag,
+            ...$actions
+        );
     }
 
     public function getApiActionTemplate(
@@ -35,8 +39,8 @@ class Factory
         ?string $responseClassName
     ): ApiActionTemplate {
         return new ApiActionTemplate(
-            $this->locationHelper,
-            $this->stringHelper,
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
             $operationId,
             $actionParameterClassName,
             $url,
@@ -52,8 +56,8 @@ class Factory
         Parameter ...$parameters
     ): ActionParameterTemplate {
         return new ActionParameterTemplate(
-            $this->locationHelper,
-            $this->stringHelper,
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
             $actionParameterClassName,
             $requestModelClassName,
             ...$parameters

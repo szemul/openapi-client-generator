@@ -4,31 +4,38 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Exception;
 
+use DI\Container;
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
 
 class Factory
 {
-    private LocationHelper $locationHelper;
-    private StringHelper   $stringHelper;
+    private Container $diContainer;
 
-    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper)
+    public function __construct(Container $container)
     {
-        $this->locationHelper = $locationHelper;
-        $this->stringHelper   = $stringHelper;
+        $this->diContainer = $container;
     }
 
     public function getPropertyNotInitializedExceptionTemplate(): PropertyNotInitializedExceptionTemplate
     {
-        return new PropertyNotInitializedExceptionTemplate($this->locationHelper, $this->stringHelper);
+        return new PropertyNotInitializedExceptionTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+        );
     }
 
     public function getRequestCodeExceptionTemplate(
         int $errorCode,
         RequestExceptionPropertyTemplate ...$properties
     ): RequestCodeExceptionTemplate {
-        return new RequestCodeExceptionTemplate($this->locationHelper, $this->stringHelper, $errorCode, ...$properties);
+        return new RequestCodeExceptionTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $errorCode,
+            ...$properties
+        );
     }
 
     public function getRequestExceptionPropertyTemplate(
@@ -36,11 +43,20 @@ class Factory
         PropertyType $type,
         ?string $description = null
     ): RequestExceptionPropertyTemplate {
-        return new RequestExceptionPropertyTemplate($this->locationHelper, $this->stringHelper, $name, $type, $description);
+        return new RequestExceptionPropertyTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $name,
+            $type,
+            $description
+        );
     }
 
     public function getRequestExceptionTemplate(): RequestExceptionTemplate
     {
-        return new RequestExceptionTemplate($this->locationHelper, $this->stringHelper);
+        return new RequestExceptionTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+        );
     }
 }

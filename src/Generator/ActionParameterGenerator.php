@@ -11,6 +11,7 @@ use Emul\OpenApiClientGenerator\File\FileHandler;
 use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Mapper\ParameterMapper;
 use Emul\OpenApiClientGenerator\Template\Api\Factory;
+use Exception;
 
 class ActionParameterGenerator implements GeneratorInterface
 {
@@ -41,20 +42,22 @@ class ActionParameterGenerator implements GeneratorInterface
     public function generate(): void
     {
         foreach ($this->configuration->getApiDoc()['paths'] as $methods) {
-            foreach ($methods as $details) {
-                $actionParameterClassName = $this->classHelper->getActionParameterClassName($details['tags'][0], $details['operationId']);
+            foreach ($methods as $method) {
+                $this->validateMethodDefinition($method);
+
+                $actionParameterClassName = $this->classHelper->getActionParameterClassName($method['tags'][0], $method['operationId']);
                 $requestModelClassName    = null;
 
                 /** @var Parameter[] $parameters */
                 $parameters = [];
 
-                if (!empty($details['requestBody']['content'])) {
-                    $requestModel          = $details['requestBody']['content']['application/json']['schema']['$ref'];
+                if (!empty($method['requestBody']['content'])) {
+                    $requestModel          = $method['requestBody']['content']['application/json']['schema']['$ref'];
                     $requestModelClassName = empty($requestModel) ? null : basename($requestModel);
                 }
 
-                if (!empty($details['parameters'])) {
-                    foreach ($details['parameters'] as $parameterDetails) {
+                if (!empty($method['parameters'])) {
+                    foreach ($method['parameters'] as $parameterDetails) {
                         $parameters[] = $this->parameterMapper->mapParameter($parameterDetails);
                     }
                 }
@@ -68,6 +71,15 @@ class ActionParameterGenerator implements GeneratorInterface
                 $this->fileHandler->saveClassTemplateToFile($parameterTemplate);
                 $this->configuration->getClassPaths()->addActionParameterClass($parameterTemplate->getClassName(true));
             }
+        }
+    }
+
+    private function validateMethodDefinition(array $method): void
+    {
+        if (empty($method['tags'][0])) {
+            throw new Exception('Tags are mandatory');
+        } elseif (empty($method['operationId'])) {
+            throw new Exception('operationId is mandatory');
         }
     }
 }

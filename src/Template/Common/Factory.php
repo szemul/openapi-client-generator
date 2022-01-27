@@ -4,37 +4,52 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Common;
 
+use DI\Container;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
 
 class Factory
 {
-    private LocationHelper $locationHelper;
-    private StringHelper   $stringHelper;
+    private Container $diContainer;
 
-    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper)
+    public function __construct(Container $diContainer)
     {
-        $this->locationHelper = $locationHelper;
-        $this->stringHelper   = $stringHelper;
+        $this->diContainer = $diContainer;
     }
 
     public function getArrayMapperFactoryTemplate(string ...$entityClasses): ArrayMapperFactoryTemplate
     {
-        return new ArrayMapperFactoryTemplate($this->locationHelper, $this->stringHelper, ...$entityClasses);
+        return new ArrayMapperFactoryTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            ...$entityClasses
+        );
     }
 
     public function getComposerJsonTemplate(string $vendorName, string $projectName, string $description): ComposerJsonTemplate
     {
-        return new ComposerJsonTemplate($this->locationHelper, $this->stringHelper, $vendorName, $projectName, $description);
+        return new ComposerJsonTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $vendorName,
+            $projectName,
+            $description
+        );
     }
 
     public function getConfigurationTemplate(): ConfigurationTemplate
     {
-        return new ConfigurationTemplate($this->locationHelper, $this->stringHelper);
+        return new ConfigurationTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class)
+        );
     }
 
     public function getJsonSerializableTraitTemplate(): JsonSerializableTraitTemplate
     {
-        return new JsonSerializableTraitTemplate($this->locationHelper, $this->stringHelper);
+        return new JsonSerializableTraitTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class)
+        );
     }
 }
