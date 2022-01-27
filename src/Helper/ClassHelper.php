@@ -20,7 +20,7 @@ class ClassHelper
 
     public function getModelClassname(string $reference): string
     {
-        return ucfirst(str_replace(['-', '_', '.'], '', basename($reference)));
+        return $this->stringHelper->convertToClassName(basename($reference));
     }
 
     public function getListModelClassname(string $subTypeReference): string
