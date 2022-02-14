@@ -97,7 +97,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
             public function createEntity(EntityCreateRequest \$request): $expectedReturnType
             {
                 \$path    = '/entity';
-                \$payload = json_encode(\$request);
+                \$payload = json_encode(\$request->getRequestModel());
                 \$headers = array_merge(
                     \$this->defaultHeaders,
                     [
@@ -142,7 +142,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
                     \$responseHeaders       = \$response->getHeaders();
             
                     if (class_exists(\$requestExceptionClass)) {
-                        throw new \$requestExceptionClass(\$responseCode, \$responseBody, \$responseHeaders);
+                        throw new \$requestExceptionClass(\$responseBody, \$responseHeaders);
                     } else {
                         throw new RequestException(\$responseCode, \$responseBody, \$responseHeaders);
                     }

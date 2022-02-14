@@ -9,6 +9,7 @@ use Emul\OpenApiClientGenerator\Entity\HttpMethod;
 use Emul\OpenApiClientGenerator\Exception\GeneratorNotNeededException;
 use Emul\OpenApiClientGenerator\File\FileHandler;
 use Emul\OpenApiClientGenerator\Helper\ClassHelper;
+use Emul\OpenApiClientGenerator\Helper\SchemaHelper;
 use Emul\OpenApiClientGenerator\Template\Api\ApiActionTemplate;
 use Emul\OpenApiClientGenerator\Template\Api\Factory;
 
@@ -18,12 +19,14 @@ class ApiGenerator implements GeneratorInterface
     private Configuration $configuration;
     private Factory       $templateFactory;
     private ClassHelper   $classHelper;
+    private SchemaHelper  $schemaHelper;
 
     public function __construct(
         FileHandler $fileHandler,
         Configuration $configuration,
         Factory $templateFactory,
-        ClassHelper $classHelper
+        ClassHelper $classHelper,
+        SchemaHelper $schemaHelper
     ) {
         if (empty($configuration->getApiDoc()['paths'])) {
             throw new GeneratorNotNeededException();
@@ -33,6 +36,7 @@ class ApiGenerator implements GeneratorInterface
         $this->configuration   = $configuration;
         $this->templateFactory = $templateFactory;
         $this->classHelper     = $classHelper;
+        $this->schemaHelper    = $schemaHelper;
     }
 
     public function generate(): void
@@ -48,9 +52,8 @@ class ApiGenerator implements GeneratorInterface
                 $httpMethod = HttpMethod::createFromString(strtoupper($methodName));
 
                 $responseIsList    = null;
-                $responseClassName = $this->getResponseClassName($details, $responseIsList);
-
-                $actionTemplate = $this->templateFactory->getApiActionTemplate(
+                $responseClassName = $this->schemaHelper->getActionResponseClassName($details, $responseIsList);
+                $actionTemplate    = $this->templateFactory->getApiActionTemplate(
                     $operationId,
                     $actionParameterClassName,
                     $path,
@@ -71,30 +74,5 @@ class ApiGenerator implements GeneratorInterface
             $this->fileHandler->saveClassTemplateToFile($template);
             $this->configuration->getClassPaths()->addApiClass($template->getClassName(true));
         }
-    }
-
-    private function getResponseClassName(array $actionDetails, ?bool &$responseIsList): ?string
-    {
-        $responseClass = null;
-
-        foreach ($actionDetails['responses'] as $statusCode => $response) {
-            if ($statusCode >= 300) {
-                continue;
-            }
-
-            if (!empty($response['content']['application/json']['schema'])) {
-                $schema = $response['content']['application/json']['schema'];
-
-                if (!empty($schema['$ref'])) {
-                    $responseIsList = false;
-                    $responseClass  = $this->classHelper->getModelClassname($schema['$ref']);
-                } elseif ($schema['type'] === 'array') {
-                    $responseIsList = true;
-                    $responseClass  = $this->classHelper->getListModelClassname(basename($schema['items']['$ref']));
-                }
-            }
-        }
-
-        return $responseClass;
     }
 }

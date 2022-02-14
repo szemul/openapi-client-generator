@@ -4,12 +4,23 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Test\Unit\Helper;
 
+use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Helper\SchemaHelper;
 use Emul\OpenApiClientGenerator\Test\Unit\TestCaseAbstract;
 use Exception;
+use Mockery;
 
 class SchemaHelperTest extends TestCaseAbstract
 {
+    private ClassHelper $classHelper;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->classHelper = Mockery::mock(ClassHelper::class);
+    }
+
     public function testUniteAllOfSchemaWhenJustPropertiesGiven_shouldMergeThem()
     {
         $sut = $this->getSut();
@@ -127,6 +138,6 @@ class SchemaHelperTest extends TestCaseAbstract
 
     public function getSut(): SchemaHelper
     {
-        return new SchemaHelper();
+        return new SchemaHelper($this->classHelper);
     }
 }
