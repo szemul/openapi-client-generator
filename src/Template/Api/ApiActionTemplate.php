@@ -78,6 +78,7 @@ class ApiActionTemplate extends TemplateAbstract
                     \$this->defaultHeaders,
                     [
                         'Content-Type'                              => 'application/json',
+                        'Accept'                                    => 'application/json',
                         \$this->configuration->getApiKeyHeaderName() => \$this->configuration->getApiKey(),
                     ],
                 );
