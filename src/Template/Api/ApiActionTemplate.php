@@ -73,7 +73,7 @@ class ApiActionTemplate extends TemplateAbstract
             public function {$this->actionName}({$this->parameterClassName} \$request): {$returnType}
             {
                 \$path    = '{$this->url}';
-                \$payload = json_encode(\$request->getRequestModel());
+                \$payload = \$request->hasRequestModel() ? json_encode(\$request->getRequestModel()) : '';
                 \$headers = array_merge(
                     \$this->defaultHeaders,
                     [
