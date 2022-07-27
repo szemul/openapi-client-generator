@@ -12,6 +12,7 @@ class HttpMethod extends EnumAbstract
     public const POST   = 'POST';
     public const DELETE = 'DELETE';
     public const PATCH  = 'PATCH';
+    public const PUT    = 'PUT';
 
     public static function get(): self
     {
@@ -33,6 +34,11 @@ class HttpMethod extends EnumAbstract
         return new self(self::PATCH);
     }
 
+    public static function put(): self
+    {
+        return new self(self::PUT);
+    }
+
     protected static function getPossibleValues(): array
     {
         return [
@@ -40,6 +46,7 @@ class HttpMethod extends EnumAbstract
             self::POST,
             self::DELETE,
             self::PATCH,
+            self::PUT,
         ];
     }
 }
