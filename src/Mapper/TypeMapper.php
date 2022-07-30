@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Mapper;
 
 use Carbon\CarbonInterface;
+use Emul\OpenApiClientGenerator\Configuration\Configuration;
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
 use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
@@ -14,12 +15,18 @@ use InvalidArgumentException;
 
 class TypeMapper
 {
+    private Configuration  $configuration;
     private LocationHelper $locationHelper;
     private StringHelper   $stringHelper;
     private ClassHelper    $classHelper;
 
-    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper, ClassHelper $classHelper)
-    {
+    public function __construct(
+        Configuration $configuration,
+        LocationHelper $locationHelper,
+        StringHelper $stringHelper,
+        ClassHelper $classHelper
+    ) {
+        $this->configuration  = $configuration;
         $this->locationHelper = $locationHelper;
         $this->stringHelper   = $stringHelper;
         $this->classHelper    = $classHelper;
@@ -35,8 +42,14 @@ class TypeMapper
         $scalarTypes = ['string', 'integer', 'number', 'boolean'];
 
         if (!empty($details['$ref'])) {
-            $subModelName = $this->classHelper->getModelClassname($details['$ref']);
-            $type         = PropertyType::object($this->locationHelper->getModelNamespace() . '\\' . $subModelName);
+            $subModelName   = $this->classHelper->getModelClassname($details['$ref']);
+            $subModelSchema = $this->configuration->getApiDoc()['components']['schemas'][$subModelName] ?? [];
+            $schemaType = $subModelSchema['type'] ?? '';
+            if ($schemaType === 'string' && !empty($subModelSchema['enum'])) {
+                $type = PropertyType::object($this->locationHelper->getEnumNamespace() . '\\' . $subModelName);
+            } else {
+                $type = PropertyType::object($this->locationHelper->getModelNamespace() . '\\' . $subModelName);
+            }
         } elseif ($typeString === 'array') {
             if (!empty($details['items'])) {
                 $arrayItemType = $this->mapApiDocDetailsToPropertyType($name, $details['items']);
