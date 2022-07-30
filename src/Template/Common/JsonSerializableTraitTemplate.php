@@ -20,7 +20,7 @@ class JsonSerializableTraitTemplate extends ClassTemplateAbstract
             
             trait {$this->getClassName()}
             {
-                public function jsonSerialize()
+                public function jsonSerialize(): mixed
                 {
                     \$properties = get_object_vars(\$this);
             

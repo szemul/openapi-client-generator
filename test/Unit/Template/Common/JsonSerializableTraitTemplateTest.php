@@ -23,7 +23,7 @@ class JsonSerializableTraitTemplateTest extends TemplateTestCaseAbstract
             
             trait JsonSerializableTrait
             {
-                public function jsonSerialize()
+                public function jsonSerialize(): mixed
                 {
                     $properties = get_object_vars($this);
             
