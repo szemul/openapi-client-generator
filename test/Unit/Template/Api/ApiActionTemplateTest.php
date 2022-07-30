@@ -61,6 +61,8 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
             foreach (json_decode($response->getBody()->getContents(), true) as $item) {
                 $list->add($mapper->map($item, $list->getItemClass()));
             }
+            
+            return $list;
             RESPONSE;
 
         $this->assertActionSame($responseClassName, $expectedResultHandling, $result);

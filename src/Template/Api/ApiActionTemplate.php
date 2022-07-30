@@ -56,6 +56,8 @@ class ApiActionTemplate extends TemplateAbstract
                     foreach (json_decode(\$response->getBody()->getContents(), true) as \$item) {
                         \$list->add(\$mapper->map(\$item, \$list->getItemClass()));
                     }
+                    
+                    return \$list;
                     RESPONSE;
             } else {
                 $responseHandling = <<<RESPONSE
