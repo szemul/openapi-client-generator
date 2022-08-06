@@ -46,4 +46,8 @@ class Parameter
         return $this->valueType;
     }
 
+    public function getPhpValueType(): string
+    {
+        return ($this->isRequired ? '' : '?') . $this->valueType;
+    }
 }

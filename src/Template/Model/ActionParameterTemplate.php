@@ -97,8 +97,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
         foreach ($this->parameters as $parameter) {
             $propertyName = $this->getPropertyName($parameter);
-            $type         = $parameter->isRequired() ? '' : '?';
-            $type         .= $parameter->getValueType();
+            $type         = $parameter->getPhpValueType();
             $result       .= 'private ' . $type . ' $' . $propertyName . ';' . PHP_EOL;
         }
 
@@ -117,7 +116,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         }
 
         foreach ($this->parameters as $parameter) {
-            $param     = $parameter->getValueType() . ' $' . $parameter->getName();
+            $param     = $parameter->getPhpValueType() . ' $' . $parameter->getName();
             $setters[] = '$this->' . $this->getPropertyName($parameter) . ' = $' . $parameter->getName() . ';';
 
             if ($parameter->isRequired()) {
@@ -199,7 +198,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
         foreach ($this->parameters as $parameter) {
             $result .= <<<GETTER
-                public function {$this->getPropertyGetterName($parameter)}(): {$parameter->getValueType()}
+                public function {$this->getPropertyGetterName($parameter)}(): {$parameter->getPhpValueType()}
                 {
                     return \$this->{$this->getPropertyName($parameter)};
                 }
@@ -230,7 +229,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
         foreach ($this->parameters as $parameter) {
             $result .= <<<SETTER
-                public function {$this->getPropertySetterName($parameter)}({$parameter->getValueType()} \$parameter): self
+                public function {$this->getPropertySetterName($parameter)}({$parameter->getPhpValueType()} \$parameter): self
                 {
                     \$this->{$this->getPropertyName($parameter)} = \$parameter;
 
