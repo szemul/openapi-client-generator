@@ -31,6 +31,7 @@ class ArrayMapperFactoryTemplate extends ClassTemplateAbstract
             
             use Carbon\\Carbon;
             use Carbon\\CarbonInterface;
+            use Carbon\\Exceptions\\InvalidFormatException;
             use Closure;
             use Emul\\ArrayToClassMapper\\MapperFactory;
             use Emul\\ArrayToClassMapper\\Mapper;
@@ -61,9 +62,15 @@ class ArrayMapperFactoryTemplate extends ClassTemplateAbstract
                 {
                     \$carbonMapper = Closure::fromCallable(
                         function (?string \$timeString) {
-                            return empty(\$timeString)
-                                ? null
-                                : Carbon::createFromFormat(CarbonInterface::ATOM, \$timeString);
+                            if (empty(\$timeString)) {
+                                return null;
+                            }
+                            
+                            try {
+                                return Carbon::createFromFormat(CarbonInterface::ATOM, \$timeString);
+                            } catch (InvalidFormatException \$e) {
+                                return Carbon::createFromFormat('Y-m-d\\TH:i:s.uP', \$timeString);
+                            }
                         }
                     );
             
