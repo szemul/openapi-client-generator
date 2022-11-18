@@ -12,15 +12,18 @@ use Emul\OpenApiClientGenerator\File\FileHandler;
 use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
+use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 use Emul\OpenApiClientGenerator\Test\Unit\TestCaseAbstract;
 use Mockery;
 
 class TemplateTestCaseAbstract extends TestCaseAbstract
 {
     protected FileHandler    $fileHandler;
+    protected Configuration  $configuration;
     protected LocationHelper $locationHelper;
     protected StringHelper   $stringHelper;
     protected ClassHelper    $classHelper;
+    protected TypeMapper     $typeMapper;
 
     protected function setUp(): void
     {
@@ -30,16 +33,16 @@ class TemplateTestCaseAbstract extends TestCaseAbstract
 
         $this->expectApiDocRead();
 
-        $this->locationHelper = new LocationHelper(
-            new Configuration(
-                $this->fileHandler,
-                new Composer('Vendor', 'Project'),
-                new Paths('/api', '/'),
-                new ClassPaths('Root')
-            )
+        $this->configuration  = new Configuration(
+            $this->fileHandler,
+            new Composer('Vendor', 'Project'),
+            new Paths('/api', '/'),
+            new ClassPaths('Root')
         );
+        $this->locationHelper = new LocationHelper($this->configuration);
         $this->stringHelper   = new StringHelper();
         $this->classHelper    = new ClassHelper($this->stringHelper);
+        $this->typeMapper     = new TypeMapper($this->configuration, $this->locationHelper, $this->stringHelper, $this->classHelper);
     }
 
     private function expectApiDocRead()

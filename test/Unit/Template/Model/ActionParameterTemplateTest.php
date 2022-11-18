@@ -14,15 +14,7 @@ use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;
 
 class ActionParameterTemplateTest extends TemplateTestCaseAbstract
 {
-    private TypeMapper $typeMapper;
     private string     $className = 'ParameterClass';
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->typeMapper = new TypeMapper($this->locationHelper, $this->stringHelper, $this->classHelper);
-    }
 
     public function testToString_shouldGenerateClass()
     {

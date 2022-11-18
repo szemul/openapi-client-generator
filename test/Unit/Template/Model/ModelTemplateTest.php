@@ -12,15 +12,6 @@ use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;
 
 class ModelTemplateTest extends TemplateTestCaseAbstract
 {
-    private TypeMapper $typeMapper;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->typeMapper = new TypeMapper($this->locationHelper, $this->stringHelper, $this->classHelper);
-    }
-
     public function testToString_shouldGenerateClass()
     {
         $properties = [
