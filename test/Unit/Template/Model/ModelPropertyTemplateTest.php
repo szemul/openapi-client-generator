@@ -13,7 +13,6 @@ use Mockery;
 
 class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 {
-    private TypeMapper $typeMapper;
     private string     $name = 'name';
 
     protected function setUp(): void

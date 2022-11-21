@@ -99,11 +99,12 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
             public function createEntity(EntityCreateRequest \$request): $expectedReturnType
             {
                 \$path    = '/entity';
-                \$payload = json_encode(\$request->getRequestModel());
+                \$payload = \$request->hasRequestModel() ? json_encode(\$request->getRequestModel()) : '';
                 \$headers = array_merge(
                     \$this->defaultHeaders,
                     [
                         'Content-Type'                              => 'application/json',
+                        'Accept'                                    => 'application/json',
                         \$this->configuration->getApiKeyHeaderName() => \$this->configuration->getApiKey(),
                     ],
                 );
@@ -113,7 +114,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
                 }
             
                 foreach (\$request->getPathParameterGetters() as \$parameterName => \$getterName) {
-                    \$path = str_replace('{' . \$parameterName . '}', \$request->\$getterName(), \$path);
+                    \$path = str_replace('{' . \$parameterName . '}', (string)\$request->\$getterName(), \$path);
                 }
 
                 \$queryParameters = [];

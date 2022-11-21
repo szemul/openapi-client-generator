@@ -56,7 +56,11 @@ class ModelGenerator implements GeneratorInterface
                 $schema['type'] = 'object';
             }
 
-            $schemaType = $schema['type'];
+            $schemaType = $schema['type'] ?? null;
+
+            if (empty($schemaType)) {
+                throw new Exception('No type defined for schema: ' . $schemaName);
+            }
 
             if ($schemaType === 'string' && !empty($schema['enum'])) {
                 $this->generateEnum($schemaName, $schema);
@@ -76,8 +80,9 @@ class ModelGenerator implements GeneratorInterface
             $template  = $this->templateFactory->getResponseListTemplate($className);
         } elseif ($schemaType === 'object') {
             foreach ($schema['properties'] as $propertyName => $details) {
-                $type        = $this->typeMapper->mapApiDocDetailsToPropertyType($propertyName, $details);
-                $description = $details['description'] ?? null;
+                $fullPropertyName = $schemaName . '_' . $propertyName;
+                $type             = $this->typeMapper->mapApiDocDetailsToPropertyType($fullPropertyName, $details);
+                $description      = $details['description'] ?? null;
 
                 $propertyTemplates[] = $this->templateFactory->getModelPropertyTemplate(
                     $propertyName,
@@ -87,7 +92,7 @@ class ModelGenerator implements GeneratorInterface
                 );
 
                 if (!empty($details['enum'])) {
-                    $this->generateEnum($propertyName, $details);
+                    $this->generateEnum($fullPropertyName, $details);
                 }
             }
 
