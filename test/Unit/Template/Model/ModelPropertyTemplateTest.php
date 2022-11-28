@@ -13,7 +13,7 @@ use Mockery;
 
 class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 {
-    private string     $name = 'name';
+    private string $name = 'name';
 
     protected function setUp(): void
     {

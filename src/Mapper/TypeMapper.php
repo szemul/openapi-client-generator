@@ -34,7 +34,7 @@ class TypeMapper
 
     public function mapApiDocDetailsToPropertyType(string $name, array $details): PropertyType
     {
-        // Handling the unnecessary usage of onOf at nullable objects
+        // Handling the unnecessary usage of oneOf at nullable objects
         if (!empty($details['oneOf'])) {
             $details['$ref'] = $details['oneOf'][0]['$ref'];
         }
@@ -44,7 +44,8 @@ class TypeMapper
         if (!empty($details['$ref'])) {
             $subModelName   = $this->classHelper->getModelClassname($details['$ref']);
             $subModelSchema = $this->configuration->getApiDoc()['components']['schemas'][$subModelName] ?? [];
-            $schemaType = $subModelSchema['type'] ?? '';
+            $schemaType     = $subModelSchema['type'] ?? '';
+
             if ($schemaType === 'string' && !empty($subModelSchema['enum'])) {
                 $type = PropertyType::object($this->locationHelper->getEnumNamespace() . '\\' . $subModelName);
             } else {
@@ -59,7 +60,7 @@ class TypeMapper
 
             $type = PropertyType::array($arrayItemType);
         } elseif ($typeString === 'object') {
-            $type = PropertyType::array(PropertyType::string());
+            $type = PropertyType::array(null);
         } elseif (in_array($typeString, $scalarTypes)) {
             if (!empty($details['enum'])) {
                 $enumName = $this->stringHelper->convertToClassName($name);
@@ -115,7 +116,8 @@ class TypeMapper
         } elseif ((string)$template->getType() === PropertyType::OBJECT) {
             $docType = '\\' . $template->getType()->getObjectClassname() . ($template->isRequired() ? '' : '|null');
         } elseif ((string)$template->getType() === PropertyType::ARRAY) {
-            $docType = $this->getArrayItemType($template->getType()) . '[]';
+            $arrayItemType = $this->getArrayItemType($template->getType());
+            $docType = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
         } else {
             throw new InvalidArgumentException('Unhandled property type: ' . $template->getType());
         }
@@ -151,9 +153,11 @@ class TypeMapper
         return $type;
     }
 
-    public function getArrayItemType(PropertyType $type): string
+    public function getArrayItemType(PropertyType $type): ?string
     {
-        if ($type->getArrayItemType()->isScalar()) {
+        if (is_null($type->getArrayItemType())) {
+            return null;
+        } elseif ($type->getArrayItemType()->isScalar()) {
             return (string)$type->getArrayItemType();
         } else {
             return '\\' . $type->getArrayItemType()->getObjectClassname();
