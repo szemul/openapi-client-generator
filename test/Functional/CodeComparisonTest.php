@@ -6,12 +6,23 @@ namespace Emul\OpenApiClientGenerator\Test\Functional;
 
 use PHPUnit\Framework\TestCase;
 
-class TestCaseAbstract extends TestCase
+class CodeComparisonTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
+        self::cleanUp();
+        self::runGenerator();
+    }
+
+    public function test()
+    {
+        $this->assertTrue(true);
+    }
+
+    private static function runGenerator(): void
+    {
         $generatorPath = realpath(__DIR__ . '/../../src/generator.php');
         $apiDocPath    = realpath(__DIR__ . '/data/openapi.json');
         $output        = null;
@@ -19,19 +30,17 @@ class TestCaseAbstract extends TestCase
         $command       = 'php ' . $generatorPath
             . ' --api-json-path=' . $apiDocPath
             . ' --client-path=' . self::getTargetPath()
-            . ' --vendor-name=shoppinpal'
-            . ' --project-name=pet-store-client'
-            . ' --root-namespace=PetStoreClient';
+            . ' --vendor-name=emulgeator'
+            . ' --project-name=test'
+            . ' --root-namespace=Test';
 
         exec($command, $output, $resultCode);
 
-        self::assertSame(0, $resultCode, 'Failed to generate Client');
+        self::assertSame(0, $resultCode);
     }
 
-    public static function tearDownAfterClass(): void
+    private static function cleanUp(): void
     {
-        parent::tearDownAfterClass();
-
         exec('rm -rf ' . self::getTargetPath());
     }
 
