@@ -14,12 +14,12 @@ class Error400 extends ModelAbstract
      */
     protected ?string $errorMessage;
     /**
-     * @var string[] List of the invalid params where the property is the parameter name and the value is the describing the issue
+     * @var array List of the invalid params where the property is the parameter name and the value is the describing the issue
      */
     protected ?array $params;
 
     /**
-     * @param string[] $params
+     * @param array $params
      */
     public function __construct(?string $errorCode = null, ?string $errorMessage = null, ?array $params = null)
     {
@@ -39,7 +39,7 @@ class Error400 extends ModelAbstract
     }
 
     /**
-     * @return string[]|null
+     * @return array|null
      */
     public function getParams(bool $throwExceptionIfNotInitialized = false): ?array
     {
@@ -60,7 +60,7 @@ class Error400 extends ModelAbstract
         return $this;
     }
 
-    public function setParams(string ...$params): self
+    public function setParams(array $params): self
     {
         $this->params = $params;
 

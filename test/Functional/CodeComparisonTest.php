@@ -37,7 +37,7 @@ class CodeComparisonTest extends TestCase
             $this->assertFileEquals(
                 $file->getRealPath(),
                 self::GENERATED_CLIENT_PATH . $relativePath,
-                "File \033[31m$relativePath\033[0m is different than expected"
+                "File \033[31m$relativePath\033[0m changed"
             );
         }
 

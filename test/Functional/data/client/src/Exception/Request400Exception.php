@@ -27,7 +27,7 @@ class Request400Exception extends RequestException
     }
 
     /**
-     * @return string[]|null   List of the invalid params where the property is the parameter name and the value is the describing the issue
+     * @return array|null   List of the invalid params where the property is the parameter name and the value is the describing the issue
      */
     public function getParams(): ?array
     {

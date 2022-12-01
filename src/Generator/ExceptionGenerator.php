@@ -59,8 +59,8 @@ class ExceptionGenerator implements GeneratorInterface
             }
             else {
                 $errorSchema = $this->configuration->getApiDoc()['components']['schemas'][$errorResponse->getSchemaName()];
-
                 $properties = [];
+
                 foreach ($errorSchema['properties'] as $propertyName => $propertyDetails) {
                     $type         = $this->typeMapper->mapApiDocDetailsToPropertyType($propertyName, $propertyDetails);
                     $description  = $propertyDetails['description'] ?? null;

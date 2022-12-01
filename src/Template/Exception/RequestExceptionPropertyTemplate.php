@@ -38,7 +38,8 @@ class RequestExceptionPropertyTemplate extends TemplateAbstract
             : (string)$this->type;
 
         if ((string)$this->type === PropertyType::ARRAY) {
-            $docType       = $this->getArrayItemType() . '[]';
+            $arrayItemType = $this->getArrayItemType();
+            $docType       = empty($arrayItemType) ? 'array'  :  $arrayItemType . '[]';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}|null   {$this->description}
@@ -66,9 +67,11 @@ class RequestExceptionPropertyTemplate extends TemplateAbstract
         return $documentation . $getter;
     }
 
-    private function getArrayItemType(bool $addRootNameSpace = false): string
+    private function getArrayItemType(bool $addRootNameSpace = false): ?string
     {
-        if ($this->type->getArrayItemType()->isScalar()) {
+        if (empty($this->type->getArrayItemType())) {
+            return null;
+        } elseif ($this->type->getArrayItemType()->isScalar()) {
             return (string)$this->type->getArrayItemType();
         } else {
             return ($addRootNameSpace ? '\\' : '') . $this->type->getArrayItemType()->getObjectClassname();
