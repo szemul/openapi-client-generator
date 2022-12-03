@@ -64,7 +64,8 @@ class ModelPropertyTemplate extends TemplateAbstract
             : (string)$this->type;
 
         if ((string)$this->type === PropertyType::ARRAY) {
-            $docType       = $this->typeMapper->getArrayItemType($this->type) . '[]';
+            $arrayItemType = $this->typeMapper->getArrayItemType($this->type);
+            $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
             $docType       .= $this->isRequired ? '' : '|null';
             $documentation = <<<DOCUMENTATION
                 /**
@@ -112,8 +113,13 @@ class ModelPropertyTemplate extends TemplateAbstract
                 $type = '?' . $type;
             }
         } elseif ((string)$this->type === PropertyType::ARRAY) {
-            $ellipsisOperator = '...';
             $type             = $this->typeMapper->getArrayItemType($this->type);
+
+            if (empty($type)) {
+                $type = 'array';
+            } else {
+                $ellipsisOperator = '...';
+            }
         }
 
         return <<<SETTER

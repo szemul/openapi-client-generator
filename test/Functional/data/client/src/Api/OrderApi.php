@@ -40,10 +40,10 @@ class OrderApi
         $headers = array_merge(
             $this->defaultHeaders,
             [
-            'Content-Type'                              => 'application/json',
-            'Accept'                                    => 'application/json',
-            $this->configuration->getApiKeyHeaderName() => $this->configuration->getApiKey(),
-        ],
+                'Content-Type'                              => 'application/json',
+                'Accept'                                    => 'application/json',
+                $this->configuration->getApiKeyHeaderName() => $this->configuration->getApiKey(),
+            ],
         );
 
         foreach ($request->getHeaderParameterGetters() as $parameterName => $getterName) {

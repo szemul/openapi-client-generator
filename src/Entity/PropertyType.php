@@ -73,7 +73,7 @@ class PropertyType
         return new self(self::BOOL);
     }
 
-    public static function array(self $arrayItemType): self
+    public static function array(?self $arrayItemType): self
     {
         return new self(self::ARRAY, $arrayItemType);
     }

@@ -20,12 +20,12 @@ class OrderUpsertEvent extends ModelAbstract
      */
     protected ?OrderUpsertEventAction $action;
     /**
-     * @var string[] Details of the order. The type depends on the action
+     * @var array Details of the order. The type depends on the action
      */
     protected array $order;
 
     /**
-     * @param string[] $order
+     * @param array $order
      */
     public function __construct(string $version, int $accountId, array $order, ?OrderUpsertEventAction $action = null)
     {
@@ -51,7 +51,7 @@ class OrderUpsertEvent extends ModelAbstract
     }
 
     /**
-     * @return string[]
+     * @return array
      */
     public function getOrder(): array
     {
@@ -79,7 +79,7 @@ class OrderUpsertEvent extends ModelAbstract
         return $this;
     }
 
-    public function setOrder(string ...$order): self
+    public function setOrder(array $order): self
     {
         $this->order = $order;
 
