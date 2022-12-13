@@ -10,7 +10,6 @@ use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;
 
 class EnumTemplateTest extends TemplateTestCaseAbstract
 {
-
     public function testToString_shouldGenerateClassProperly()
     {
         $sut = $this->getSut('number', 'one', 'two');

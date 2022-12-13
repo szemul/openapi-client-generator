@@ -21,3 +21,6 @@ jobs:
 
       - name: PHPUnit Tests
         run: vendor/bin/phpunit --coverage-text
+
+      - name: Coding Standard validation
+        run: vendor/bin/php-cs-fixer fix --dry-run

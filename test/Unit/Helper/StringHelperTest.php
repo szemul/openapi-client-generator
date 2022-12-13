@@ -64,7 +64,7 @@ class StringHelperTest extends TestCaseAbstract
             ['simpleCamelCase', 'SimpleCamelCase'],
             ['30_days', 'Days30'],
             ['dash-case', 'DashCase'],
-            ['internal.apiGateway', 'InternalApiGateway']
+            ['internal.apiGateway', 'InternalApiGateway'],
         ];
     }
 

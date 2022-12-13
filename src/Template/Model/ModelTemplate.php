@@ -18,11 +18,11 @@ class ModelTemplate extends ClassTemplateAbstract
     private array $properties;
 
     public function __construct(
-        LocationHelper              $locationHelper,
-        StringHelper                $stringHelper,
+        LocationHelper $locationHelper,
+        StringHelper $stringHelper,
         private readonly TypeMapper $typeMapper,
-        string                      $modelName,
-        ModelPropertyTemplate       ...$properties
+        string $modelName,
+        ModelPropertyTemplate ...$properties
     ) {
         parent::__construct($locationHelper, $stringHelper);
 

@@ -10,10 +10,9 @@ use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 
 class ComposerJsonTemplate extends TemplateAbstract
 {
-
     public function __construct(
-        LocationHelper          $locationHelper,
-        StringHelper            $stringHelper,
+        LocationHelper $locationHelper,
+        StringHelper $stringHelper,
         private readonly string $vendorName,
         private readonly string $projectName,
         private readonly string $description

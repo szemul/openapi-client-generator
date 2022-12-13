@@ -41,7 +41,7 @@ class JsonSerializableTraitTemplate extends ClassTemplateAbstract
             MODEL;
     }
 
-    public function getDirectory():string
+    public function getDirectory(): string
     {
         return $this->getLocationHelper()->getRootPath();
     }

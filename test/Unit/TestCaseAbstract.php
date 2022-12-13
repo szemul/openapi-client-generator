@@ -23,5 +23,4 @@ abstract class TestCaseAbstract extends TestCase
 
         $this->assertSame($expected, $actual);
     }
-
 }

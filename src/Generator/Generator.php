@@ -11,9 +11,9 @@ use Emul\OpenApiClientGenerator\Helper\CommandHelper;
 class Generator
 {
     public function __construct(
-        private readonly FileHandler   $fileHandler,
+        private readonly FileHandler $fileHandler,
         private readonly Configuration $configuration,
-        private readonly Factory       $factory,
+        private readonly Factory $factory,
         private readonly CommandHelper $commandHelper
     ) {
         $this->fileHandler->createDirectory($this->configuration->getPaths()->getSrcPath());

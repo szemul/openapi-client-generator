@@ -9,15 +9,14 @@ use Emul\OpenApiClientGenerator\Entity\Response;
 use Emul\OpenApiClientGenerator\File\FileHandler;
 use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 use Emul\OpenApiClientGenerator\Template\Exception\Factory;
-use Exception;
 
 class ExceptionGenerator implements GeneratorInterface
 {
     public function __construct(
-        private readonly FileHandler   $fileHandler,
+        private readonly FileHandler $fileHandler,
         private readonly Configuration $configuration,
-        private readonly Factory       $templateFactory,
-        private readonly TypeMapper    $typeMapper
+        private readonly Factory $templateFactory,
+        private readonly TypeMapper $typeMapper
     ) {
     }
 
@@ -59,7 +58,6 @@ class ExceptionGenerator implements GeneratorInterface
 
                 $template = $this->templateFactory->getRequestCodeExceptionTemplate($errorResponse->getStatusCode(), ...$properties);
             }
-
 
             $this->fileHandler->saveClassTemplateToFile($template);
         }

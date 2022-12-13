@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Test\Unit\Template\Model;
 
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
-use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 use Emul\OpenApiClientGenerator\Template\Model\ModelPropertyTemplate;
 use Emul\OpenApiClientGenerator\Template\Model\ModelTemplate;
 use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;

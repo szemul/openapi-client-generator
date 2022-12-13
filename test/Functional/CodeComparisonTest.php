@@ -60,7 +60,7 @@ class CodeComparisonTest extends TestCase
         $output        = null;
         $resultCode    = null;
         $command       = 'php ' . $generatorPath
-            . ' client-generator'
+            . ' client:generate'
             . ' --api-json-path=' . $apiDocPath
             . ' --client-path=' . self::GENERATED_CLIENT_PATH
             . ' --vendor-name=emulgeator'

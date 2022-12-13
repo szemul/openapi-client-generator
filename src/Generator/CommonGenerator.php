@@ -11,9 +11,9 @@ use Emul\OpenApiClientGenerator\Template\Common\Factory;
 class CommonGenerator implements GeneratorInterface
 {
     public function __construct(
-        private readonly FileHandler   $fileHandler,
+        private readonly FileHandler $fileHandler,
         private readonly Configuration $configuration,
-        private readonly Factory       $templateFactory
+        private readonly Factory $templateFactory
     ) {
     }
 

@@ -11,7 +11,7 @@ abstract class TemplateAbstract
 {
     public function __construct(
         private readonly LocationHelper $locationHelper,
-        private readonly StringHelper   $stringHelper
+        private readonly StringHelper $stringHelper
     ) {
     }
 

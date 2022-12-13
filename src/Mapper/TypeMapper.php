@@ -16,10 +16,10 @@ use InvalidArgumentException;
 class TypeMapper
 {
     public function __construct(
-        private readonly Configuration  $configuration,
+        private readonly Configuration $configuration,
         private readonly LocationHelper $locationHelper,
-        private readonly StringHelper   $stringHelper,
-        private readonly ClassHelper    $classHelper
+        private readonly StringHelper $stringHelper,
+        private readonly ClassHelper $classHelper
     ) {
     }
 

@@ -13,13 +13,13 @@ use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 class ModelPropertyTemplate extends TemplateAbstract
 {
     public function __construct(
-        LocationHelper                $locationHelper,
-        StringHelper                  $stringHelper,
-        private readonly TypeMapper   $typeMapper,
-        private readonly string       $name,
+        LocationHelper $locationHelper,
+        StringHelper $stringHelper,
+        private readonly TypeMapper $typeMapper,
+        private readonly string $name,
         private readonly PropertyType $type,
-        private readonly bool         $isRequired,
-        private readonly ?string      $description = null
+        private readonly bool $isRequired,
+        private readonly ?string $description = null
     ) {
         parent::__construct($locationHelper, $stringHelper);
     }
@@ -47,14 +47,14 @@ class ModelPropertyTemplate extends TemplateAbstract
         $documentation = '';
         $getterName    = 'get' . ucfirst($this->name);
         $returnType    = $this->isRequired ? '' : '?';
-        $returnType    .= (string)$this->type === PropertyType::OBJECT
+        $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
             : (string)$this->type;
 
         if ((string)$this->type === PropertyType::ARRAY) {
             $arrayItemType = $this->typeMapper->getArrayItemType($this->type);
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
-            $docType       .= $this->isRequired ? '' : '|null';
+            $docType .= $this->isRequired ? '' : '|null';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}

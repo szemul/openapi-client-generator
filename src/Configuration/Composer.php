@@ -21,5 +21,4 @@ class Composer
     {
         return $this->projectName;
     }
-
 }

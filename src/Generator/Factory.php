@@ -9,7 +9,6 @@ use Emul\OpenApiClientGenerator\Configuration\Configuration;
 
 class Factory
 {
-
     public function __construct(private readonly FactoryInterface $diFactory)
     {
     }

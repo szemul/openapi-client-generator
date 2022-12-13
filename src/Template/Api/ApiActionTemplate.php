@@ -14,14 +14,14 @@ class ApiActionTemplate extends TemplateAbstract
     private string $actionName;
 
     public function __construct(
-        LocationHelper              $locationHelper,
-        StringHelper                $stringHelper,
-        string                      $operationId,
-        private readonly string     $parameterClassName,
-        private readonly string     $url,
+        LocationHelper $locationHelper,
+        StringHelper $stringHelper,
+        string $operationId,
+        private readonly string $parameterClassName,
+        private readonly string $url,
         private readonly HttpMethod $httpMethod,
-        private readonly ?bool      $responseIsList,
-        private readonly ?string    $responseClassName
+        private readonly ?bool $responseIsList,
+        private readonly ?string $responseClassName
     ) {
         parent::__construct($locationHelper, $stringHelper);
 

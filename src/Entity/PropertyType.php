@@ -21,8 +21,8 @@ class PropertyType
     ];
 
     private function __construct(
-        private readonly string  $value,
-        private readonly ?self   $arrayItemType = null,
+        private readonly string $value,
+        private readonly ?self $arrayItemType = null,
         private readonly ?string $objectClassname = null
     ) {
     }

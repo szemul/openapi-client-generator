@@ -10,10 +10,9 @@ use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class ResponseListTemplate extends ClassTemplateAbstract
 {
-
     public function __construct(
-        LocationHelper          $locationHelper,
-        StringHelper            $stringHelper,
+        LocationHelper $locationHelper,
+        StringHelper $stringHelper,
         private readonly string $itemClassName
     ) {
         parent::__construct($locationHelper, $stringHelper);

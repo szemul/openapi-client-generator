@@ -6,9 +6,9 @@ namespace Emul\OpenApiClientGenerator\Configuration;
 
 class ClassPaths
 {
-    private array $apiClasses = [];
-    private array $entityClasses = [];
-    private array $modelClasses = [];
+    private array $apiClasses             = [];
+    private array $entityClasses          = [];
+    private array $modelClasses           = [];
     private array $actionParameterClasses = [];
 
     public function __construct(private readonly string $rootNamespace)

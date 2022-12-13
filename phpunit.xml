@@ -4,7 +4,6 @@
          beStrictAboutChangesToGlobalState="true"
          beStrictAboutOutputDuringTests="true"
          colors="true"
-         stopOnFailure="true"
      >
     <coverage processUncoveredFiles="true">
         <include>
