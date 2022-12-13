@@ -23,7 +23,9 @@ class ResponseListTemplateTest extends TemplateTestCaseAbstract
 
             namespace Root\Model;
 
-            class ItemClassList implements ResponseListInterface
+            use JsonSerializable;
+            
+            class ItemClassList implements ResponseListInterface, JsonSerializable
             {
                 /** @var ItemClass[] */
                 private array $items = [];
@@ -44,6 +46,11 @@ class ResponseListTemplateTest extends TemplateTestCaseAbstract
                  * @return ItemClass[]
                  */
                 public function getItems(): array
+                {
+                    return $this->items;
+                }
+                
+                public function jsonSerialize(): mixed
                 {
                     return $this->items;
                 }
