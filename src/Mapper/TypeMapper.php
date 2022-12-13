@@ -15,21 +15,12 @@ use InvalidArgumentException;
 
 class TypeMapper
 {
-    private Configuration  $configuration;
-    private LocationHelper $locationHelper;
-    private StringHelper   $stringHelper;
-    private ClassHelper    $classHelper;
-
     public function __construct(
-        Configuration $configuration,
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
-        ClassHelper $classHelper
+        private readonly Configuration $configuration,
+        private readonly LocationHelper $locationHelper,
+        private readonly StringHelper $stringHelper,
+        private readonly ClassHelper $classHelper
     ) {
-        $this->configuration  = $configuration;
-        $this->locationHelper = $locationHelper;
-        $this->stringHelper   = $stringHelper;
-        $this->classHelper    = $classHelper;
     }
 
     public function mapApiDocDetailsToPropertyType(string $name, array $details): PropertyType
@@ -117,7 +108,7 @@ class TypeMapper
             $docType = '\\' . $template->getType()->getObjectClassname() . ($template->isRequired() ? '' : '|null');
         } elseif ((string)$template->getType() === PropertyType::ARRAY) {
             $arrayItemType = $this->getArrayItemType($template->getType());
-            $docType = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
+            $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
         } else {
             throw new InvalidArgumentException('Unhandled property type: ' . $template->getType());
         }

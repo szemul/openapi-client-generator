@@ -39,7 +39,7 @@ class RequestExceptionPropertyTemplate extends TemplateAbstract
 
         if ((string)$this->type === PropertyType::ARRAY) {
             $arrayItemType = $this->getArrayItemType();
-            $docType       = empty($arrayItemType) ? 'array'  :  $arrayItemType . '[]';
+            $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}|null   {$this->description}

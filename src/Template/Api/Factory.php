@@ -13,11 +13,8 @@ use Emul\OpenApiClientGenerator\Template\Model\ActionParameterTemplate;
 
 class Factory
 {
-    private Container $diContainer;
-
-    public function __construct(Container $container)
+    public function __construct(private readonly Container $diContainer)
     {
-        $this->diContainer = $container;
     }
 
     public function getApiTemplate(string $apiTag, ApiActionTemplate ...$actions): ApiTemplate

@@ -7,7 +7,6 @@ namespace Emul\OpenApiClientGenerator\Test\Unit\Template\Model;
 use Emul\OpenApiClientGenerator\Entity\Parameter;
 use Emul\OpenApiClientGenerator\Entity\ParameterType;
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
-use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 use Emul\OpenApiClientGenerator\Template\Model\ActionParameterTemplate;
 use Emul\OpenApiClientGenerator\Template\Model\ModelPropertyTemplate;
 use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;

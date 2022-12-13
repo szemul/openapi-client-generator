@@ -15,31 +15,17 @@ use Exception;
 
 class ModelGenerator implements GeneratorInterface
 {
-    private FileHandler   $fileHandler;
-    private Factory       $templateFactory;
-    private Configuration $configuration;
-    private TypeMapper    $typeMapper;
-    private ClassHelper   $classHelper;
-    private SchemaHelper  $schemaHelper;
-
     public function __construct(
-        FileHandler $fileHandler,
-        Configuration $configuration,
-        Factory $templateFactory,
-        TypeMapper $typeMapper,
-        ClassHelper $classHelper,
-        SchemaHelper $schemaHelper
+        private readonly FileHandler $fileHandler,
+        private readonly Configuration $configuration,
+        private readonly Factory $templateFactory,
+        private readonly TypeMapper $typeMapper,
+        private readonly ClassHelper $classHelper,
+        private readonly SchemaHelper $schemaHelper
     ) {
         if (empty($configuration->getApiDoc()['components']['schemas'])) {
             throw new GeneratorNotNeededException();
         }
-
-        $this->fileHandler     = $fileHandler;
-        $this->configuration   = $configuration;
-        $this->templateFactory = $templateFactory;
-        $this->typeMapper      = $typeMapper;
-        $this->classHelper     = $classHelper;
-        $this->schemaHelper    = $schemaHelper;
     }
 
     public function generate(): void

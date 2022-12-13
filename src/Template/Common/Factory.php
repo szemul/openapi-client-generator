@@ -10,11 +10,8 @@ use Emul\OpenApiClientGenerator\Helper\StringHelper;
 
 class Factory
 {
-    private Container $diContainer;
-
-    public function __construct(Container $diContainer)
+    public function __construct(private readonly Container $diContainer)
     {
-        $this->diContainer = $diContainer;
     }
 
     public function getArrayMapperFactoryTemplate(string ...$entityClasses): ArrayMapperFactoryTemplate

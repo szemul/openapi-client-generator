@@ -10,16 +10,12 @@ use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class ResponseListTemplate extends ClassTemplateAbstract
 {
-    private string $itemClassName;
-
     public function __construct(
         LocationHelper $locationHelper,
         StringHelper $stringHelper,
-        string $itemClassName
+        private readonly string $itemClassName
     ) {
         parent::__construct($locationHelper, $stringHelper);
-
-        $this->itemClassName = $itemClassName;
     }
 
     public function getDirectory(): string
@@ -46,7 +42,9 @@ class ResponseListTemplate extends ClassTemplateAbstract
             
             namespace {$this->getLocationHelper()->getModelNamespace()};
             
-            class {$this->getClassName()} implements ResponseListInterface
+            use JsonSerializable;
+            
+            class {$this->getClassName()} implements ResponseListInterface, JsonSerializable
             {
                 /** @var {$this->itemClassName}[] */
                 private array \$items = [];
@@ -67,6 +65,11 @@ class ResponseListTemplate extends ClassTemplateAbstract
                  * @return {$this->itemClassName}[]
                  */
                 public function getItems(): array
+                {
+                    return \$this->items;
+                }
+                
+                public function jsonSerialize(): mixed
                 {
                     return \$this->items;
                 }

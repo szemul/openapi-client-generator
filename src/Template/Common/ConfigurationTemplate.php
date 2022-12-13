@@ -35,7 +35,7 @@ class ConfigurationTemplate extends ClassTemplateAbstract
                     return \$this->host;
                 }
             
-                public function setHost(string \$host): Configuration
+                public function setHost(string \$host): self
                 {
                     \$this->host = \$host;
             

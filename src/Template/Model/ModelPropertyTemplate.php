@@ -12,28 +12,16 @@ use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 
 class ModelPropertyTemplate extends TemplateAbstract
 {
-    private TypeMapper   $typeMapper;
-    private string       $name;
-    private PropertyType $type;
-    private bool         $isRequired;
-    private ?string      $description = null;
-
     public function __construct(
         LocationHelper $locationHelper,
         StringHelper $stringHelper,
-        TypeMapper $typeMapper,
-        string $name,
-        PropertyType $type,
-        bool $isRequired,
-        ?string $description = null
+        private readonly TypeMapper $typeMapper,
+        private readonly string $name,
+        private readonly PropertyType $type,
+        private readonly bool $isRequired,
+        private readonly ?string $description = null
     ) {
         parent::__construct($locationHelper, $stringHelper);
-
-        $this->typeMapper  = $typeMapper;
-        $this->name        = $name;
-        $this->type        = $type;
-        $this->isRequired  = $isRequired;
-        $this->description = $description;
     }
 
     public function __toString(): string
@@ -59,14 +47,14 @@ class ModelPropertyTemplate extends TemplateAbstract
         $documentation = '';
         $getterName    = 'get' . ucfirst($this->name);
         $returnType    = $this->isRequired ? '' : '?';
-        $returnType    .= (string)$this->type === PropertyType::OBJECT
+        $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
             : (string)$this->type;
 
         if ((string)$this->type === PropertyType::ARRAY) {
             $arrayItemType = $this->typeMapper->getArrayItemType($this->type);
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
-            $docType       .= $this->isRequired ? '' : '|null';
+            $docType .= $this->isRequired ? '' : '|null';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}
@@ -113,7 +101,7 @@ class ModelPropertyTemplate extends TemplateAbstract
                 $type = '?' . $type;
             }
         } elseif ((string)$this->type === PropertyType::ARRAY) {
-            $type             = $this->typeMapper->getArrayItemType($this->type);
+            $type = $this->typeMapper->getArrayItemType($this->type);
 
             if (empty($type)) {
                 $type = 'array';

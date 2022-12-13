@@ -20,15 +20,11 @@ class PropertyType
         self::BOOL,
     ];
 
-    private string        $value;
-    private ?PropertyType $arrayItemType   = null;
-    private ?string       $objectClassname = null;
-
-    private function __construct(string $value, ?self $arrayItemType = null, ?string $objectClassname = null)
-    {
-        $this->value           = $value;
-        $this->arrayItemType   = $arrayItemType;
-        $this->objectClassname = $objectClassname;
+    private function __construct(
+        private readonly string $value,
+        private readonly ?self $arrayItemType = null,
+        private readonly ?string $objectClassname = null
+    ) {
     }
 
     public function isScalar(): bool

@@ -29,8 +29,18 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Successful creation"
+                    "200": {
+                        "description": "Successful creation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrderCreateResponse"
+                                    }
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad request, the request parameters are invalid",
@@ -161,6 +171,15 @@
                     "order": {
                         "description": "Details of the order. The type depends on the action",
                         "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderCreateResponse": {
+                "properties": {
+                    "id": {
+                        "description": "Id of the created order",
+                        "type": "integer"
                     }
                 },
                 "type": "object"

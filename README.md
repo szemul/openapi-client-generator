@@ -9,4 +9,4 @@ Run `src/generator.php` to generate the client. See it's help page
 ## Limitations
 * Currently, only supports Json payloads
 * Requires all paths to have a `tag` and an `operationId` defined
-
+* Requires all properties to have a `type` defined

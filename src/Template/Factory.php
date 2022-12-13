@@ -12,11 +12,8 @@ use Emul\OpenApiClientGenerator\Template\Model\Factory as ModelTemplateFactory;
 
 class Factory
 {
-    private FactoryInterface $diFactory;
-
-    public function __construct(FactoryInterface $diFactory)
+    public function __construct(private readonly FactoryInterface $diFactory)
     {
-        $this->diFactory = $diFactory;
     }
 
     public function getApiFactory(): ApiTemplateFactory

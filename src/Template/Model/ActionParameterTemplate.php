@@ -98,7 +98,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         foreach ($this->parameters as $parameter) {
             $propertyName = $this->getPropertyName($parameter);
             $type         = $parameter->getPhpValueType();
-            $result       .= 'private ' . $type . ' $' . $propertyName . ';' . PHP_EOL;
+            $result .= 'private ' . $type . ' $' . $propertyName . ';' . PHP_EOL;
         }
 
         return $result;

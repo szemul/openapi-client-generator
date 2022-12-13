@@ -17,5 +17,4 @@ abstract class ClassTemplateAbstract extends TemplateAbstract implements Represe
 
         return $result . $this->getShortClassName();
     }
-
 }

@@ -6,13 +6,11 @@ namespace Emul\OpenApiClientGenerator\Configuration;
 
 class Paths
 {
-    private string $apiDocPath;
-    private string $targetRootPath;
-    private string $srcPath;
+    private readonly string $targetRootPath;
+    private readonly string $srcPath;
 
-    public function __construct(string $apiDocPath, string $targetRootPath)
+    public function __construct(private readonly string $apiDocPath, string $targetRootPath)
     {
-        $this->apiDocPath     = $apiDocPath;
         $this->targetRootPath = rtrim($targetRootPath, '/') . '/';
         $this->srcPath        = $this->targetRootPath . 'src/';
     }

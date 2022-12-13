@@ -6,15 +6,11 @@ namespace Emul\OpenApiClientGenerator\Entity;
 
 class Response
 {
-    private int     $statusCode;
-    private ?string $description = null;
-    private ?string $schemaName  = null;
-
-    public function __construct(int $statusCode, ?string $description, ?string $schemaName)
-    {
-        $this->statusCode  = $statusCode;
-        $this->description = $description;
-        $this->schemaName  = $schemaName;
+    public function __construct(
+        private readonly int $statusCode,
+        private readonly ?string $description,
+        private readonly ?string $schemaName
+    ) {
     }
 
     public function getStatusCode(): int

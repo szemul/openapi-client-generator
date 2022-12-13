@@ -52,7 +52,7 @@ class ModelAbstractTemplate extends ClassTemplateAbstract
             MODEL;
     }
 
-    public function getDirectory():string
+    public function getDirectory(): string
     {
         return $this->getLocationHelper()->getModelPath();
     }

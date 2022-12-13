@@ -10,22 +10,14 @@ use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 
 class ComposerJsonTemplate extends TemplateAbstract
 {
-    private string $vendorName;
-    private string $projectName;
-    private string $description;
-
     public function __construct(
         LocationHelper $locationHelper,
         StringHelper $stringHelper,
-        string $vendorName,
-        string $projectName,
-        string $description
+        private readonly string $vendorName,
+        private readonly string $projectName,
+        private readonly string $description
     ) {
         parent::__construct($locationHelper, $stringHelper);
-
-        $this->vendorName  = $vendorName;
-        $this->projectName = $projectName;
-        $this->description = $description;
     }
 
     public function __toString(): string

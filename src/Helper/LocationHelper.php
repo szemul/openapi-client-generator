@@ -8,17 +8,14 @@ use Emul\OpenApiClientGenerator\Configuration\Configuration;
 
 class LocationHelper
 {
-    const NAME_API              = 'Api';
-    const NAME_EXCEPTION        = 'Exception';
-    const NAME_MODEL            = 'Model';
-    const NAME_ENUM             = 'Enum';
-    const NAME_ACTION_PARAMETER = 'ActionParameter';
+    public const NAME_API              = 'Api';
+    public const NAME_EXCEPTION        = 'Exception';
+    public const NAME_MODEL            = 'Model';
+    public const NAME_ENUM             = 'Enum';
+    public const NAME_ACTION_PARAMETER = 'ActionParameter';
 
-    private Configuration $configuration;
-
-    public function __construct(Configuration $configuration)
+    public function __construct(private readonly Configuration $configuration)
     {
-        $this->configuration = $configuration;
     }
 
     public function getApiPath(): string

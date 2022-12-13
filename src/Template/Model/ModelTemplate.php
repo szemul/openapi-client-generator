@@ -12,8 +12,7 @@ use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class ModelTemplate extends ClassTemplateAbstract
 {
-    private TypeMapper $typeMapper;
-    private string     $className;
+    private string $className;
 
     /** @var ModelPropertyTemplate[] */
     private array $properties;
@@ -21,13 +20,12 @@ class ModelTemplate extends ClassTemplateAbstract
     public function __construct(
         LocationHelper $locationHelper,
         StringHelper $stringHelper,
-        TypeMapper $typeMapper,
+        private readonly TypeMapper $typeMapper,
         string $modelName,
         ModelPropertyTemplate ...$properties
     ) {
         parent::__construct($locationHelper, $stringHelper);
 
-        $this->typeMapper = $typeMapper;
         $this->className  = $this->getStringHelper()->convertToClassName($modelName);
         $this->properties = $properties;
     }

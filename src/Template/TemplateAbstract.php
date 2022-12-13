@@ -9,13 +9,10 @@ use Emul\OpenApiClientGenerator\Helper\StringHelper;
 
 abstract class TemplateAbstract
 {
-    private LocationHelper $locationHelper;
-    private StringHelper   $stringHelper;
-
-    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper)
-    {
-        $this->locationHelper = $locationHelper;
-        $this->stringHelper   = $stringHelper;
+    public function __construct(
+        private readonly LocationHelper $locationHelper,
+        private readonly StringHelper $stringHelper
+    ) {
     }
 
     protected function getLocationHelper(): LocationHelper

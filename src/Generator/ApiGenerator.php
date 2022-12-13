@@ -15,28 +15,16 @@ use Emul\OpenApiClientGenerator\Template\Api\Factory;
 
 class ApiGenerator implements GeneratorInterface
 {
-    private FileHandler   $fileHandler;
-    private Configuration $configuration;
-    private Factory       $templateFactory;
-    private ClassHelper   $classHelper;
-    private SchemaHelper  $schemaHelper;
-
     public function __construct(
-        FileHandler $fileHandler,
-        Configuration $configuration,
-        Factory $templateFactory,
-        ClassHelper $classHelper,
-        SchemaHelper $schemaHelper
+        private readonly FileHandler $fileHandler,
+        private readonly Configuration $configuration,
+        private readonly Factory $templateFactory,
+        private readonly ClassHelper $classHelper,
+        private readonly SchemaHelper $schemaHelper
     ) {
         if (empty($configuration->getApiDoc()['paths'])) {
             throw new GeneratorNotNeededException();
         }
-
-        $this->fileHandler     = $fileHandler;
-        $this->configuration   = $configuration;
-        $this->templateFactory = $templateFactory;
-        $this->classHelper     = $classHelper;
-        $this->schemaHelper    = $schemaHelper;
     }
 
     public function generate(): void

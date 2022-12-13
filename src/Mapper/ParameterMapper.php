@@ -9,11 +9,8 @@ use Emul\OpenApiClientGenerator\Entity\ParameterType;
 
 class ParameterMapper
 {
-    private TypeMapper $typeMapper;
-
-    public function __construct(TypeMapper $typeMapper)
+    public function __construct(private readonly TypeMapper $typeMapper)
     {
-        $this->typeMapper = $typeMapper;
     }
 
     public function mapParameter(array $parameterDetails): Parameter

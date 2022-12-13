@@ -39,6 +39,10 @@ class FileHandler
 
     public function getFileContent(string $path): string
     {
+        if (!file_exists($path)) {
+            throw new Exception("File $path does not exist");
+        }
+
         return file_get_contents($path);
     }
 
