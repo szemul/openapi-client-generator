@@ -9,7 +9,9 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Test\Configuration;
 use Test\Exception\RequestException;
+use Test\ArrayMapperFactory;
 use Test\Model\ActionParameter\OrderCreateOrder;
+use Test\Model\OrderCreateResponseList;
 
 class OrderApi
 {
@@ -33,7 +35,7 @@ class OrderApi
         $this->defaultHeaders = $defaultHeaders;
     }
 
-    public function createOrder(OrderCreateOrder $request): string
+    public function createOrder(OrderCreateOrder $request): OrderCreateResponseList
     {
         $path    = '/order/create';
         $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
@@ -87,7 +89,14 @@ class OrderApi
                 throw new RequestException($responseCode, $responseBody, $responseHeaders);
             }
         } else {
-            return $response->getBody()->getContents();
+            $mapper = (new ArrayMapperFactory())->getMapper();
+            $list   = new OrderCreateResponseList();
+
+            foreach (json_decode($response->getBody()->getContents(), true) as $item) {
+                $list->add($mapper->map($item, $list->getItemClass()));
+            }
+
+            return $list;
         }
     }
 }

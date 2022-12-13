@@ -13,21 +13,12 @@ use Exception;
 
 class ExceptionGenerator implements GeneratorInterface
 {
-    private FileHandler   $fileHandler;
-    private Configuration $configuration;
-    private Factory       $templateFactory;
-    private TypeMapper    $typeMapper;
-
     public function __construct(
-        FileHandler $fileHandler,
-        Configuration $configuration,
-        Factory $templateFactory,
-        TypeMapper $typeMapper
+        private readonly FileHandler   $fileHandler,
+        private readonly Configuration $configuration,
+        private readonly Factory       $templateFactory,
+        private readonly TypeMapper    $typeMapper
     ) {
-        $this->fileHandler     = $fileHandler;
-        $this->configuration   = $configuration;
-        $this->templateFactory = $templateFactory;
-        $this->typeMapper      = $typeMapper;
     }
 
     public function generate(): void
@@ -56,10 +47,9 @@ class ExceptionGenerator implements GeneratorInterface
         foreach ($this->gatherErrorResponsesByCode() as $errorResponse) {
             if (empty($this->configuration->getApiDoc()['components']['schemas'][$errorResponse->getSchemaName()])) {
                 $template = $this->templateFactory->getRequestCodeExceptionTemplate($errorResponse->getStatusCode());
-            }
-            else {
+            } else {
                 $errorSchema = $this->configuration->getApiDoc()['components']['schemas'][$errorResponse->getSchemaName()];
-                $properties = [];
+                $properties  = [];
 
                 foreach ($errorSchema['properties'] as $propertyName => $propertyDetails) {
                     $type         = $this->typeMapper->mapApiDocDetailsToPropertyType($propertyName, $propertyDetails);

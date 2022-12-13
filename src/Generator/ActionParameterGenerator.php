@@ -15,28 +15,16 @@ use Exception;
 
 class ActionParameterGenerator implements GeneratorInterface
 {
-    private FileHandler     $fileHandler;
-    private Configuration   $configuration;
-    private Factory         $templateFactory;
-    private ParameterMapper $parameterMapper;
-    private ClassHelper     $classHelper;
-
     public function __construct(
-        FileHandler $fileHandler,
-        Configuration $configuration,
-        Factory $templateFactory,
-        ParameterMapper $parameterMapper,
-        ClassHelper $classHelper
+        private readonly FileHandler     $fileHandler,
+        private readonly Configuration   $configuration,
+        private readonly Factory         $templateFactory,
+        private readonly ParameterMapper $parameterMapper,
+        private readonly ClassHelper     $classHelper
     ) {
         if (empty($configuration->getApiDoc()['paths'])) {
             throw new GeneratorNotNeededException();
         }
-
-        $this->fileHandler     = $fileHandler;
-        $this->configuration   = $configuration;
-        $this->templateFactory = $templateFactory;
-        $this->parameterMapper = $parameterMapper;
-        $this->classHelper     = $classHelper;
     }
 
     public function generate(): void
@@ -63,8 +51,8 @@ class ActionParameterGenerator implements GeneratorInterface
                 }
 
                 $parameterTemplate = $this->templateFactory->getActionParameterTemplate(
-                    $actionParameterClassName,
-                    $requestModelClassName,
+                       $actionParameterClassName,
+                       $requestModelClassName,
                     ...$parameters
                 );
 

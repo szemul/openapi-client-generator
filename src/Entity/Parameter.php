@@ -6,19 +6,13 @@ namespace Emul\OpenApiClientGenerator\Entity;
 
 class Parameter
 {
-    private string        $name;
-    private ParameterType $type;
-    private ?string       $description;
-    private bool          $isRequired;
-    private PropertyType  $valueType;
-
-    public function __construct(string $name, ParameterType $type, bool $isRequired, PropertyType $valueType, ?string $description)
-    {
-        $this->name        = $name;
-        $this->type        = $type;
-        $this->isRequired  = $isRequired;
-        $this->valueType   = $valueType;
-        $this->description = $description;
+    public function __construct(
+        private readonly string $name,
+        private readonly ParameterType $type,
+        private readonly bool $isRequired,
+        private readonly PropertyType $valueType,
+        private readonly ?string $description
+    ) {
     }
 
     public function getName(): string

@@ -14,11 +14,8 @@ class LocationHelper
     const NAME_ENUM             = 'Enum';
     const NAME_ACTION_PARAMETER = 'ActionParameter';
 
-    private Configuration $configuration;
-
-    public function __construct(Configuration $configuration)
+    public function __construct(private readonly Configuration $configuration)
     {
-        $this->configuration = $configuration;
     }
 
     public function getApiPath(): string

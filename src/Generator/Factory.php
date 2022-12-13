@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Generator;
 
 use DI\FactoryInterface;
+use Emul\OpenApiClientGenerator\Configuration\Configuration;
 
 class Factory
 {
-    private FactoryInterface $diFactory;
 
-    public function __construct(FactoryInterface $diFactory)
+    public function __construct(private readonly FactoryInterface $diFactory)
     {
-        $this->diFactory = $diFactory;
+    }
+
+    public function getGenerator(Configuration $config): Generator
+    {
+        return $this->diFactory->make(Generator::class, ['configuration' => $config]);
     }
 
     public function getApiGenerator(): ApiGenerator

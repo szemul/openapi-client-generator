@@ -11,31 +11,21 @@ use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 
 class ApiActionTemplate extends TemplateAbstract
 {
-    private string     $actionName;
-    private string     $parameterClassName;
-    private string     $url;
-    private HttpMethod $httpMethod;
-    private ?bool      $responseIsList    = null;
-    private ?string    $responseClassName = null;
+    private string $actionName;
 
     public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
-        string $operationId,
-        string $parameterClassName,
-        string $url,
-        HttpMethod $httpMethod,
-        ?bool $responseIsList,
-        ?string $responseClassName
+        LocationHelper              $locationHelper,
+        StringHelper                $stringHelper,
+        string                      $operationId,
+        private readonly string     $parameterClassName,
+        private readonly string     $url,
+        private readonly HttpMethod $httpMethod,
+        private readonly ?bool      $responseIsList,
+        private readonly ?string    $responseClassName
     ) {
         parent::__construct($locationHelper, $stringHelper);
 
-        $this->actionName         = $this->getStringHelper()->convertToMethodOrVariableName($operationId);
-        $this->parameterClassName = $parameterClassName;
-        $this->url                = $url;
-        $this->httpMethod         = $httpMethod;
-        $this->responseIsList     = $responseIsList;
-        $this->responseClassName  = $responseClassName;
+        $this->actionName = $this->getStringHelper()->convertToMethodOrVariableName($operationId);
     }
 
     public function __toString(): string

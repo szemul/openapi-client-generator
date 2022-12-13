@@ -6,15 +6,13 @@ namespace Emul\OpenApiClientGenerator\Configuration;
 
 class ClassPaths
 {
-    private string $rootNamespace;
-    private array  $apiClasses             = [];
-    private array  $entityClasses          = [];
-    private array  $modelClasses           = [];
-    private array  $actionParameterClasses = [];
+    private array $apiClasses = [];
+    private array $entityClasses = [];
+    private array $modelClasses = [];
+    private array $actionParameterClasses = [];
 
-    public function __construct(string $rootNamespace)
+    public function __construct(private readonly string $rootNamespace)
     {
-        $this->rootNamespace = $rootNamespace;
     }
 
     public function getRootNamespace(): string

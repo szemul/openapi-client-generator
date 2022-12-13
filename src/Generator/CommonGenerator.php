@@ -10,15 +10,11 @@ use Emul\OpenApiClientGenerator\Template\Common\Factory;
 
 class CommonGenerator implements GeneratorInterface
 {
-    private FileHandler   $fileHandler;
-    private Configuration $configuration;
-    private Factory       $templateFactory;
-
-    public function __construct(FileHandler $fileHandler, Configuration $configuration, Factory $templateFactory)
-    {
-        $this->fileHandler     = $fileHandler;
-        $this->configuration   = $configuration;
-        $this->templateFactory = $templateFactory;
+    public function __construct(
+        private readonly FileHandler   $fileHandler,
+        private readonly Configuration $configuration,
+        private readonly Factory       $templateFactory
+    ) {
     }
 
     public function generate(): void

@@ -8,23 +8,15 @@ use Emul\OpenApiClientGenerator\File\FileHandler;
 
 class Configuration
 {
-    private FileHandler $fileHandler;
-    private Composer    $composer;
-    private Paths       $paths;
-    private ClassPaths  $classPaths;
-    private array       $apiDoc;
+    private array $apiDoc;
 
     public function __construct(
-        FileHandler $fileHandler,
-        Composer $composer,
-        Paths $paths,
-        ClassPaths $classPaths
+        private readonly FileHandler $fileHandler,
+        private readonly Composer $composer,
+        private readonly Paths $paths,
+        private readonly ClassPaths $classPaths
     ) {
-        $this->fileHandler = $fileHandler;
-        $this->paths       = $paths;
-        $this->composer    = $composer;
-        $this->classPaths  = $classPaths;
-        $this->apiDoc      = $this->getDecodedApiDoc();
+        $this->apiDoc = $this->getDecodedApiDoc();
     }
 
     public function getComposer(): Composer

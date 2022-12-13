@@ -6,11 +6,8 @@ namespace Emul\OpenApiClientGenerator\Helper;
 
 class ClassHelper
 {
-    private StringHelper $stringHelper;
-
-    public function __construct(StringHelper $stringHelper)
+    public function __construct(private readonly StringHelper $stringHelper)
     {
-        $this->stringHelper = $stringHelper;
     }
 
     public function getActionParameterClassName(string $tag, string $operationId): string

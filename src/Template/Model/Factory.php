@@ -12,11 +12,8 @@ use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 
 class Factory
 {
-    private Container $diContainer;
-
-    public function __construct(Container $container)
+    public function __construct(private readonly Container $diContainer)
     {
-        $this->diContainer = $container;
     }
 
     public function getModelAbstractTemplate(): ModelAbstractTemplate

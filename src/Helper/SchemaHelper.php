@@ -8,11 +8,8 @@ use Exception;
 
 class SchemaHelper
 {
-    private ClassHelper $classHelper;
-
-    public function __construct(ClassHelper $classHelper)
+    public function __construct(private readonly ClassHelper $classHelper)
     {
-        $this->classHelper = $classHelper;
     }
 
     public function getActionResponseClassName(array $actionDetails, ?bool &$responseIsList): ?string

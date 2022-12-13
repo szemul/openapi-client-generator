@@ -10,22 +10,12 @@ use Emul\OpenApiClientGenerator\Helper\CommandHelper;
 
 class Generator
 {
-    private FileHandler   $fileHandler;
-    private Configuration $configuration;
-    private Factory       $factory;
-    private CommandHelper $commandHelper;
-
     public function __construct(
-        FileHandler $fileHandler,
-        Configuration $configuration,
-        Factory $factory,
-        CommandHelper $commandHelper
+        private readonly FileHandler   $fileHandler,
+        private readonly Configuration $configuration,
+        private readonly Factory       $factory,
+        private readonly CommandHelper $commandHelper
     ) {
-        $this->fileHandler   = $fileHandler;
-        $this->configuration = $configuration;
-        $this->factory       = $factory;
-        $this->commandHelper = $commandHelper;
-
         $this->fileHandler->createDirectory($this->configuration->getPaths()->getSrcPath());
     }
 
@@ -56,7 +46,7 @@ class Generator
 
     private function fixCodingStandards()
     {
-        $command    = ROOT . '/vendor/bin/php-cs-fixer --config='
+        $command = ROOT . '/vendor/bin/php-cs-fixer --config='
             . ROOT . '/.php-cs-fixer.generated.php fix '
             . $this->configuration->getPaths()->getTargetRootPath();
 
@@ -68,11 +58,17 @@ class Generator
         $destinationDirectory = $this->configuration->getPaths()->getTargetRootPath() . 'doc/';
 
         $this->fileHandler->createDirectory($destinationDirectory);
-        $this->fileHandler->copyFile($this->configuration->getPaths()->getApiDocPath(), $destinationDirectory . 'openapi.json');
+        $this->fileHandler->copyFile(
+            $this->configuration->getPaths()->getApiDocPath(),
+            $destinationDirectory . 'openapi.json'
+        );
     }
 
     private function copyGitIgnore(): void
     {
-        $this->fileHandler->copyFile(ROOT . '/.gitignore', $this->configuration->getPaths()->getTargetRootPath() . '.gitignore');
+        $this->fileHandler->copyFile(
+            ROOT . '/.gitignore',
+            $this->configuration->getPaths()->getTargetRootPath() . '.gitignore'
+        );
     }
 }
