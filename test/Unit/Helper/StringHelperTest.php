@@ -20,7 +20,7 @@ class StringHelperTest extends TestCaseAbstract
             ['dash-case', 'DASH_CASE'],
             ['30_days', 'DAYS_30'],
             ['_days', 'DAYS'],
-            ['UPPER', 'UPPER']
+            ['UPPER', 'UPPER'],
         ];
     }
 
