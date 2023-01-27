@@ -47,6 +47,6 @@ class StringHelper
 
     private function convertToSnakeCase(string $string): string
     {
-        return strtolower(preg_replace('#[A-Z]([A-Z](?![a-z]))*#', '_$0', $string));
+        return ltrim(strtolower(preg_replace('#[A-Z]([A-Z](?![a-z]))*#', '_$0', $string)), '_');
     }
 }
