@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Helper;
 
+use Emul\OpenApiClientGenerator\Entity\ResponseClass;
 use Exception;
 
 class SchemaHelper
@@ -12,29 +13,37 @@ class SchemaHelper
     {
     }
 
-    public function getActionResponseClassName(array $actionDetails, ?bool &$responseIsList): ?string
+    /**
+     * @return ResponseClass[]
+     */
+    public function getActionResponseClasses(array $actionDetails): array
     {
-        $responseClass = null;
+        $responseClasses = [];
 
         foreach ($actionDetails['responses'] as $statusCode => $response) {
+            $statusCode = (int)$statusCode;
             if ($statusCode >= 300) {
                 continue;
             }
+
+            $responseIsList = false;
+            $responseClass  = 'GeneralResponse';
 
             if (!empty($response['content']['application/json']['schema'])) {
                 $schema = $response['content']['application/json']['schema'];
 
                 if (!empty($schema['$ref'])) {
-                    $responseIsList = false;
-                    $responseClass  = $this->classHelper->getModelClassname($schema['$ref']);
+                    $responseClass = $this->classHelper->getModelClassname($schema['$ref']);
                 } elseif ($schema['type'] === 'array') {
                     $responseIsList = true;
                     $responseClass  = $this->classHelper->getListModelClassname(basename($schema['items']['$ref']));
                 }
             }
+
+            $responseClasses[] = new ResponseClass($statusCode, $responseIsList, $responseClass);
         }
 
-        return $responseClass;
+        return $responseClasses;
     }
 
     public function uniteAllOfSchema(array $schemas, string $allOfSchemaName): array
@@ -42,6 +51,55 @@ class SchemaHelper
         return [
             'properties' => $this->unfoldAndUniteAllOfSchema($schemas, $allOfSchemaName),
         ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getResponseListClassNames(array $paths): array
+    {
+        $responseListClassNames = [];
+        foreach ($paths as $methods) {
+            foreach ($methods as $details) {
+                foreach ($details['responses'] as $statusCode => $response) {
+                    if ($statusCode >= 300 || empty($response['content']['application/json']['schema']['type'])) {
+                        continue;
+                    }
+
+                    $schema = $response['content']['application/json']['schema'];
+                    if ($schema['type'] === 'array') {
+                        $responseListClassNames[] = $this->classHelper->getModelClassname(basename($schema['items']['$ref']));
+                    }
+                }
+            }
+        }
+
+        return $responseListClassNames;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getResponseSchemaNames(array $paths): array
+    {
+        $schemaNames = [];
+        foreach ($paths as $methods) {
+            foreach ($methods as $details) {
+                foreach ($details['responses'] as $statusCode => $response) {
+                    if ($statusCode >= 300 || empty($response['content']['application/json']['schema'])) {
+                        continue;
+                    }
+
+                    $schema = $response['content']['application/json']['schema'];
+
+                    if (!empty($schema['$ref'])) {
+                        $schemaNames[] = basename($schema['$ref']);
+                    }
+                }
+            }
+        }
+
+        return $schemaNames;
     }
 
     private function unfoldAndUniteAllOfSchema(array $schemas, string $allOfSchemaName)

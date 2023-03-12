@@ -10,10 +10,11 @@
         "nesbot/carbon": "^2.0",
         "emulgeator/enum": "^1.0",
         "emulgeator/array-to-class-mapper": "^0.1.2",
-        "friendsofphp/php-cs-fixer": "3.9.5",
+        "friendsofphp/php-cs-fixer": "3.9.1",
         "psr/container": "^1.0",
         "php-di/php-di": "^6.3",
-        "symfony/console": "^6.2"
+        "symfony/console": "^6.2",
+        "symfony/yaml": "^6.2"
     },
     "autoload": {
       "psr-4": {

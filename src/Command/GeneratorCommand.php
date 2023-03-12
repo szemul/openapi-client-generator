@@ -30,10 +30,16 @@ class GeneratorCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        try {
+            $apiDocPath = $this->getRequiredOptionString($input, 'api-json-path');
+        } catch (\InvalidArgumentException $exception) {
+            $apiDocPath = $this->getRequiredOptionString($input, 'api-documentation-path');
+        }
+
         $config = $this->configFactory->getConfig(
             $this->getRequiredOptionString($input, 'vendor-name'),
             $this->getRequiredOptionString($input, 'project-name'),
-            $this->getRequiredOptionString($input, 'api-json-path'),
+            $apiDocPath,
             $this->getRequiredOptionString($input, 'client-path'),
             $this->getRequiredOptionString($input, 'root-namespace'),
         );
@@ -50,7 +56,8 @@ class GeneratorCommand extends Command
     protected function configure()
     {
         $this
-            ->addOption('api-json-path', null, InputOption::VALUE_REQUIRED, 'Path to the api documentation JSON')
+            ->addOption('api-json-path', null, InputOption::VALUE_REQUIRED, 'Path to the api documentation JSON -- DEPRECATED - Use api-documentation-path instead')
+            ->addOption('api-documentation-path', null, InputOption::VALUE_REQUIRED, 'Path to the api documentation JSON or YAML')
             ->addOption('client-path', null, InputOption::VALUE_REQUIRED, 'Path of the client to generate')
             ->addOption(
                 'vendor-name',
@@ -67,6 +74,9 @@ class GeneratorCommand extends Command
             ->addOption('root-namespace', null, InputOption::VALUE_REQUIRED, 'Root Namespace of the project');
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function getRequiredOptionString(InputInterface $input, string $name): string
     {
         $value = $input->getOption($name);

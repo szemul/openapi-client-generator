@@ -25,8 +25,10 @@ class ResponseListTemplateTest extends TemplateTestCaseAbstract
 
             use JsonSerializable;
             
-            class ItemClassList implements ResponseListInterface, JsonSerializable
+            class ItemClassList implements ResponseListInterface, ResponseInterface, JsonSerializable
             {
+                use ResponseTrait;
+            
                 /** @var ItemClass[] */
                 private array $items = [];
 

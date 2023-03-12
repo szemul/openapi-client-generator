@@ -24,13 +24,14 @@ class Factory
         );
     }
 
-    public function getModelTemplate(string $modelName, ModelPropertyTemplate ...$properties): ModelTemplate
+    public function getModelTemplate(string $modelName, bool $isResponse, ModelPropertyTemplate ...$properties): ModelTemplate
     {
         return new ModelTemplate(
             $this->diContainer->get(LocationHelper::class),
             $this->diContainer->get(StringHelper::class),
             $this->diContainer->get(TypeMapper::class),
             $modelName,
+            $isResponse,
             ...$properties
         );
     }
@@ -62,6 +63,22 @@ class Factory
         );
     }
 
+    public function getGeneralResponseTemplate(): GeneralResponseTemplate
+    {
+        return new GeneralResponseTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+        );
+    }
+
+    public function getResponseInterfaceTemplate(): ResponseInterfaceTemplate
+    {
+        return new ResponseInterfaceTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+        );
+    }
+
     public function getResponseListInterfaceTemplate(): ResponseListInterfaceTemplate
     {
         return new ResponseListInterfaceTemplate(
@@ -76,6 +93,14 @@ class Factory
             $this->diContainer->get(LocationHelper::class),
             $this->diContainer->get(StringHelper::class),
             $itemClassName
+        );
+    }
+
+    public function getResponseTraitTemplate(): ResponseTraitTemplate
+    {
+        return new ResponseTraitTemplate(
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
         );
     }
 }

@@ -13,12 +13,12 @@ class Factory
     public function getConfig(
         string $vendorName,
         string $projectName,
-        string $apiJsonPath,
+        string $apiDocPath,
         string $clientPath,
         string $rootNamespace
     ): Configuration {
         $composer   = new Composer($vendorName, $projectName);
-        $paths      = new Paths($apiJsonPath, $clientPath);
+        $paths      = new Paths($apiDocPath, $clientPath);
         $classPaths = new ClassPaths($rootNamespace);
 
         return new Configuration($this->fileHandler, $composer, $paths, $classPaths);

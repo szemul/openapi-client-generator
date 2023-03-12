@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Test\Unit\Template\Api;
 
 use Emul\OpenApiClientGenerator\Entity\HttpMethod;
+use Emul\OpenApiClientGenerator\Entity\ResponseClass;
 use Emul\OpenApiClientGenerator\Template\Api\ApiActionTemplate;
 use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;
 
@@ -24,78 +25,74 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
 
     public function testToString_shouldGenerateTemplate()
     {
-        $result                 = (string)$this->getSut(null, null);
-        $expectedReturnType     = 'string';
-        $expectedResultHandling = 'return $response->getBody()->getContents();';
+        $responseClass = new ResponseClass(200, false, 'ResponseClass');
+        $result        = (string)$this->getSut($responseClass);
 
-        $this->assertActionSame($expectedReturnType, $expectedResultHandling, $result);
-    }
+        $expectedReturnType    = $responseClass->getModelClassName();
+        $expectedDocumentation = <<<'DOC'
+            /**
+             * @return ResponseClass => 200
+             */
+            DOC;
 
-    public function testToStringWhenResponseClassGiven_shouldGenerateTemplate()
-    {
-        $responseClassName = 'ResponseClass';
-        $result            = (string)$this->getSut(false, $responseClassName);
-
-        $expectedReturnType     = $responseClassName;
         $expectedResultHandling = <<<'RESPONSE'
-            return (new ArrayMapperFactory())
-                ->getMapper()
-                ->map(
-                    json_decode($response->getBody()->getContents(), true),
-                    ResponseClass::class
-                );
+            return match ($responseCode) {
+                200     => $this->getCreateEntityResponse200($responseCode, $responseBody),
+                default => $this->getCreateEntityResponse($responseCode, $responseBody),
+            };
             RESPONSE;
 
-        $this->assertActionSame($expectedReturnType, $expectedResultHandling, $result);
+        $this->assertActionSame($expectedDocumentation, $expectedReturnType, $expectedResultHandling, $result);
     }
 
     public function testToStringWhenResponseListClassGiven_shouldGenerateTemplate()
     {
-        $responseClassName = 'ResponseListClass';
-        $result            = (string)$this->getSut(true, $responseClassName);
+        $responseClass = new ResponseClass(200, true, 'ResponseListClass');
+        $result        = (string)$this->getSut($responseClass);
+
+        $expectedDocumentation = <<<'DOC'
+            /**
+             * @return ResponseListClass => 200
+             */
+            DOC;
 
         $expectedResultHandling = <<<'RESPONSE'
-            $mapper = (new ArrayMapperFactory())->getMapper();
-            $list   = new ResponseListClass();
-            
-            foreach (json_decode($response->getBody()->getContents(), true) as $item) {
-                $list->add($mapper->map($item, $list->getItemClass()));
-            }
-            
-            return $list;
+            return match ($responseCode) {
+                200     => $this->getCreateEntityResponse200($responseCode, $responseBody),
+                default => $this->getCreateEntityResponse($responseCode, $responseBody),
+            };
             RESPONSE;
 
-        $this->assertActionSame($responseClassName, $expectedResultHandling, $result);
+        $this->assertActionSame($expectedDocumentation, $responseClass->getModelClassName(), $expectedResultHandling, $result);
     }
 
     public function testGetParameterFullClassName()
     {
-        $result = $this->getSut(false, null)->getParameterFullClassName();
+        $result = $this->getSut()->getParameterFullClassName();
 
         $this->assertSame('Root\Model\ActionParameter\EntityCreateRequest', $result);
     }
 
-    public function testGetClassesToImportWhenNoResponseClassGiven_shouldReturnEmptyArray()
-    {
-        $result = $this->getSut(false, null)->getClassesToImport();
-
-        $this->assertEmpty($result);
-    }
-
     public function testGetClasses_shouldReturnMapperAndResponse()
     {
-        $result         = $this->getSut(true, 'ResponseClass')->getClassesToImport();
+        $responseClass1 = new ResponseClass(200, false, 'Response1');
+        $responseClass2 = new ResponseClass(201, false, 'Response2');
+        $result         = $this->getSut($responseClass1, $responseClass2)->getClassesToImport();
         $expectedResult = [
             'Root\ArrayMapperFactory',
-            'Root\Model\ResponseClass',
+            'Root\Model\GeneralResponse',
+            'Root\Model\ResponseInterface',
+            'Root\Model\Response1',
+            'Root\Model\Response2',
         ];
 
         $this->assertSame($expectedResult, $result);
     }
 
-    private function assertActionSame(string $expectedReturnType, string $expectedResponseHandling, string $result)
+    private function assertActionSame(string $expectedDocumentation, string $expectedReturnType, string $expectedResponseHandling, string $result)
     {
-        $expectedResult = <<<EXPECTED
+        $expectedResult = $expectedDocumentation . <<<EXPECTED
+
             public function createEntity(EntityCreateRequest \$request): $expectedReturnType
             {
                 \$path    = '/entity';
@@ -138,10 +135,10 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
             
                 \$response     = \$this->httpClient->sendRequest(\$request);
                 \$responseCode = \$response->getStatusCode();
+                \$responseBody = \$response->getBody()->getContents();
             
                 if (\$responseCode >= 400) {
                     \$requestExceptionClass = '\Root\Exception\Request' . \$responseCode . 'Exception';
-                    \$responseBody          = \$response->getBody()->getContents();
                     \$responseHeaders       = \$response->getHeaders();
             
                     if (class_exists(\$requestExceptionClass)) {
@@ -158,7 +155,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
         $this->assertRenderedStringSame($expectedResult, $result);
     }
 
-    private function getSut(?bool $responseIsList, ?string $responseClassName): ApiActionTemplate
+    private function getSut(ResponseClass ...$responseClasses): ApiActionTemplate
     {
         return new ApiActionTemplate(
             $this->locationHelper,
@@ -167,8 +164,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
             $this->requestModelClassName,
             $this->url,
             $this->httpMethod,
-            $responseIsList,
-            $responseClassName
+            ...$responseClasses
         );
     }
 }

@@ -6,19 +6,139 @@ namespace Emul\OpenApiClientGenerator\Test\Unit\Helper;
 
 use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Helper\SchemaHelper;
+use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Test\Unit\TestCaseAbstract;
 use Exception;
-use Mockery;
 
 class SchemaHelperTest extends TestCaseAbstract
 {
-    private ClassHelper $classHelper;
-
-    protected function setUp(): void
+    public function testGetActionResponseClasses()
     {
-        parent::setUp();
+        $actionDetails = [
+            'responses' => [
+                200 => [
+                    'content' => [
+                        'application/json' => [
+                            'schema' => [
+                                'type'  => 'array',
+                                'items' => [
+                                    '$ref' => '#/components/schemas/Item',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                201 => [
+                    'content' => [
+                        'application/json' => [
+                            'schema' => [
+                                '$ref' => '#/components/schemas/Individual',
+                            ],
+                        ],
+                    ],
+                ],
+                204 => [],
+            ],
+        ];
 
-        $this->classHelper = Mockery::mock(ClassHelper::class);
+        $responseClasses = $this->getSut()->getActionResponseClasses($actionDetails);
+
+        $this->assertCount(3, $responseClasses);
+        $this->assertSame(200, $responseClasses[0]->getStatusCode());
+        $this->assertSame('ItemList', $responseClasses[0]->getModelClassName());
+        $this->assertTrue($responseClasses[0]->isList());
+        $this->assertSame(201, $responseClasses[1]->getStatusCode());
+        $this->assertSame('Individual', $responseClasses[1]->getModelClassName());
+        $this->assertFalse($responseClasses[1]->isList());
+        $this->assertSame(204, $responseClasses[2]->getStatusCode());
+        $this->assertSame('GeneralResponse', $responseClasses[2]->getModelClassName());
+        $this->assertFalse($responseClasses[2]->isList());
+    }
+
+    public function testGetResponseSchemaNames()
+    {
+        $paths = [
+            '/order' => [
+                'get'  => [
+                    'responses' => [
+                        200 => [
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/GetResponse',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'post' => [
+                    'responses' => [
+                        200 => [
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/PostResponse',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $responseSchemaNames = $this->getSut()->getResponseSchemaNames($paths);
+
+        $this->assertCount(2, $responseSchemaNames);
+        $this->assertSame('GetResponse', $responseSchemaNames[0]);
+        $this->assertSame('PostResponse', $responseSchemaNames[1]);
+    }
+
+    public function testGetResponseListClassNames()
+    {
+        $paths = [
+            '/order' => [
+                'get'  => [
+                    'responses' => [
+                        200 => [
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        'type'  => 'array',
+                                        'items' => [
+                                            '$ref' => '#/components/schemas/GetResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'post' => [
+                    'responses' => [
+                        200 => [
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        'type'  => 'array',
+                                        'items' => [
+                                            '$ref' => '#/components/schemas/PostResponse',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $responseSchemaNames = $this->getSut()->getResponseListClassNames($paths);
+
+        $this->assertCount(2, $responseSchemaNames);
+        $this->assertSame('GetResponse', $responseSchemaNames[0]);
+        $this->assertSame('PostResponse', $responseSchemaNames[1]);
     }
 
     public function testUniteAllOfSchemaWhenJustPropertiesGiven_shouldMergeThem()
@@ -138,6 +258,6 @@ class SchemaHelperTest extends TestCaseAbstract
 
     public function getSut(): SchemaHelper
     {
-        return new SchemaHelper($this->classHelper);
+        return new SchemaHelper(new ClassHelper(new StringHelper()));
     }
 }

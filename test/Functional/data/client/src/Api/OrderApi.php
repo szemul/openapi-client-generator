@@ -11,7 +11,9 @@ use Test\Configuration;
 use Test\Exception\RequestException;
 use Test\ArrayMapperFactory;
 use Test\Model\ActionParameter\OrderCreateOrder;
-use Test\Model\OrderCreateResponseList;
+use Test\Model\GeneralResponse;
+use Test\Model\OrderCreate200ResponseList;
+use Test\Model\OrderCreate201Response;
 
 class OrderApi
 {
@@ -35,7 +37,11 @@ class OrderApi
         $this->defaultHeaders = $defaultHeaders;
     }
 
-    public function createOrder(OrderCreateOrder $request): OrderCreateResponseList
+    /**
+     * @return OrderCreate200ResponseList => 200
+     * @return OrderCreate201Response => 201
+     */
+    public function createOrder(OrderCreateOrder $request): OrderCreate200ResponseList|OrderCreate201Response
     {
         $path    = '/order/create';
         $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
@@ -77,10 +83,10 @@ class OrderApi
 
         $response     = $this->httpClient->sendRequest($request);
         $responseCode = $response->getStatusCode();
+        $responseBody = $response->getBody()->getContents();
 
         if ($responseCode >= 400) {
             $requestExceptionClass = '\Test\Exception\Request' . $responseCode . 'Exception';
-            $responseBody          = $response->getBody()->getContents();
             $responseHeaders       = $response->getHeaders();
 
             if (class_exists($requestExceptionClass)) {
@@ -89,14 +95,47 @@ class OrderApi
                 throw new RequestException($responseCode, $responseBody, $responseHeaders);
             }
         } else {
-            $mapper = (new ArrayMapperFactory())->getMapper();
-            $list   = new OrderCreateResponseList();
-
-            foreach (json_decode($response->getBody()->getContents(), true) as $item) {
-                $list->add($mapper->map($item, $list->getItemClass()));
-            }
-
-            return $list;
+            return match ($responseCode) {
+                200     => $this->getCreateOrderResponse200($responseCode, $responseBody),
+                201     => $this->getCreateOrderResponse201($responseCode, $responseBody),
+                default => $this->getCreateOrderResponse($responseCode, $responseBody),
+            };
         }
+    }
+
+    private function getCreateOrderResponse200(int $statusCode, string $responseBody): OrderCreate200ResponseList
+    {
+        $mapper = (new ArrayMapperFactory())->getMapper();
+        $list   = (new OrderCreate200ResponseList())
+    ->setStatusCode($statusCode)
+    ->setBody($responseBody);
+
+        foreach (json_decode($responseBody, true) as $item) {
+            $list->add($mapper->map($item, $list->getItemClass()));
+        }
+
+        return $list;
+    }
+
+    private function getCreateOrderResponse201(int $statusCode, string $responseBody): OrderCreate201Response
+    {
+        $response = (new ArrayMapperFactory())
+    ->getMapper()
+    ->map(
+        empty($responseBody) ? [] : json_decode($responseBody, true),
+        OrderCreate201Response::class
+    );
+        $response
+    ->setStatusCode($statusCode)
+    ->setBody($responseBody);
+
+        return $response;
+    }
+
+    private function getCreateOrderResponse(int $statusCode, string $responseBody): GeneralResponse
+    {
+        return (new GeneralResponse())
+        ->setStatusCode($statusCode)
+        ->setBody($responseBody);
     }
 }

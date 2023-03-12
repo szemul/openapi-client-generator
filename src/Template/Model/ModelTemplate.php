@@ -22,6 +22,7 @@ class ModelTemplate extends ClassTemplateAbstract
         StringHelper $stringHelper,
         private readonly TypeMapper $typeMapper,
         string $modelName,
+        private readonly bool $isResponse,
         ModelPropertyTemplate ...$properties
     ) {
         parent::__construct($locationHelper, $stringHelper);
@@ -55,8 +56,9 @@ class ModelTemplate extends ClassTemplateAbstract
             
             {$this->getImports()}
             
-            class {$this->getClassName()} extends ModelAbstract
+            class {$this->getClassName()} extends ModelAbstract {$this->getImplements()}
             {
+                {$this->getTraits()}
                 {$this->getProperties()}
                 {$this->getConstructor()}
                 {$this->getGetters()}
@@ -81,6 +83,20 @@ class ModelTemplate extends ClassTemplateAbstract
         }
 
         return $result;
+    }
+
+    private function getImplements(): string
+    {
+        return $this->isResponse
+            ? 'implements ResponseInterface'
+            : '';
+    }
+
+    private function getTraits(): string
+    {
+        return $this->isResponse
+            ? 'use ResponseTrait;'
+            : '';
     }
 
     private function getProperties(): string

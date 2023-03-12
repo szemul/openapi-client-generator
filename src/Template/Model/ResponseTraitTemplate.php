@@ -8,12 +8,11 @@ use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
-class ResponseListTemplate extends ClassTemplateAbstract
+class ResponseTraitTemplate extends ClassTemplateAbstract
 {
     public function __construct(
         LocationHelper $locationHelper,
-        StringHelper $stringHelper,
-        private readonly string $itemClassName
+        StringHelper $stringHelper
     ) {
         parent::__construct($locationHelper, $stringHelper);
     }
@@ -30,7 +29,7 @@ class ResponseListTemplate extends ClassTemplateAbstract
 
     protected function getShortClassName(): string
     {
-        return $this->itemClassName . 'List';
+        return 'ResponseTrait';
     }
 
     public function __toString(): string
@@ -44,36 +43,33 @@ class ResponseListTemplate extends ClassTemplateAbstract
             
             use JsonSerializable;
             
-            class {$this->getClassName()} implements ResponseListInterface, ResponseInterface, JsonSerializable
+            trait {$this->getClassName()}
             {
-                use ResponseTrait;
+                private int \$statusCode;
+                private string \$body;
             
-                /** @var {$this->itemClassName}[] */
-                private array \$items = [];
-            
-                public function getItemClass(): string
+                public function setStatusCode(int \$statusCode): self
                 {
-                    return {$this->itemClassName}::class;
-                }
-            
-                public function add({$this->itemClassName} \$item): self
-                {
-                    \$this->items[] = \$item;
-            
+                    \$this->statusCode = \$statusCode;
+                    
                     return \$this;
                 }
             
-                /**
-                 * @return {$this->itemClassName}[]
-                 */
-                public function getItems(): array
+                public function getStatusCode(): int
                 {
-                    return \$this->items;
+                    return \$this->statusCode;
                 }
                 
-                public function jsonSerialize(): mixed
+                public function setBody(string \$body): self
                 {
-                    return \$this->items;
+                    \$this->body = \$body;
+                    
+                    return \$this;
+                }
+            
+                public function getBody(): string
+                {
+                    return \$this->body;
                 }
             }
             TEMPLATE;

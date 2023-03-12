@@ -56,12 +56,12 @@ class CodeComparisonTest extends TestCase
     private static function runGenerator(): void
     {
         $generatorPath = realpath(__DIR__ . '/../../src/generator.php');
-        $apiDocPath    = realpath(self::EXPECTED_CLIENT_PATH . 'doc/openapi.json');
+        $apiDocPath    = realpath(self::EXPECTED_CLIENT_PATH . 'doc/openapi.yaml');
         $output        = null;
         $resultCode    = null;
         $command       = 'php ' . $generatorPath
             . ' client:generate'
-            . ' --api-json-path=' . $apiDocPath
+            . ' --api-documentation-path=' . $apiDocPath
             . ' --client-path=' . self::GENERATED_CLIENT_PATH
             . ' --vendor-name=emulgeator'
             . ' --project-name=test'

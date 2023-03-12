@@ -76,6 +76,7 @@ class ApiTemplate extends ClassTemplateAbstract
                 }
             
             {$this->getActions()}
+            {$this->getResponseHandlerMethods()}
             }
             API;
     }
@@ -101,6 +102,16 @@ class ApiTemplate extends ClassTemplateAbstract
         $result = '';
         foreach ($this->actions as $action) {
             $result .= $action . PHP_EOL;
+        }
+
+        return $result;
+    }
+
+    private function getResponseHandlerMethods(): string
+    {
+        $result = '';
+        foreach ($this->actions as $action) {
+            $result .= implode(PHP_EOL, $action->getResponseHandlerMethods());
         }
 
         return $result;

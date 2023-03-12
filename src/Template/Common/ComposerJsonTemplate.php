@@ -29,7 +29,7 @@ class ComposerJsonTemplate extends TemplateAbstract
                 "minimum-stability": "stable",
                 "license": "MIT",
                 "require": {
-                    "php": ">=7.4",
+                    "php": ">=8.0",
                     "ext-json": "*",
                     "nesbot/carbon": "^2.0",
                     "emulgeator/enum": "^1.0",

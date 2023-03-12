@@ -6,17 +6,19 @@ namespace Test\Model;
 
 use JsonSerializable;
 
-class OrderCreateResponseList implements ResponseListInterface, JsonSerializable
+class OrderCreate200ResponseList implements ResponseListInterface, ResponseInterface, JsonSerializable
 {
-    /** @var OrderCreateResponse[] */
+    use ResponseTrait;
+
+    /** @var OrderCreate200Response[] */
     private array $items = [];
 
     public function getItemClass(): string
     {
-        return OrderCreateResponse::class;
+        return OrderCreate200Response::class;
     }
 
-    public function add(OrderCreateResponse $item): self
+    public function add(OrderCreate200Response $item): self
     {
         $this->items[] = $item;
 
@@ -24,7 +26,7 @@ class OrderCreateResponseList implements ResponseListInterface, JsonSerializable
     }
 
     /**
-     * @return OrderCreateResponse[]
+     * @return OrderCreate200Response[]
      */
     public function getItems(): array
     {
