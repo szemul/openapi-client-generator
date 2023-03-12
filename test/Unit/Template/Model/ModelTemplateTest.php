@@ -17,7 +17,7 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
             $this->getPropertyTemplate('property1', PropertyType::int(), true, 'First'),
             $this->getPropertyTemplate('property2', PropertyType::array(PropertyType::string()), false, 'Second'),
         ];
-        $sut        = $this->getSut(...$properties);
+        $sut        = $this->getSut(false, ...$properties);
 
         $result         = (string)$sut;
         $expectedResult = <<<'EXPECTED'
@@ -26,7 +26,7 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
             
             namespace Root\Model;
             
-            class Model extends ModelAbstract
+            class Model extends ModelAbstract 
             {
                 /**
                  * @var int First
@@ -79,16 +79,61 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
         $this->assertRenderedStringSame($expectedResult, $result);
     }
 
+    public function testToStringWhenResponseGiven_shouldGenerateResponseClass()
+    {
+        $properties = [
+            $this->getPropertyTemplate('property1', PropertyType::int(), true, 'First'),
+        ];
+        $sut        = $this->getSut(true, ...$properties);
+
+        $result         = (string)$sut;
+        $expectedResult = <<<'EXPECTED'
+            <?php
+            declare(strict_types=1);
+            
+            namespace Root\Model;
+            
+            class Model extends ModelAbstract implements ResponseInterface
+            {
+                use ResponseTrait;
+                
+                /**
+                 * @var int First
+                 */
+                protected int $property1;
+
+                public function __construct(int $property1)
+                {
+                    $this->property1 = $property1;
+                }
+
+                public function getProperty1(): int
+                {
+                    return $this->property1;
+                }
+            
+                public function setProperty1(int $property1): self
+                {
+                    $this->property1 = $property1;
+            
+                    return $this;
+                }
+            }
+            EXPECTED;
+
+        $this->assertRenderedStringSame($expectedResult, $result);
+    }
+
     public function testGetDirectory()
     {
-        $directory = $this->getSut()->getDirectory();
+        $directory = $this->getSut(false)->getDirectory();
 
         $this->assertSame('/src/Model/', $directory);
     }
 
     public function testGetClassname()
     {
-        $className = $this->getSut()->getClassName(true);
+        $className = $this->getSut(false)->getClassName(true);
 
         $this->assertSame('Root\Model\Model', $className);
     }
@@ -106,8 +151,8 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
         );
     }
 
-    private function getSut(ModelPropertyTemplate ...$properties): ModelTemplate
+    private function getSut(bool $isResponse, ModelPropertyTemplate ...$properties): ModelTemplate
     {
-        return new ModelTemplate($this->locationHelper, $this->stringHelper, $this->typeMapper, 'Model', ...$properties);
+        return new ModelTemplate($this->locationHelper, $this->stringHelper, $this->typeMapper, 'Model', $isResponse, ...$properties);
     }
 }

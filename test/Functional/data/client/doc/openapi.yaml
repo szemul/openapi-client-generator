@@ -1,0 +1,162 @@
+openapi: 3.0.0
+info:
+    title: 'Order API'
+    version: '1.0'
+servers:
+    -
+        url: 'http://test.localdomain:80'
+        description: 'Local DEV'
+paths:
+    /order/create:
+        post:
+            tags:
+                - Order
+            description: 'Creates the given order'
+            operationId: createOrder
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/OrderCreateRequest'
+            responses:
+                200:
+                    description: 'Successful creation'
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/OrderCreate200Response'
+                201:
+                    description: 'Successful creation'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/OrderCreate201Response'
+                400:
+                    description: 'Bad request, the request parameters are invalid'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error400'
+components:
+    schemas:
+        OrderCreateRequest:
+            required:
+                - orderId
+                - currencyCode
+                - sourceSystem
+                - products
+            properties:
+                friendlyId:
+                    description: 'Human readable id of the order'
+                    type: string
+                currencyCode:
+                    description: 'Currency of the payment and prices'
+                    type: string
+                products:
+                    description: 'Ordered products'
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/OrderProductRequest'
+                createdAt:
+                    type: string
+                    format: date-time
+                orderId:
+                    description: 'Id of the order in the source system'
+                    type: string
+                sourceSystem:
+                    $ref: '#/components/schemas/OrderSourceSystemRequest'
+            type: object
+        OrderProductRequest:
+            required:
+                - name
+                - productId
+            properties:
+                name:
+                    description: 'Name of the extra'
+                    type: string
+                productId:
+                    description: 'Id of the extra product'
+                    type: string
+            type: object
+        OrderSourceSystemRequest:
+            required:
+                - accountId
+                - name
+                - pushDeadline
+                - successCallbackUrl
+                - failedCallbackUrl
+            properties:
+                accountId:
+                    description: 'Id of the source account'
+                    type: integer
+                name:
+                    description: 'Name of the food system the request comes from'
+                    type: string
+                pushDeadline:
+                    type: string
+                    format: date-time
+                successCallbackUrl:
+                    description: 'Url of the caller service what will be called once the order has been pushed successfully'
+                    type: string
+                failedCallbackUrl:
+                    description: 'Url of the caller service what will be called if we failed to push the order'
+                    type: string
+            type: object
+        OrderUpsertEvent:
+            required:
+                - version
+                - accountId
+                - order
+            properties:
+                version:
+                    description: 'The version of the entity. The format is v1, v2, etc'
+                    type: string
+                accountId:
+                    description: 'ID of the account that owns this entity'
+                    type: integer
+                action:
+                    description: 'The action this entity describes'
+                    type: string
+                    enum:
+                        - create
+                        - update
+                        - cancel
+                order:
+                    description: 'Details of the order. The type depends on the action'
+                    type: object
+            type: object
+        OrderCreate200Response:
+            properties:
+                taskId:
+                    description: 'Id of the task'
+                    type: integer
+            type: object
+        OrderCreate201Response:
+            properties:
+                id:
+                    description: 'Id of the created order'
+                    type: integer
+            type: object
+        Error400:
+            properties:
+                errorCode:
+                    type: string
+                    description: 'The code of the error'
+                errorMessage:
+                    type: string
+                    description: 'Description of the error'
+                params:
+                    type: object
+                    description: 'List of the invalid params where the property is the parameter name and the value is the describing the issue'
+            type: object
+    securitySchemes:
+        api_key:
+            type: apiKey
+            name: X-API-KEY
+            in: header
+security:
+    -
+        api_key: {  }

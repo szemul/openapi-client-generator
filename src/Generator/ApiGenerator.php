@@ -39,15 +39,13 @@ class ApiGenerator implements GeneratorInterface
 
                 $httpMethod = HttpMethod::createFromString(strtoupper($methodName));
 
-                $responseIsList    = null;
-                $responseClassName = $this->schemaHelper->getActionResponseClassName($details, $responseIsList);
-                $actionTemplate    = $this->templateFactory->getApiActionTemplate(
+                $responseClasses = $this->schemaHelper->getActionResponseClasses($details);
+                $actionTemplate  = $this->templateFactory->getApiActionTemplate(
                     $operationId,
                     $actionParameterClassName,
                     $path,
                     $httpMethod,
-                    $responseIsList,
-                    $responseClassName
+                    ...$responseClasses
                 );
 
                 foreach ($details['tags'] as $tag) {

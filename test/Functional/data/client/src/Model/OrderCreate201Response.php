@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Test\Model;
 
-class OrderCreateResponse extends ModelAbstract
+class OrderCreate201Response extends ModelAbstract implements ResponseInterface
 {
+    use ResponseTrait;
     /**
      * @var int|null Id of the created order
      */

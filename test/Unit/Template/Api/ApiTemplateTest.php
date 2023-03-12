@@ -26,6 +26,7 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
         $this->expectParameterFullClassNameRetrieved('ActionParameter');
         $this->expectClassesToImportRetrieved('Class1', 'Class2');
         $this->expectActionRendered('Action');
+        $this->expectResponseHandlersRendered('ResponseHandlers');
 
         $result = (string)$this->getSut();
 
@@ -68,7 +69,7 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
                 }
             
             Action
-            
+            ResponseHandlers
             }
             EXPECTED;
 
@@ -83,7 +84,7 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
             ->andReturn($expectedResult);
     }
 
-    private function expectParameterFullClassNameRetrieved(string $expectedResult)
+    private function expectParameterFullClassNameRetrieved(string $expectedResult): void
     {
         $this->action
             ->shouldReceive('getParameterFullClassName')
@@ -91,12 +92,19 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
             ->andReturn($expectedResult);
     }
 
-    private function expectClassesToImportRetrieved(string ...$expectedClasses)
+    private function expectClassesToImportRetrieved(string ...$expectedClasses): void
     {
         $this->action
             ->shouldReceive('getClassesToImport')
             ->once()
             ->andReturn($expectedClasses);
+    }
+
+    private function expectResponseHandlersRendered(string $responseHandler): void
+    {
+        $this->action
+            ->expects('getResponseHandlerMethods')
+            ->andReturn([$responseHandler]);
     }
 
     private function getSut(): ApiTemplate

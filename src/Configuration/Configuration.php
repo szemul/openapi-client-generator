@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Configuration;
 
 use Emul\OpenApiClientGenerator\File\FileHandler;
+use Symfony\Component\Yaml\Yaml;
 
 class Configuration
 {
@@ -41,6 +42,8 @@ class Configuration
 
     private function getDecodedApiDoc(): array
     {
-        return json_decode($this->fileHandler->getFileContent($this->paths->getApiDocPath()), true);
+        $fileContent = $this->fileHandler->getFileContent($this->paths->getApiDocPath());
+
+        return Yaml::parse($fileContent);
     }
 }

@@ -7,6 +7,7 @@ namespace Emul\OpenApiClientGenerator\Generator;
 use Emul\OpenApiClientGenerator\Configuration\Configuration;
 use Emul\OpenApiClientGenerator\File\FileHandler;
 use Emul\OpenApiClientGenerator\Helper\CommandHelper;
+use Symfony\Component\Yaml\Yaml;
 
 class Generator
 {
@@ -56,12 +57,10 @@ class Generator
     private function copyDocumentation(): void
     {
         $destinationDirectory = $this->configuration->getPaths()->getTargetRootPath() . 'doc/';
+        $yaml                 = Yaml::dump($this->configuration->getApiDoc(), 10);
 
         $this->fileHandler->createDirectory($destinationDirectory);
-        $this->fileHandler->copyFile(
-            $this->configuration->getPaths()->getApiDocPath(),
-            $destinationDirectory . 'openapi.json'
-        );
+        $this->fileHandler->saveFile($destinationDirectory . 'openapi.yaml', $yaml);
     }
 
     private function copyGitIgnore(): void

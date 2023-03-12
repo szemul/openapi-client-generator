@@ -4,7 +4,7 @@
     "minimum-stability": "stable",
     "license": "MIT",
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "ext-json": "*",
         "nesbot/carbon": "^2.0",
         "emulgeator/enum": "^1.0",
@@ -14,8 +14,8 @@
         "psr/http-factory": "^1.0"
     },
     "autoload": {
-      "psr-4": {
-        "Test\\": "src"
-      }
+        "psr-4": {
+            "Test\\": "src"
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace Emul\OpenApiClientGenerator\Template\Api;
 use DI\Container;
 use Emul\OpenApiClientGenerator\Entity\HttpMethod;
 use Emul\OpenApiClientGenerator\Entity\Parameter;
+use Emul\OpenApiClientGenerator\Entity\ResponseClass;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\Model\ActionParameterTemplate;
@@ -32,8 +33,7 @@ class Factory
         string $actionParameterClassName,
         string $url,
         HttpMethod $httpMethod,
-        ?bool $responseIsList,
-        ?string $responseClassName
+        ResponseClass ...$responseClasses
     ): ApiActionTemplate {
         return new ApiActionTemplate(
             $this->diContainer->get(LocationHelper::class),
@@ -42,8 +42,7 @@ class Factory
             $actionParameterClassName,
             $url,
             $httpMethod,
-            $responseIsList,
-            $responseClassName
+            ...$responseClasses
         );
     }
 

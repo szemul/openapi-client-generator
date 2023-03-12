@@ -32,9 +32,13 @@ class ModelGenerator implements GeneratorInterface
     {
         $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getModelAbstractTemplate());
         $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getResponseListInterfaceTemplate());
+        $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getGeneralResponseTemplate());
+        $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getResponseInterfaceTemplate());
+        $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getResponseTraitTemplate());
         $this->generateResponseLists();
 
-        $schemas = $this->configuration->getApiDoc()['components']['schemas'];
+        $schemas             = $this->configuration->getApiDoc()['components']['schemas'];
+        $responseSchemaNames = $this->schemaHelper->getResponseSchemaNames($this->configuration->getApiDoc()['paths']);
 
         foreach ($schemas as $schemaName => $schema) {
             if (!empty($schema['allOf'])) {
@@ -51,12 +55,14 @@ class ModelGenerator implements GeneratorInterface
             if ($schemaType === 'string' && !empty($schema['enum'])) {
                 $this->generateEnum($schemaName, $schema);
             } else {
-                $this->generateModel($schemaName, $schema);
+                $isResponse = in_array($schemaName, $responseSchemaNames);
+
+                $this->generateModel($schemaName, $schema, $isResponse);
             }
         }
     }
 
-    private function generateModel(string $schemaName, array $schema)
+    private function generateModel(string $schemaName, array $schema, bool $isResponse)
     {
         $propertyTemplates = [];
         $schemaType        = $schema['type'];
@@ -82,7 +88,7 @@ class ModelGenerator implements GeneratorInterface
                 }
             }
 
-            $template = $this->templateFactory->getModelTemplate($schemaName, ...$propertyTemplates);
+            $template = $this->templateFactory->getModelTemplate($schemaName, $isResponse, ...$propertyTemplates);
         } else {
             throw new Exception('Unhandled type ' . $schemaType);
         }
@@ -113,22 +119,12 @@ class ModelGenerator implements GeneratorInterface
 
     private function generateResponseLists()
     {
-        foreach ($this->configuration->getApiDoc()['paths'] as $methods) {
-            foreach ($methods as $details) {
-                foreach ($details['responses'] as $statusCode => $response) {
-                    if ($statusCode >= 300 || empty($response['content']['application/json']['schema']['type'])) {
-                        continue;
-                    }
+        $classNames = $this->schemaHelper->getResponseListClassNames($this->configuration->getApiDoc()['paths']);
 
-                    $schema = $response['content']['application/json']['schema'];
-                    if ($schema['type'] === 'array') {
-                        $className = $this->classHelper->getModelClassname(basename($schema['items']['$ref']));
-                        $template  = $this->templateFactory->getResponseListTemplate($className);
+        foreach ($classNames as $className) {
+            $template = $this->templateFactory->getResponseListTemplate($className);
 
-                        $this->fileHandler->saveClassTemplateToFile($template);
-                    }
-                }
-            }
+            $this->fileHandler->saveClassTemplateToFile($template);
         }
     }
 }
