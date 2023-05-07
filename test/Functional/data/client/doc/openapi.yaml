@@ -40,6 +40,12 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Error400'
+                404:
+                    description: 'Path not found'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error404'
 components:
     schemas:
         OrderCreateRequest:
@@ -141,6 +147,18 @@ components:
                     type: integer
             type: object
         Error400:
+            properties:
+                errorCode:
+                    type: string
+                    description: 'The code of the error'
+                errorMessage:
+                    type: string
+                    description: 'Description of the error'
+                params:
+                    type: object
+                    description: 'List of the invalid params where the property is the parameter name and the value is the describing the issue'
+            type: object
+        Error404:
             properties:
                 errorCode:
                     type: string

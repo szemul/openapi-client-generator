@@ -10,6 +10,8 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Test\Configuration;
 use Test\Exception\RequestException;
 use Test\ArrayMapperFactory;
+use Test\Exception\Request400Exception;
+use Test\Exception\Request404Exception;
 use Test\Model\ActionParameter\OrderCreateOrder;
 use Test\Model\GeneralResponse;
 use Test\Model\OrderCreate200ResponseList;
@@ -40,6 +42,8 @@ class OrderApi
     /**
      * @return OrderCreate200ResponseList => 200
      * @return OrderCreate201Response => 201
+     * @throws Request400Exception when received 400 (Bad request, the request parameters are invalid)
+     * @throws Request404Exception when received 404 (Path not found)
      */
     public function createOrder(OrderCreateOrder $request): OrderCreate200ResponseList|OrderCreate201Response
     {

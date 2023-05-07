@@ -41,15 +41,17 @@ class ApiActionTemplate
 
     public function __toString(): string
     {
-        $returnDocumentation = $this->getReturnDocumentation();
-        $throwsDocumentation = $this->getThrowsDocumentation();
         $returnType          = $this->getReturnType();
         $responseHandling    = $this->getResponseHandling();
+        $returnDocumentation = $this->getReturnDocumentation();
+        $throwsDocumentation = $this->getThrowsDocumentation();
+        $documentationLines  = array_merge($returnDocumentation, $throwsDocumentation);
+        $documentationLines = empty($documentationLines) ? ['*'] : $documentationLines;
+        $documentation = implode(PHP_EOL . ' ', $documentationLines);
 
         return <<<ACTION
             /**
-             {$returnDocumentation}
-             {$throwsDocumentation}
+             {$documentation}
              */
             public function {$this->actionName}({$this->parameterClassName} \$request): {$returnType}
             {
@@ -207,28 +209,28 @@ class ApiActionTemplate
         return $this->stringHelper->convertToMethodOrVariableName("get_{$this->actionName}_Response_{$statusCode}");
     }
 
-    private function getReturnDocumentation(): string
+    private function getReturnDocumentation(): array
     {
-        $documentation = '';
+        $documentationLines = [];
         foreach ($this->responseClasses as $responseClass) {
             $statusCode        = $responseClass->getStatusCode();
             $responseClassName = $responseClass->getModelClassName();
 
-            $documentation .= '* @return ' . $responseClassName . ' => ' . $statusCode . PHP_EOL;
+            $documentationLines[] = '* @return ' . $responseClassName . ' => ' . $statusCode;
         }
 
-        return empty($documentation) ? '*' : $documentation;
+        return $documentationLines;
     }
 
-    private function getThrowsDocumentation(): string
+    private function getThrowsDocumentation(): array
     {
-        $documentation = '';
+        $documentationLines = [];
 
         foreach ($this->exceptionClasses as $exceptionClass) {
-            $documentation .= "* @throws {$exceptionClass->getClassName()} when received {$exceptionClass->getStatusCode()} ({$exceptionClass->getDescription()})" . PHP_EOL;
+            $documentationLines[] = "* @throws {$exceptionClass->getClassName()} when received {$exceptionClass->getStatusCode()} ({$exceptionClass->getDescription()})";
         }
 
-        return empty($documentation) ? '*' : $documentation;
+        return $documentationLines;
     }
 
     private function getReturnType(): string

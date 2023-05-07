@@ -33,7 +33,6 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
         $expectedDocumentation = <<<'DOC'
             /**
              * @return ResponseClass => 200
-             *
              */
             DOC;
 
@@ -55,7 +54,6 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
         $expectedDocumentation = <<<'DOC'
             /**
              * @return ResponseListClass => 200
-             *
              */
             DOC;
 
@@ -77,9 +75,8 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
 
         $expectedDocumentation = <<<'DOC'
             /**
-             *
              * @throws Exception400 when received 400 (Bad Request)
-            * @throws Exception404 when received 404 (Not found)
+             * @throws Exception404 when received 404 (Not found)
              */
             DOC;
 

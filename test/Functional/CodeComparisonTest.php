@@ -22,7 +22,7 @@ class CodeComparisonTest extends TestCase
         self::runGenerator();
     }
 
-    public function pathProvider(): array
+    public static function pathProvider(): array
     {
         return [
             [self::EXPECTED_CLIENT_PATH, self::GENERATED_CLIENT_PATH],
