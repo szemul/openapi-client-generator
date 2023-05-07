@@ -10,9 +10,9 @@ class ComposerJsonTemplate
 {
     public function __construct(
         private readonly LocationHelper $locationHelper,
-        private readonly string         $vendorName,
-        private readonly string         $projectName,
-        private readonly string         $description
+        private readonly string $vendorName,
+        private readonly string $projectName,
+        private readonly string $description
     ) {
     }
 

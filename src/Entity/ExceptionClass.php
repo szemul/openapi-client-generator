@@ -5,7 +5,7 @@ namespace Emul\OpenApiClientGenerator\Entity;
 class ExceptionClass
 {
     public function __construct(
-        private readonly int    $statusCode,
+        private readonly int $statusCode,
         private readonly string $description,
         private readonly string $className
     ) {

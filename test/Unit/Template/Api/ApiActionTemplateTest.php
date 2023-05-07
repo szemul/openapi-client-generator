@@ -71,7 +71,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
     {
         $exceptionClass1 = new ExceptionClass(400, 'Bad Request', 'Exception400');
         $exceptionClass2 = new ExceptionClass(404, 'Not found', 'Exception404');
-        $result        = (string)$this->getSut([], [$exceptionClass1, $exceptionClass2]);
+        $result          = (string)$this->getSut([], [$exceptionClass1, $exceptionClass2]);
 
         $expectedDocumentation = <<<'DOC'
             /**

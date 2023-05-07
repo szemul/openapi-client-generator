@@ -26,20 +26,20 @@ class Factory
     public function getModelTemplate(string $modelName, bool $isResponse, ModelPropertyTemplate ...$properties): ModelTemplate
     {
         return new ModelTemplate(
-               $this->diContainer->get(LocationHelper::class),
-               $this->diContainer->get(StringHelper::class),
-               $this->diContainer->get(TypeMapper::class),
-               $modelName,
-               $isResponse,
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $this->diContainer->get(TypeMapper::class),
+            $modelName,
+            $isResponse,
             ...$properties
         );
     }
 
     public function getModelPropertyTemplate(
-        string       $name,
+        string $name,
         PropertyType $type,
-        bool         $isRequired,
-        ?string      $description = null
+        bool $isRequired,
+        ?string $description = null
     ): ModelPropertyTemplate {
         return new ModelPropertyTemplate(
             $this->diContainer->get(TypeMapper::class),
@@ -53,9 +53,9 @@ class Factory
     public function getEnumTemplate(string $name, string ...$values): EnumTemplate
     {
         return new EnumTemplate(
-               $this->diContainer->get(LocationHelper::class),
-               $this->diContainer->get(StringHelper::class),
-               $name,
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $name,
             ...$values
         );
     }

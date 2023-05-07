@@ -10,11 +10,11 @@ use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 class ModelPropertyTemplate
 {
     public function __construct(
-        private readonly TypeMapper   $typeMapper,
-        private readonly string       $name,
+        private readonly TypeMapper $typeMapper,
+        private readonly string $name,
         private readonly PropertyType $type,
-        private readonly bool         $isRequired,
-        private readonly ?string      $description = null
+        private readonly bool $isRequired,
+        private readonly ?string $description = null
     ) {
     }
 
@@ -41,14 +41,14 @@ class ModelPropertyTemplate
         $documentation = '';
         $getterName    = 'get' . ucfirst($this->name);
         $returnType    = $this->isRequired ? '' : '?';
-        $returnType    .= (string)$this->type === PropertyType::OBJECT
+        $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
             : (string)$this->type;
 
         if ((string)$this->type === PropertyType::ARRAY) {
             $arrayItemType = $this->typeMapper->getArrayItemType($this->type);
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
-            $docType       .= $this->isRequired ? '' : '|null';
+            $docType .= $this->isRequired ? '' : '|null';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}

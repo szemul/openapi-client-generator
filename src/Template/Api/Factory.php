@@ -22,9 +22,9 @@ class Factory
     public function getApiTemplate(string $apiTag, ApiActionTemplate ...$actions): ApiTemplate
     {
         return new ApiTemplate(
-               $this->diContainer->get(LocationHelper::class),
-               $this->diContainer->get(StringHelper::class),
-               $apiTag,
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $apiTag,
             ...$actions
         );
     }
@@ -34,12 +34,12 @@ class Factory
      * @param ExceptionClass[] $exceptionClasses
      */
     public function getApiActionTemplate(
-        string     $operationId,
-        string     $actionParameterClassName,
-        string     $url,
+        string $operationId,
+        string $actionParameterClassName,
+        string $url,
         HttpMethod $httpMethod,
-        array      $responseClasses,
-        array      $exceptionClasses
+        array $responseClasses,
+        array $exceptionClasses
     ): ApiActionTemplate {
         return new ApiActionTemplate(
             $this->diContainer->get(LocationHelper::class),
@@ -54,15 +54,15 @@ class Factory
     }
 
     public function getActionParameterTemplate(
-        string    $actionParameterClassName,
-        ?string   $requestModelClassName,
+        string $actionParameterClassName,
+        ?string $requestModelClassName,
         Parameter ...$parameters
     ): ActionParameterTemplate {
         return new ActionParameterTemplate(
-               $this->diContainer->get(LocationHelper::class),
-               $this->diContainer->get(StringHelper::class),
-               $actionParameterClassName,
-               $requestModelClassName,
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(StringHelper::class),
+            $actionParameterClassName,
+            $requestModelClassName,
             ...$parameters
         );
     }

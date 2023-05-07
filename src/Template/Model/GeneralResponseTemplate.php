@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Template\Model;
 
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
-use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class GeneralResponseTemplate extends ClassTemplateAbstract

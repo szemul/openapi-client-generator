@@ -24,22 +24,21 @@ class Factory
     }
 
     public function getRequestCodeExceptionTemplate(
-        int                              $errorCode,
+        int $errorCode,
         RequestExceptionPropertyTemplate ...$properties
     ): RequestCodeExceptionTemplate {
-
         return new RequestCodeExceptionTemplate(
-               $this->diContainer->get(LocationHelper::class),
-               $this->diContainer->get(ClassHelper::class),
-               $errorCode,
+            $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(ClassHelper::class),
+            $errorCode,
             ...$properties
         );
     }
 
     public function getRequestExceptionPropertyTemplate(
-        string       $name,
+        string $name,
         PropertyType $type,
-        ?string      $description = null
+        ?string $description = null
     ): RequestExceptionPropertyTemplate {
         return new RequestExceptionPropertyTemplate(
             $name,

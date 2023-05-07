@@ -16,9 +16,9 @@ class ApiTemplate extends ClassTemplateAbstract
 
     public function __construct(
         private readonly LocationHelper $locationHelper,
-        private readonly StringHelper   $stringHelper,
-        string                          $apiTag,
-        ApiActionTemplate               ...$actions
+        private readonly StringHelper $stringHelper,
+        string $apiTag,
+        ApiActionTemplate ...$actions
     ) {
         $this->apiName = $this->stringHelper->convertToClassName($apiTag);
         $this->actions = $actions;

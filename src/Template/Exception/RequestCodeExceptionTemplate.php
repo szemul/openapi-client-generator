@@ -16,9 +16,9 @@ class RequestCodeExceptionTemplate extends ClassTemplateAbstract
     private array $properties = [];
 
     public function __construct(
-        private readonly LocationHelper  $locationHelper,
-        private readonly ClassHelper     $classHelper,
-        int                              $errorCode,
+        private readonly LocationHelper $locationHelper,
+        private readonly ClassHelper $classHelper,
+        int $errorCode,
         RequestExceptionPropertyTemplate ...$properties
     ) {
         $this->errorCode  = $errorCode;

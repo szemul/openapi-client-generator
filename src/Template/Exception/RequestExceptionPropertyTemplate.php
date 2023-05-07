@@ -13,9 +13,9 @@ class RequestExceptionPropertyTemplate
     private ?string      $description = null;
 
     public function __construct(
-        string       $name,
+        string $name,
         PropertyType $type,
-        ?string      $description = null
+        ?string $description = null
     ) {
         $this->name        = $name;
         $this->type        = $type;

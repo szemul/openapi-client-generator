@@ -12,7 +12,7 @@ class ResponseInterfaceTemplate extends ClassTemplateAbstract
     public function __construct(private readonly LocationHelper $locationHelper)
     {
     }
-    
+
     public function getDirectory(): string
     {
         return $this->locationHelper->getModelPath();

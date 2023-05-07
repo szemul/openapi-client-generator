@@ -21,10 +21,10 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
     public function __construct(
         private readonly LocationHelper $locationHelper,
-        private readonly StringHelper   $stringHelper,
-        string                          $className,
-        ?string                         $requestModelClassName,
-        Parameter                       ...$parameters
+        private readonly StringHelper $stringHelper,
+        string $className,
+        ?string $requestModelClassName,
+        Parameter ...$parameters
     ) {
         $this->className             = $className;
         $this->requestModelClassName = $requestModelClassName;
@@ -96,7 +96,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         foreach ($this->parameters as $parameter) {
             $propertyName = $this->getPropertyName($parameter);
             $type         = $parameter->getPhpValueType();
-            $result       .= 'private ' . $type . ' $' . $propertyName . ';' . PHP_EOL;
+            $result .= 'private ' . $type . ' $' . $propertyName . ';' . PHP_EOL;
         }
 
         return $result;

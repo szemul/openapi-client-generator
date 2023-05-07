@@ -26,13 +26,13 @@ class ApiActionTemplate
      */
     public function __construct(
         private readonly LocationHelper $locationHelper,
-        private readonly StringHelper   $stringHelper,
-        string                          $operationId,
-        private readonly string         $parameterClassName,
-        private readonly string         $url,
-        private readonly HttpMethod     $httpMethod,
-        array                           $responseClasses,
-        array                           $exceptionClasses
+        private readonly StringHelper $stringHelper,
+        string $operationId,
+        private readonly string $parameterClassName,
+        private readonly string $url,
+        private readonly HttpMethod $httpMethod,
+        array $responseClasses,
+        array $exceptionClasses
     ) {
         $this->actionName       = $this->stringHelper->convertToMethodOrVariableName($operationId);
         $this->responseClasses  = $responseClasses;
@@ -46,8 +46,8 @@ class ApiActionTemplate
         $returnDocumentation = $this->getReturnDocumentation();
         $throwsDocumentation = $this->getThrowsDocumentation();
         $documentationLines  = array_merge($returnDocumentation, $throwsDocumentation);
-        $documentationLines = empty($documentationLines) ? ['*'] : $documentationLines;
-        $documentation = implode(PHP_EOL . ' ', $documentationLines);
+        $documentationLines  = empty($documentationLines) ? ['*'] : $documentationLines;
+        $documentation       = implode(PHP_EOL . ' ', $documentationLines);
 
         return <<<ACTION
             /**
@@ -252,7 +252,7 @@ class ApiActionTemplate
             $statusCode = $responseClass->getStatusCode();
 
             $responseHandlerMethodName = $this->getResponseGetterMethodName($statusCode);
-            $responseHandlerMatch      .= "{$statusCode} => \$this->{$responseHandlerMethodName}(\$responseCode, \$responseBody)," . PHP_EOL;
+            $responseHandlerMatch .= "{$statusCode} => \$this->{$responseHandlerMethodName}(\$responseCode, \$responseBody)," . PHP_EOL;
         }
         $responseHandlerMatch .= "default => \$this->{$this->getResponseGetterMethodName(null)}(\$responseCode, \$responseBody)," . PHP_EOL;
 

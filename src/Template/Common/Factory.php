@@ -16,7 +16,7 @@ class Factory
     public function getArrayMapperFactoryTemplate(string ...$entityClasses): ArrayMapperFactoryTemplate
     {
         return new ArrayMapperFactoryTemplate(
-               $this->diContainer->get(LocationHelper::class),
+            $this->diContainer->get(LocationHelper::class),
             ...$entityClasses
         );
     }

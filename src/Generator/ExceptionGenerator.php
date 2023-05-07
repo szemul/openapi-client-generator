@@ -13,10 +13,10 @@ use Emul\OpenApiClientGenerator\Template\Exception\Factory;
 class ExceptionGenerator implements GeneratorInterface
 {
     public function __construct(
-        private readonly FileHandler   $fileHandler,
+        private readonly FileHandler $fileHandler,
         private readonly Configuration $configuration,
-        private readonly Factory       $templateFactory,
-        private readonly TypeMapper    $typeMapper
+        private readonly Factory $templateFactory,
+        private readonly TypeMapper $typeMapper
     ) {
     }
 

@@ -12,7 +12,7 @@ class ModelAbstractTemplate extends ClassTemplateAbstract
     public function __construct(private readonly LocationHelper $locationHelper)
     {
     }
-    
+
     public function __toString(): string
     {
         return <<<MODEL

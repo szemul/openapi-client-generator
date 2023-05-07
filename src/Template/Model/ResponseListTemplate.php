@@ -11,7 +11,7 @@ class ResponseListTemplate extends ClassTemplateAbstract
 {
     public function __construct(
         private readonly LocationHelper $locationHelper,
-        private readonly string         $itemClassName
+        private readonly string $itemClassName
     ) {
     }
 

@@ -16,9 +16,9 @@ class EnumTemplate extends ClassTemplateAbstract
 
     public function __construct(
         private readonly LocationHelper $locationHelper,
-        private readonly StringHelper   $stringHelper,
-        string                          $enumName,
-        string                          ...$values
+        private readonly StringHelper $stringHelper,
+        string $enumName,
+        string ...$values
     ) {
         $this->enumName = $enumName;
         $this->values   = $values;
