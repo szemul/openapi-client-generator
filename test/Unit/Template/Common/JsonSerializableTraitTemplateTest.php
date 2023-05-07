@@ -62,6 +62,6 @@ class JsonSerializableTraitTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): JsonSerializableTraitTemplate
     {
-        return new JsonSerializableTraitTemplate($this->locationHelper, $this->stringHelper);
+        return new JsonSerializableTraitTemplate($this->locationHelper);
     }
 }

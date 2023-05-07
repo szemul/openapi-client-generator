@@ -16,11 +16,11 @@ use Emul\OpenApiClientGenerator\Template\Api\Factory;
 class ApiGenerator implements GeneratorInterface
 {
     public function __construct(
-        private readonly FileHandler $fileHandler,
+        private readonly FileHandler   $fileHandler,
         private readonly Configuration $configuration,
-        private readonly Factory $templateFactory,
-        private readonly ClassHelper $classHelper,
-        private readonly SchemaHelper $schemaHelper
+        private readonly Factory       $templateFactory,
+        private readonly ClassHelper   $classHelper,
+        private readonly SchemaHelper  $schemaHelper
     ) {
         if (empty($configuration->getApiDoc()['paths'])) {
             throw new GeneratorNotNeededException();
@@ -36,16 +36,17 @@ class ApiGenerator implements GeneratorInterface
             foreach ($methods as $methodName => $details) {
                 $operationId              = $details['operationId'];
                 $actionParameterClassName = $this->classHelper->getActionParameterClassName($details['tags'][0], $operationId);
+                $httpMethod               = HttpMethod::createFromString(strtoupper($methodName));
+                $responseClasses          = $this->schemaHelper->getActionResponseClasses($details);
+                $exceptionClasses         = $this->schemaHelper->getActionExceptionClasses($details);
 
-                $httpMethod = HttpMethod::createFromString(strtoupper($methodName));
-
-                $responseClasses = $this->schemaHelper->getActionResponseClasses($details);
-                $actionTemplate  = $this->templateFactory->getApiActionTemplate(
+                $actionTemplate = $this->templateFactory->getApiActionTemplate(
                     $operationId,
                     $actionParameterClassName,
                     $path,
                     $httpMethod,
-                    ...$responseClasses
+                    $responseClasses,
+                    $exceptionClasses
                 );
 
                 foreach ($details['tags'] as $tag) {

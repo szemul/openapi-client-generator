@@ -46,6 +46,6 @@ class ComposerJsonTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): ComposerJsonTemplate
     {
-        return new ComposerJsonTemplate($this->locationHelper, $this->stringHelper, $this->vendorName, $this->projectName, $this->description);
+        return new ComposerJsonTemplate($this->locationHelper, $this->vendorName, $this->projectName, $this->description);
     }
 }

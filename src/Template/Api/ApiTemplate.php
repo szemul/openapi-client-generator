@@ -14,22 +14,24 @@ class ApiTemplate extends ClassTemplateAbstract
     /** @var ApiActionTemplate[] */
     private array $actions = [];
 
-    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper, string $apiTag, ApiActionTemplate ...$actions)
-    {
-        parent::__construct($locationHelper, $stringHelper);
-
-        $this->apiName = $this->getStringHelper()->convertToClassName($apiTag);
+    public function __construct(
+        private readonly LocationHelper $locationHelper,
+        private readonly StringHelper   $stringHelper,
+        string                          $apiTag,
+        ApiActionTemplate               ...$actions
+    ) {
+        $this->apiName = $this->stringHelper->convertToClassName($apiTag);
         $this->actions = $actions;
     }
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getApiPath();
+        return $this->locationHelper->getApiPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getApiNamespace();
+        return $this->locationHelper->getApiNamespace();
     }
 
     protected function getShortClassName(): string
@@ -49,8 +51,8 @@ class ApiTemplate extends ClassTemplateAbstract
             use Psr\Http\Client\ClientInterface;
             use Psr\Http\Message\RequestFactoryInterface;
             use Psr\Http\Message\StreamFactoryInterface;
-            use {$this->getLocationHelper()->getRootNamespace()}\Configuration;
-            use {$this->getLocationHelper()->getExceptionNamespace()}\RequestException;
+            use {$this->locationHelper->getRootNamespace()}\Configuration;
+            use {$this->locationHelper->getExceptionNamespace()}\RequestException;
             {$this->getImports()}
             
             class {$this->getClassName()}

@@ -4,61 +4,52 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Api;
 
+use Emul\OpenApiClientGenerator\Entity\ExceptionClass;
 use Emul\OpenApiClientGenerator\Entity\HttpMethod;
 use Emul\OpenApiClientGenerator\Entity\ResponseClass;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
-use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 
-class ApiActionTemplate extends TemplateAbstract
+class ApiActionTemplate
 {
     private string $actionName;
 
     /** @var ResponseClass[] */
     private array $responseClasses = [];
 
-    public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
-        string $operationId,
-        private readonly string $parameterClassName,
-        private readonly string $url,
-        private readonly HttpMethod $httpMethod,
-        ResponseClass ...$responseClasses
-    ) {
-        parent::__construct($locationHelper, $stringHelper);
+    /** @var ExceptionClass[] */
+    private array $exceptionClasses = [];
 
-        $this->actionName      = $this->getStringHelper()->convertToMethodOrVariableName($operationId);
-        $this->responseClasses = $responseClasses;
+    /**
+     * @param ResponseClass[] $responseClasses
+     * @param ExceptionClass[] $exceptionClasses
+     */
+    public function __construct(
+        private readonly LocationHelper $locationHelper,
+        private readonly StringHelper   $stringHelper,
+        string                          $operationId,
+        private readonly string         $parameterClassName,
+        private readonly string         $url,
+        private readonly HttpMethod     $httpMethod,
+        array                           $responseClasses,
+        array                           $exceptionClasses
+    ) {
+        $this->actionName       = $this->stringHelper->convertToMethodOrVariableName($operationId);
+        $this->responseClasses  = $responseClasses;
+        $this->exceptionClasses = $exceptionClasses;
     }
 
     public function __toString(): string
     {
-        $responseHandlerMatch = '';
-        $returnTypes          = [];
-        $returnDocumentation  = '';
-
-        foreach ($this->responseClasses as $responseClass) {
-            $statusCode        = $responseClass->getStatusCode();
-            $responseClassName = $responseClass->getModelClassName();
-
-            $returnDocumentation .= '* @return ' . $responseClassName . ' => ' . $statusCode . PHP_EOL;
-            $returnTypes[]             = $responseClassName;
-            $responseHandlerMethodName = $this->getResponseGetterMethodName($statusCode);
-            $responseHandlerMatch .= "{$statusCode} => \$this->{$responseHandlerMethodName}(\$responseCode, \$responseBody)," . PHP_EOL;
-        }
-        $responseHandlerMatch .= "default => \$this->{$this->getResponseGetterMethodName(null)}(\$responseCode, \$responseBody)," . PHP_EOL;
-        $returnType           = implode('|', array_unique($returnTypes));
-
-        $responseHandling = <<<RESPONSE_HANDLING
-            return match (\$responseCode) {
-                $responseHandlerMatch
-            };
-            RESPONSE_HANDLING;
+        $returnDocumentation = $this->getReturnDocumentation();
+        $throwsDocumentation = $this->getThrowsDocumentation();
+        $returnType          = $this->getReturnType();
+        $responseHandling    = $this->getResponseHandling();
 
         return <<<ACTION
             /**
              {$returnDocumentation}
+             {$throwsDocumentation}
              */
             public function {$this->actionName}({$this->parameterClassName} \$request): {$returnType}
             {
@@ -105,7 +96,7 @@ class ApiActionTemplate extends TemplateAbstract
                 \$responseBody = \$response->getBody()->getContents();
 
                 if (\$responseCode >= 400) {
-                    \$requestExceptionClass = '\\{$this->getLocationHelper()->getExceptionNamespace()}\Request' . \$responseCode . 'Exception';
+                    \$requestExceptionClass = '\\{$this->locationHelper->getExceptionNamespace()}\Request' . \$responseCode . 'Exception';
                     \$responseHeaders       = \$response->getHeaders();
 
                     if (class_exists(\$requestExceptionClass)) {
@@ -134,19 +125,23 @@ class ApiActionTemplate extends TemplateAbstract
 
     public function getParameterFullClassName(): string
     {
-        return $this->getLocationHelper()->getActionParameterNamespace() . '\\' . $this->parameterClassName;
+        return $this->locationHelper->getActionParameterNamespace() . '\\' . $this->parameterClassName;
     }
 
     public function getClassesToImport(): array
     {
         $result = [
-            $this->getLocationHelper()->getRootNamespace() . '\\ArrayMapperFactory',
-            $this->getLocationHelper()->getModelNamespace() . '\\GeneralResponse',
-            $this->getLocationHelper()->getModelNamespace() . '\\ResponseInterface',
+            $this->locationHelper->getRootNamespace() . '\\ArrayMapperFactory',
+            $this->locationHelper->getModelNamespace() . '\\GeneralResponse',
+            $this->locationHelper->getModelNamespace() . '\\ResponseInterface',
         ];
 
         foreach ($this->responseClasses as $responseClass) {
-            $result[] = $this->getLocationHelper()->getModelNamespace() . '\\' . $responseClass->getModelClassName();
+            $result[] = $this->locationHelper->getModelNamespace() . '\\' . $responseClass->getModelClassName();
+        }
+
+        foreach ($this->exceptionClasses as $exceptionClass) {
+            $result[] = $this->locationHelper->getExceptionNamespace() . '\\' . $exceptionClass->getClassName();
         }
 
         return $result;
@@ -209,6 +204,60 @@ class ApiActionTemplate extends TemplateAbstract
 
     private function getResponseGetterMethodName(?int $statusCode): string
     {
-        return $this->getStringHelper()->convertToMethodOrVariableName("get_{$this->actionName}_Response_{$statusCode}");
+        return $this->stringHelper->convertToMethodOrVariableName("get_{$this->actionName}_Response_{$statusCode}");
+    }
+
+    private function getReturnDocumentation(): string
+    {
+        $documentation = '';
+        foreach ($this->responseClasses as $responseClass) {
+            $statusCode        = $responseClass->getStatusCode();
+            $responseClassName = $responseClass->getModelClassName();
+
+            $documentation .= '* @return ' . $responseClassName . ' => ' . $statusCode . PHP_EOL;
+        }
+
+        return empty($documentation) ? '*' : $documentation;
+    }
+
+    private function getThrowsDocumentation(): string
+    {
+        $documentation = '';
+
+        foreach ($this->exceptionClasses as $exceptionClass) {
+            $documentation .= "* @throws {$exceptionClass->getClassName()} when received {$exceptionClass->getStatusCode()} ({$exceptionClass->getDescription()})" . PHP_EOL;
+        }
+
+        return empty($documentation) ? '*' : $documentation;
+    }
+
+    private function getReturnType(): string
+    {
+        $returnTypes = [];
+        foreach ($this->responseClasses as $responseClass) {
+            $responseClassName = $responseClass->getModelClassName();
+
+            $returnTypes[] = $responseClassName;
+        }
+
+        return implode('|', array_unique($returnTypes));
+    }
+
+    private function getResponseHandling(): string
+    {
+        $responseHandlerMatch = '';
+        foreach ($this->responseClasses as $responseClass) {
+            $statusCode = $responseClass->getStatusCode();
+
+            $responseHandlerMethodName = $this->getResponseGetterMethodName($statusCode);
+            $responseHandlerMatch      .= "{$statusCode} => \$this->{$responseHandlerMethodName}(\$responseCode, \$responseBody)," . PHP_EOL;
+        }
+        $responseHandlerMatch .= "default => \$this->{$this->getResponseGetterMethodName(null)}(\$responseCode, \$responseBody)," . PHP_EOL;
+
+        return <<<RESPONSE_HANDLING
+            return match (\$responseCode) {
+                $responseHandlerMatch
+            };
+            RESPONSE_HANDLING;
     }
 }

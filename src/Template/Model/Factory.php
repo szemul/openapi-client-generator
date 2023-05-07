@@ -20,31 +20,28 @@ class Factory
     {
         return new ModelAbstractTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class)
         );
     }
 
     public function getModelTemplate(string $modelName, bool $isResponse, ModelPropertyTemplate ...$properties): ModelTemplate
     {
         return new ModelTemplate(
-            $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
-            $this->diContainer->get(TypeMapper::class),
-            $modelName,
-            $isResponse,
+               $this->diContainer->get(LocationHelper::class),
+               $this->diContainer->get(StringHelper::class),
+               $this->diContainer->get(TypeMapper::class),
+               $modelName,
+               $isResponse,
             ...$properties
         );
     }
 
     public function getModelPropertyTemplate(
-        string $name,
+        string       $name,
         PropertyType $type,
-        bool $isRequired,
-        ?string $description = null
+        bool         $isRequired,
+        ?string      $description = null
     ): ModelPropertyTemplate {
         return new ModelPropertyTemplate(
-            $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
             $this->diContainer->get(TypeMapper::class),
             $name,
             $type,
@@ -56,9 +53,9 @@ class Factory
     public function getEnumTemplate(string $name, string ...$values): EnumTemplate
     {
         return new EnumTemplate(
-            $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
-            $name,
+               $this->diContainer->get(LocationHelper::class),
+               $this->diContainer->get(StringHelper::class),
+               $name,
             ...$values
         );
     }
@@ -67,7 +64,6 @@ class Factory
     {
         return new GeneralResponseTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 
@@ -75,7 +71,6 @@ class Factory
     {
         return new ResponseInterfaceTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 
@@ -83,7 +78,6 @@ class Factory
     {
         return new ResponseListInterfaceTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 
@@ -91,7 +85,6 @@ class Factory
     {
         return new ResponseListTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
             $itemClassName
         );
     }
@@ -100,7 +93,6 @@ class Factory
     {
         return new ResponseTraitTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 }

@@ -10,21 +10,18 @@ use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class GeneralResponseTemplate extends ClassTemplateAbstract
 {
-    public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper
-    ) {
-        parent::__construct($locationHelper, $stringHelper);
+    public function __construct(private readonly LocationHelper $locationHelper)
+    {
     }
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getModelPath();
+        return $this->locationHelper->getModelPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getModelNamespace();
+        return $this->locationHelper->getModelNamespace();
     }
 
     protected function getShortClassName(): string
@@ -39,7 +36,7 @@ class GeneralResponseTemplate extends ClassTemplateAbstract
             
             declare(strict_types=1);
             
-            namespace {$this->getLocationHelper()->getModelNamespace()};
+            namespace {$this->locationHelper->getModelNamespace()};
             
             use JsonSerializable;
             

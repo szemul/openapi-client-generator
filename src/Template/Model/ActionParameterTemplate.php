@@ -20,14 +20,12 @@ class ActionParameterTemplate extends ClassTemplateAbstract
     private array $parameters;
 
     public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
-        string $className,
-        ?string $requestModelClassName,
-        Parameter ...$parameters
+        private readonly LocationHelper $locationHelper,
+        private readonly StringHelper   $stringHelper,
+        string                          $className,
+        ?string                         $requestModelClassName,
+        Parameter                       ...$parameters
     ) {
-        parent::__construct($locationHelper, $stringHelper);
-
         $this->className             = $className;
         $this->requestModelClassName = $requestModelClassName;
         $this->parameters            = $parameters;
@@ -35,12 +33,12 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getActionParameterPath();
+        return $this->locationHelper->getActionParameterPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getActionParameterNamespace();
+        return $this->locationHelper->getActionParameterNamespace();
     }
 
     protected function getShortClassName(): string
@@ -84,7 +82,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
             return '';
         }
 
-        return 'use ' . $this->getLocationHelper()->getModelNamespace() . '\\' . $this->requestModelClassName . ';' . PHP_EOL;
+        return 'use ' . $this->locationHelper->getModelNamespace() . '\\' . $this->requestModelClassName . ';' . PHP_EOL;
     }
 
     private function getProperties(): string
@@ -98,7 +96,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         foreach ($this->parameters as $parameter) {
             $propertyName = $this->getPropertyName($parameter);
             $type         = $parameter->getPhpValueType();
-            $result .= 'private ' . $type . ' $' . $propertyName . ';' . PHP_EOL;
+            $result       .= 'private ' . $type . ' $' . $propertyName . ';' . PHP_EOL;
         }
 
         return $result;
@@ -186,7 +184,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
         if (!empty($this->requestModelClassName)) {
             $propertyName = self::REQUEST_MODEL_PROPERTY_NAME;
-            $getterName   = $this->getStringHelper()->convertToMethodOrVariableName('get_' . $propertyName);
+            $getterName   = $this->stringHelper->convertToMethodOrVariableName('get_' . $propertyName);
             $result       = <<<GETTER
                 public function $getterName(): $this->requestModelClassName
                 {
@@ -215,7 +213,7 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
         if (!empty($this->requestModelClassName)) {
             $propertyName = self::REQUEST_MODEL_PROPERTY_NAME;
-            $setterName   = $this->getStringHelper()->convertToMethodOrVariableName('set_' . $propertyName);
+            $setterName   = $this->stringHelper->convertToMethodOrVariableName('set_' . $propertyName);
             $result       = <<<SETTER
                 public function $setterName($this->requestModelClassName \$model): self
                 {
@@ -244,16 +242,16 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
     private function getPropertyName(Parameter $parameter): string
     {
-        return $this->getStringHelper()->convertToMethodOrVariableName($parameter->getType() . '_' . $parameter->getName());
+        return $this->stringHelper->convertToMethodOrVariableName($parameter->getType() . '_' . $parameter->getName());
     }
 
     private function getPropertyGetterName(Parameter $parameter): string
     {
-        return $this->getStringHelper()->convertToMethodOrVariableName('get_' . $this->getPropertyName($parameter));
+        return $this->stringHelper->convertToMethodOrVariableName('get_' . $this->getPropertyName($parameter));
     }
 
     private function getPropertySetterName(Parameter $parameter): string
     {
-        return $this->getStringHelper()->convertToMethodOrVariableName('set_' . $this->getPropertyName($parameter));
+        return $this->stringHelper->convertToMethodOrVariableName('set_' . $this->getPropertyName($parameter));
     }
 }

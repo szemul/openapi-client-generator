@@ -90,6 +90,6 @@ class ConfigurationTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): ConfigurationTemplate
     {
-        return new ConfigurationTemplate($this->locationHelper, $this->stringHelper);
+        return new ConfigurationTemplate($this->locationHelper);
     }
 }

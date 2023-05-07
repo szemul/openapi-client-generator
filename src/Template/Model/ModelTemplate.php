@@ -18,27 +18,25 @@ class ModelTemplate extends ClassTemplateAbstract
     private array $properties;
 
     public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
+        private readonly LocationHelper $locationHelper,
+        private readonly StringHelper $stringHelper,
         private readonly TypeMapper $typeMapper,
         string $modelName,
         private readonly bool $isResponse,
         ModelPropertyTemplate ...$properties
     ) {
-        parent::__construct($locationHelper, $stringHelper);
-
-        $this->className  = $this->getStringHelper()->convertToClassName($modelName);
+        $this->className  = $this->stringHelper->convertToClassName($modelName);
         $this->properties = $properties;
     }
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getModelPath();
+        return $this->locationHelper->getModelPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getModelNamespace();
+        return $this->locationHelper->getModelNamespace();
     }
 
     protected function getShortClassName(): string

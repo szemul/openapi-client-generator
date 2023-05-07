@@ -70,6 +70,6 @@ class RequestCodeExceptionTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): RequestCodeExceptionTemplate
     {
-        return new RequestCodeExceptionTemplate($this->locationHelper, $this->stringHelper, $this->errorCode, $this->property);
+        return new RequestCodeExceptionTemplate($this->locationHelper, $this->classHelper, $this->errorCode, $this->property);
     }
 }

@@ -6,7 +6,6 @@ namespace Emul\OpenApiClientGenerator\Template\Common;
 
 use DI\Container;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
-use Emul\OpenApiClientGenerator\Helper\StringHelper;
 
 class Factory
 {
@@ -17,8 +16,7 @@ class Factory
     public function getArrayMapperFactoryTemplate(string ...$entityClasses): ArrayMapperFactoryTemplate
     {
         return new ArrayMapperFactoryTemplate(
-            $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
+               $this->diContainer->get(LocationHelper::class),
             ...$entityClasses
         );
     }
@@ -27,7 +25,6 @@ class Factory
     {
         return new ComposerJsonTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
             $vendorName,
             $projectName,
             $description
@@ -38,7 +35,6 @@ class Factory
     {
         return new ConfigurationTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class)
         );
     }
 
@@ -46,7 +42,6 @@ class Factory
     {
         return new JsonSerializableTraitTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class)
         );
     }
 }

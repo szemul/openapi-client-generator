@@ -72,6 +72,6 @@ class RequestExceptionTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): RequestExceptionTemplate
     {
-        return new RequestExceptionTemplate($this->locationHelper, $this->stringHelper);
+        return new RequestExceptionTemplate($this->locationHelper);
     }
 }
