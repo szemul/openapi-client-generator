@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Exception;
 
+use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class RequestExceptionTemplate extends ClassTemplateAbstract
 {
+    public function __construct(private readonly LocationHelper $locationHelper)
+    {
+    }
+
     public function __toString(): string
     {
         return <<<MODEL
@@ -52,12 +57,12 @@ class RequestExceptionTemplate extends ClassTemplateAbstract
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getExceptionPath();
+        return $this->locationHelper->getExceptionPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getExceptionNamespace();
+        return $this->locationHelper->getExceptionNamespace();
     }
 
     protected function getShortClassName(): string

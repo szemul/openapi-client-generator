@@ -5,19 +5,15 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Template\Common;
 
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
-use Emul\OpenApiClientGenerator\Helper\StringHelper;
-use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 
-class ComposerJsonTemplate extends TemplateAbstract
+class ComposerJsonTemplate
 {
     public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
+        private readonly LocationHelper $locationHelper,
         private readonly string $vendorName,
         private readonly string $projectName,
         private readonly string $description
     ) {
-        parent::__construct($locationHelper, $stringHelper);
     }
 
     public function __toString(): string
@@ -40,7 +36,7 @@ class ComposerJsonTemplate extends TemplateAbstract
                 },
                 "autoload": {
                   "psr-4": {
-                    "{$this->getLocationHelper()->getEscapedRootNamespace()}\\\\": "src"
+                    "{$this->locationHelper->getEscapedRootNamespace()}\\\\": "src"
                   }
                 }
             }

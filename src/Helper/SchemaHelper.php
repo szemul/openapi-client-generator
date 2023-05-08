@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Helper;
 
+use Emul\OpenApiClientGenerator\Entity\ExceptionClass;
 use Emul\OpenApiClientGenerator\Entity\ResponseClass;
 use Exception;
 
@@ -44,6 +45,28 @@ class SchemaHelper
         }
 
         return $responseClasses;
+    }
+
+    /**
+     * @return ExceptionClass[]
+     */
+    public function getActionExceptionClasses(array $actionDetails): array
+    {
+        /** @var ExceptionClass[] $exceptionClasses */
+        $exceptionClasses = [];
+
+        foreach ($actionDetails['responses'] as $statusCode => $response) {
+            $statusCode = (int)$statusCode;
+            if ($statusCode < 400) {
+                continue;
+            }
+
+            $className          = $this->classHelper->getRequestExceptionClassName($statusCode);
+            $description        = $response['description'] ?? '';
+            $exceptionClasses[] = new ExceptionClass($statusCode, $description, $className);
+        }
+
+        return $exceptionClasses;
     }
 
     public function uniteAllOfSchema(array $schemas, string $allOfSchemaName): array

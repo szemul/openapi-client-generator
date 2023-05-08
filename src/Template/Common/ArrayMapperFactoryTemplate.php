@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Template\Common;
 
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
-use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class ArrayMapperFactoryTemplate extends ClassTemplateAbstract
@@ -13,10 +12,8 @@ class ArrayMapperFactoryTemplate extends ClassTemplateAbstract
     /** @var string[] */
     private array $entityClasses = [];
 
-    public function __construct(LocationHelper $locationHelper, StringHelper $stringHelper, string ...$entityClasses)
+    public function __construct(private readonly LocationHelper $locationHelper, string ...$entityClasses)
     {
-        parent::__construct($locationHelper, $stringHelper);
-
         $this->entityClasses = $entityClasses;
     }
 
@@ -98,12 +95,12 @@ class ArrayMapperFactoryTemplate extends ClassTemplateAbstract
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getRootPath();
+        return $this->locationHelper->getRootPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getRootNamespace();
+        return $this->locationHelper->getRootNamespace();
     }
 
     protected function getShortClassName(): string

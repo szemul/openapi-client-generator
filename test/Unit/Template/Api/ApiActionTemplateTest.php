@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Test\Unit\Template\Api;
 
+use Emul\OpenApiClientGenerator\Entity\ExceptionClass;
 use Emul\OpenApiClientGenerator\Entity\HttpMethod;
 use Emul\OpenApiClientGenerator\Entity\ResponseClass;
 use Emul\OpenApiClientGenerator\Template\Api\ApiActionTemplate;
@@ -26,7 +27,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
     public function testToString_shouldGenerateTemplate()
     {
         $responseClass = new ResponseClass(200, false, 'ResponseClass');
-        $result        = (string)$this->getSut($responseClass);
+        $result        = (string)$this->getSut([$responseClass], []);
 
         $expectedReturnType    = $responseClass->getModelClassName();
         $expectedDocumentation = <<<'DOC'
@@ -48,7 +49,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
     public function testToStringWhenResponseListClassGiven_shouldGenerateTemplate()
     {
         $responseClass = new ResponseClass(200, true, 'ResponseListClass');
-        $result        = (string)$this->getSut($responseClass);
+        $result        = (string)$this->getSut([$responseClass], []);
 
         $expectedDocumentation = <<<'DOC'
             /**
@@ -66,24 +67,53 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
         $this->assertActionSame($expectedDocumentation, $responseClass->getModelClassName(), $expectedResultHandling, $result);
     }
 
+    public function testToStringWhenExceptionsGiven_shouldGenerateThrowsDocumentation()
+    {
+        $exceptionClass1 = new ExceptionClass(400, 'Bad Request', 'Exception400');
+        $exceptionClass2 = new ExceptionClass(404, 'Not found', 'Exception404');
+        $result          = (string)$this->getSut([], [$exceptionClass1, $exceptionClass2]);
+
+        $expectedDocumentation = <<<'DOC'
+            /**
+             * @throws Exception400 when received 400 (Bad Request)
+             * @throws Exception404 when received 404 (Not found)
+             */
+            DOC;
+
+        $expectedResultHandling = <<<'RESPONSE'
+            return match ($responseCode) {
+                default => $this->getCreateEntityResponse($responseCode, $responseBody),
+            };
+            RESPONSE;
+
+        $this->assertActionSame($expectedDocumentation, '', $expectedResultHandling, $result);
+    }
+
     public function testGetParameterFullClassName()
     {
-        $result = $this->getSut()->getParameterFullClassName();
+        $result = $this->getSut([], [])->getParameterFullClassName();
 
         $this->assertSame('Root\Model\ActionParameter\EntityCreateRequest', $result);
     }
 
     public function testGetClasses_shouldReturnMapperAndResponse()
     {
-        $responseClass1 = new ResponseClass(200, false, 'Response1');
-        $responseClass2 = new ResponseClass(201, false, 'Response2');
-        $result         = $this->getSut($responseClass1, $responseClass2)->getClassesToImport();
+        $responseClass1  = new ResponseClass(200, false, 'Response1');
+        $responseClass2  = new ResponseClass(201, false, 'Response2');
+        $exceptionClass1 = new ExceptionClass(400, 'Bad Request', 'Exception400');
+        $exceptionClass2 = new ExceptionClass(404, 'Not found', 'Exception404');
+
+        $sut = $this->getSut([$responseClass1, $responseClass2], [$exceptionClass1, $exceptionClass2]);
+
+        $result         = $sut->getClassesToImport();
         $expectedResult = [
             'Root\ArrayMapperFactory',
             'Root\Model\GeneralResponse',
             'Root\Model\ResponseInterface',
             'Root\Model\Response1',
             'Root\Model\Response2',
+            'Root\Exception\Exception400',
+            'Root\Exception\Exception404',
         ];
 
         $this->assertSame($expectedResult, $result);
@@ -155,7 +185,11 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
         $this->assertRenderedStringSame($expectedResult, $result);
     }
 
-    private function getSut(ResponseClass ...$responseClasses): ApiActionTemplate
+    /**
+     * @param ResponseClass[] $responseClasses
+     * @param ExceptionClass[] $exceptionClasses
+     */
+    private function getSut(array $responseClasses, array $exceptionClasses): ApiActionTemplate
     {
         return new ApiActionTemplate(
             $this->locationHelper,
@@ -164,7 +198,8 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
             $this->requestModelClassName,
             $this->url,
             $this->httpMethod,
-            ...$responseClasses
+            $responseClasses,
+            $exceptionClasses
         );
     }
 }

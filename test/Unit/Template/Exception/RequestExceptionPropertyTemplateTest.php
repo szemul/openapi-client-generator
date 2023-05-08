@@ -88,6 +88,6 @@ class RequestExceptionPropertyTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(PropertyType $type, ?string $description = null): RequestExceptionPropertyTemplate
     {
-        return new RequestExceptionPropertyTemplate($this->locationHelper, $this->stringHelper, $this->name, $type, $description);
+        return new RequestExceptionPropertyTemplate($this->name, $type, $description);
     }
 }

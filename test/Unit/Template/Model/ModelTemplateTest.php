@@ -141,8 +141,6 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
     private function getPropertyTemplate(string $name, PropertyType $type, bool $isRequired, ?string $description): ModelPropertyTemplate
     {
         return new ModelPropertyTemplate(
-            $this->locationHelper,
-            $this->stringHelper,
             $this->typeMapper,
             $name,
             $type,

@@ -1,15 +1,11 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
          beStrictAboutChangesToGlobalState="true"
          beStrictAboutOutputDuringTests="true"
          colors="true"
-     >
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./src/</directory>
-        </include>
-    </coverage>
+         cacheDirectory=".phpunit.cache">
+    <coverage/>
     <testsuites>
         <testsuite name="unit">
             <directory>./test/Unit</directory>
@@ -23,4 +19,9 @@
             <exclude>./test/Unit</exclude>
         </testsuite>
     </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">./src/</directory>
+        </include>
+    </source>
 </phpunit>

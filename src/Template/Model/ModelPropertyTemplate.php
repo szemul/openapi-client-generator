@@ -5,23 +5,17 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Template\Model;
 
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
-use Emul\OpenApiClientGenerator\Helper\LocationHelper;
-use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
-use Emul\OpenApiClientGenerator\Template\TemplateAbstract;
 
-class ModelPropertyTemplate extends TemplateAbstract
+class ModelPropertyTemplate
 {
     public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
         private readonly TypeMapper $typeMapper,
         private readonly string $name,
         private readonly PropertyType $type,
         private readonly bool $isRequired,
         private readonly ?string $description = null
     ) {
-        parent::__construct($locationHelper, $stringHelper);
     }
 
     public function __toString(): string

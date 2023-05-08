@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template;
 
-abstract class ClassTemplateAbstract extends TemplateAbstract implements RepresentsClassInterface
+abstract class ClassTemplateAbstract implements RepresentsClassInterface
 {
     abstract protected function getShortClassName(): string;
 

@@ -5,27 +5,24 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Template\Model;
 
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
-use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class ResponseListTemplate extends ClassTemplateAbstract
 {
     public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
+        private readonly LocationHelper $locationHelper,
         private readonly string $itemClassName
     ) {
-        parent::__construct($locationHelper, $stringHelper);
     }
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getModelPath();
+        return $this->locationHelper->getModelPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getModelNamespace();
+        return $this->locationHelper->getModelNamespace();
     }
 
     protected function getShortClassName(): string
@@ -40,7 +37,7 @@ class ResponseListTemplate extends ClassTemplateAbstract
             
             declare(strict_types=1);
             
-            namespace {$this->getLocationHelper()->getModelNamespace()};
+            namespace {$this->locationHelper->getModelNamespace()};
             
             use JsonSerializable;
             

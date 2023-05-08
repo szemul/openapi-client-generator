@@ -6,8 +6,8 @@ namespace Emul\OpenApiClientGenerator\Template\Exception;
 
 use DI\Container;
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
+use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
-use Emul\OpenApiClientGenerator\Helper\StringHelper;
 
 class Factory
 {
@@ -20,10 +20,7 @@ class Factory
 
     public function getPropertyNotInitializedExceptionTemplate(): PropertyNotInitializedExceptionTemplate
     {
-        return new PropertyNotInitializedExceptionTemplate(
-            $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
-        );
+        return $this->diContainer->get(PropertyNotInitializedExceptionTemplate::class);
     }
 
     public function getRequestCodeExceptionTemplate(
@@ -32,7 +29,7 @@ class Factory
     ): RequestCodeExceptionTemplate {
         return new RequestCodeExceptionTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
+            $this->diContainer->get(ClassHelper::class),
             $errorCode,
             ...$properties
         );
@@ -44,8 +41,6 @@ class Factory
         ?string $description = null
     ): RequestExceptionPropertyTemplate {
         return new RequestExceptionPropertyTemplate(
-            $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
             $name,
             $type,
             $description
@@ -56,7 +51,6 @@ class Factory
     {
         return new RequestExceptionTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 }

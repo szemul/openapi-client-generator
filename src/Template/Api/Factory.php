@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Template\Api;
 
 use DI\Container;
+use Emul\OpenApiClientGenerator\Entity\ExceptionClass;
 use Emul\OpenApiClientGenerator\Entity\HttpMethod;
 use Emul\OpenApiClientGenerator\Entity\Parameter;
 use Emul\OpenApiClientGenerator\Entity\ResponseClass;
@@ -28,12 +29,17 @@ class Factory
         );
     }
 
+    /**
+     * @param ResponseClass[] $responseClasses
+     * @param ExceptionClass[] $exceptionClasses
+     */
     public function getApiActionTemplate(
         string $operationId,
         string $actionParameterClassName,
         string $url,
         HttpMethod $httpMethod,
-        ResponseClass ...$responseClasses
+        array $responseClasses,
+        array $exceptionClasses
     ): ApiActionTemplate {
         return new ApiActionTemplate(
             $this->diContainer->get(LocationHelper::class),
@@ -42,7 +48,8 @@ class Factory
             $actionParameterClassName,
             $url,
             $httpMethod,
-            ...$responseClasses
+            $responseClasses,
+            $exceptionClasses
         );
     }
 

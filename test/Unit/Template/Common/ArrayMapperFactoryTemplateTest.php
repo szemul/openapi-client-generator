@@ -109,6 +109,6 @@ class ArrayMapperFactoryTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): ArrayMapperFactoryTemplate
     {
-        return new ArrayMapperFactoryTemplate($this->locationHelper, $this->stringHelper, ...$this->entityClasses);
+        return new ArrayMapperFactoryTemplate($this->locationHelper, ...$this->entityClasses);
     }
 }

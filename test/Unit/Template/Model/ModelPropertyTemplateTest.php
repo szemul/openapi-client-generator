@@ -225,8 +225,6 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
     private function getSut(PropertyType $type, bool $isRequired, ?string $description = null): ModelPropertyTemplate
     {
         return new ModelPropertyTemplate(
-            $this->locationHelper,
-            $this->stringHelper,
             $this->typeMapper,
             $this->name,
             $type,

@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Model;
 
+use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class ModelAbstractTemplate extends ClassTemplateAbstract
 {
+    public function __construct(private readonly LocationHelper $locationHelper)
+    {
+    }
+
     public function __toString(): string
     {
         return <<<MODEL
@@ -17,8 +22,8 @@ class ModelAbstractTemplate extends ClassTemplateAbstract
             
             namespace {$this->getNamespace()};
             
-            use {$this->getLocationHelper()->getRootNamespace()}\JsonSerializableTrait;
-            use {$this->getLocationHelper()->getExceptionNamespace()}\PropertyNotInitializedException;
+            use {$this->locationHelper->getRootNamespace()}\JsonSerializableTrait;
+            use {$this->locationHelper->getExceptionNamespace()}\PropertyNotInitializedException;
             use JsonSerializable;
             use ReflectionException;
             use ReflectionProperty;
@@ -54,12 +59,12 @@ class ModelAbstractTemplate extends ClassTemplateAbstract
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getModelPath();
+        return $this->locationHelper->getModelPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getModelNamespace();
+        return $this->locationHelper->getModelNamespace();
     }
 
     protected function getShortClassName(): string

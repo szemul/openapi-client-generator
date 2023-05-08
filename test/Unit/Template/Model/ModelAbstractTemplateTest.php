@@ -74,6 +74,6 @@ class ModelAbstractTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): ModelAbstractTemplate
     {
-        return new ModelAbstractTemplate($this->locationHelper, $this->stringHelper);
+        return new ModelAbstractTemplate($this->locationHelper);
     }
 }

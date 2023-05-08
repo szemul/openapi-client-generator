@@ -9,7 +9,7 @@ use Emul\OpenApiClientGenerator\Test\Unit\TestCaseAbstract;
 
 class StringHelperTest extends TestCaseAbstract
 {
-    public function constantProvider(): array
+    public static function constantProvider(): array
     {
         return [
             ['word', 'WORD'],
@@ -34,7 +34,7 @@ class StringHelperTest extends TestCaseAbstract
         $this->assertSame($expectedResult, $result);
     }
 
-    public function methodProvider(): array
+    public static function methodProvider(): array
     {
         return [
             ['word', 'word'],
@@ -57,7 +57,7 @@ class StringHelperTest extends TestCaseAbstract
         $this->assertSame($expectedResult, $result);
     }
 
-    public function classProvider(): array
+    public static function classProvider(): array
     {
         return [
             ['word', 'Word'],

@@ -46,6 +46,6 @@ class ResponseListInterfaceTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): ResponseListInterfaceTemplate
     {
-        return new ResponseListInterfaceTemplate($this->locationHelper, $this->stringHelper);
+        return new ResponseListInterfaceTemplate($this->locationHelper);
     }
 }

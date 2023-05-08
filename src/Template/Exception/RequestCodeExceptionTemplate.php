@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Exception;
 
+use Emul\OpenApiClientGenerator\Helper\ClassHelper;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
-use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class RequestCodeExceptionTemplate extends ClassTemplateAbstract
@@ -16,13 +16,11 @@ class RequestCodeExceptionTemplate extends ClassTemplateAbstract
     private array $properties = [];
 
     public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
+        private readonly LocationHelper $locationHelper,
+        private readonly ClassHelper $classHelper,
         int $errorCode,
         RequestExceptionPropertyTemplate ...$properties
     ) {
-        parent::__construct($locationHelper, $stringHelper);
-
         $this->errorCode  = $errorCode;
         $this->properties = $properties;
     }
@@ -54,16 +52,16 @@ class RequestCodeExceptionTemplate extends ClassTemplateAbstract
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getExceptionPath();
+        return $this->locationHelper->getExceptionPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getExceptionNamespace();
+        return $this->locationHelper->getExceptionNamespace();
     }
 
     protected function getShortClassName(): string
     {
-        return 'Request' . $this->errorCode . 'Exception';
+        return $this->classHelper->getRequestExceptionClassName($this->errorCode);
     }
 }

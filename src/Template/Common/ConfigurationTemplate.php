@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Emul\OpenApiClientGenerator\Template\Common;
 
+use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
 
 class ConfigurationTemplate extends ClassTemplateAbstract
 {
+    public function __construct(private readonly LocationHelper $locationHelper)
+    {
+    }
+
     public function __toString(): string
     {
         return <<<CONFIGURATION
@@ -71,12 +76,12 @@ class ConfigurationTemplate extends ClassTemplateAbstract
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getRootPath();
+        return $this->locationHelper->getRootPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getRootNamespace();
+        return $this->locationHelper->getRootNamespace();
     }
 
     protected function getShortClassName(): string

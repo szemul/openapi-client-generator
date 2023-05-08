@@ -78,6 +78,6 @@ class ResponseListTemplateTest extends TemplateTestCaseAbstract
 
     private function getSut(): ResponseListTemplate
     {
-        return new ResponseListTemplate($this->locationHelper, $this->stringHelper, $this->itemClassName);
+        return new ResponseListTemplate($this->locationHelper, $this->itemClassName);
     }
 }

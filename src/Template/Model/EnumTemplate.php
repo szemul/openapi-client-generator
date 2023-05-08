@@ -15,30 +15,28 @@ class EnumTemplate extends ClassTemplateAbstract
     private array $values;
 
     public function __construct(
-        LocationHelper $locationHelper,
-        StringHelper $stringHelper,
+        private readonly LocationHelper $locationHelper,
+        private readonly StringHelper $stringHelper,
         string $enumName,
         string ...$values
     ) {
-        parent::__construct($locationHelper, $stringHelper);
-
         $this->enumName = $enumName;
         $this->values   = $values;
     }
 
     public function getDirectory(): string
     {
-        return $this->getLocationHelper()->getEnumPath();
+        return $this->locationHelper->getEnumPath();
     }
 
     public function getNamespace(): string
     {
-        return $this->getLocationHelper()->getEnumNamespace();
+        return $this->locationHelper->getEnumNamespace();
     }
 
     protected function getShortClassName(): string
     {
-        return $this->getStringHelper()->convertToClassName($this->enumName);
+        return $this->stringHelper->convertToClassName($this->enumName);
     }
 
     public function __toString(): string
@@ -65,7 +63,7 @@ class EnumTemplate extends ClassTemplateAbstract
         $constants = [];
 
         foreach ($this->values as $value) {
-            $constName = $this->getStringHelper()->convertToConstantName($value);
+            $constName = $this->stringHelper->convertToConstantName($value);
 
             $constants[] = '    public const ' . $constName . " = '" . $value . "';";
         }
@@ -78,8 +76,8 @@ class EnumTemplate extends ClassTemplateAbstract
         $methods = [];
 
         foreach ($this->values as $value) {
-            $methodName = $this->getStringHelper()->convertToMethodOrVariableName($value);
-            $constName  = $this->getStringHelper()->convertToConstantName($value);
+            $methodName = $this->stringHelper->convertToMethodOrVariableName($value);
+            $constName  = $this->stringHelper->convertToConstantName($value);
 
             $methods[] = <<<CREATOR
                 public static function {$methodName}(): self
@@ -98,7 +96,7 @@ class EnumTemplate extends ClassTemplateAbstract
         $constantList = '';
 
         foreach ($this->values as $value) {
-            $constName   = $this->getStringHelper()->convertToConstantName($value);
+            $constName   = $this->stringHelper->convertToConstantName($value);
             $constants[] = 'self::' . $constName;
         }
         $constantList = implode(', ', $constants);

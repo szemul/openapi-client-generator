@@ -24,4 +24,9 @@ class ClassHelper
     {
         return $this->getModelClassname($subTypeReference) . 'List';
     }
+
+    public function getRequestExceptionClassName(int $errorCode): string
+    {
+        return 'Request' . $errorCode . 'Exception';
+    }
 }

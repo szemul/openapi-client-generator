@@ -20,7 +20,6 @@ class Factory
     {
         return new ModelAbstractTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class)
         );
     }
 
@@ -43,8 +42,6 @@ class Factory
         ?string $description = null
     ): ModelPropertyTemplate {
         return new ModelPropertyTemplate(
-            $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
             $this->diContainer->get(TypeMapper::class),
             $name,
             $type,
@@ -67,7 +64,6 @@ class Factory
     {
         return new GeneralResponseTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 
@@ -75,7 +71,6 @@ class Factory
     {
         return new ResponseInterfaceTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 
@@ -83,7 +78,6 @@ class Factory
     {
         return new ResponseListInterfaceTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 
@@ -91,7 +85,6 @@ class Factory
     {
         return new ResponseListTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
             $itemClassName
         );
     }
@@ -100,7 +93,6 @@ class Factory
     {
         return new ResponseTraitTemplate(
             $this->diContainer->get(LocationHelper::class),
-            $this->diContainer->get(StringHelper::class),
         );
     }
 }

@@ -44,6 +44,6 @@ class PropertyNotInitializedExceptionTemplateTest extends TemplateTestCaseAbstra
 
     private function getSut(): PropertyNotInitializedExceptionTemplate
     {
-        return new PropertyNotInitializedExceptionTemplate($this->locationHelper, $this->stringHelper);
+        return new PropertyNotInitializedExceptionTemplate($this->locationHelper);
     }
 }
