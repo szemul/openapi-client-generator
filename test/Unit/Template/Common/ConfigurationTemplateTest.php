@@ -45,12 +45,12 @@ class ConfigurationTemplateTest extends TemplateTestCaseAbstract
                     return $this;
                 }
 
-                public function getApiKeyHeaderName(): string
+                public function getApiKeyHeaderName(): ?string
                 {
                     return $this->apiKeyHeaderName;
                 }
 
-                public function setApiKeyHeaderName(string $apiKeyHeaderName): self
+                public function setApiKeyHeaderName(?string $apiKeyHeaderName): self
                 {
                     $this->apiKeyHeaderName = $apiKeyHeaderName;
             
