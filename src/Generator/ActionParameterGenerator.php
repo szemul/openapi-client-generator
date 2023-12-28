@@ -9,6 +9,7 @@ use Emul\OpenApiClientGenerator\Entity\Parameter;
 use Emul\OpenApiClientGenerator\Exception\GeneratorNotNeededException;
 use Emul\OpenApiClientGenerator\File\FileHandler;
 use Emul\OpenApiClientGenerator\Helper\ClassHelper;
+use Emul\OpenApiClientGenerator\Helper\SchemaHelper;
 use Emul\OpenApiClientGenerator\Mapper\ParameterMapper;
 use Emul\OpenApiClientGenerator\Template\Api\Factory;
 use Exception;
@@ -20,7 +21,8 @@ class ActionParameterGenerator implements GeneratorInterface
         private readonly Configuration $configuration,
         private readonly Factory $templateFactory,
         private readonly ParameterMapper $parameterMapper,
-        private readonly ClassHelper $classHelper
+        private readonly ClassHelper $classHelper,
+        private readonly SchemaHelper $schemaHelper
     ) {
         if (empty($configuration->getApiDoc()['paths'])) {
             throw new GeneratorNotNeededException();
@@ -46,6 +48,10 @@ class ActionParameterGenerator implements GeneratorInterface
 
                 if (!empty($method['parameters'])) {
                     foreach ($method['parameters'] as $parameterDetails) {
+                        if (array_key_exists('$ref', $parameterDetails)) {
+                            $parameterDetails = $this->schemaHelper->getReferencedValue($parameterDetails['$ref'], $this->configuration->getApiDoc());
+                        }
+
                         $parameters[] = $this->parameterMapper->mapParameter($parameterDetails);
                     }
                 }

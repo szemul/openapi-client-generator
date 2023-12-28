@@ -256,6 +256,27 @@ class SchemaHelperTest extends TestCaseAbstract
         $sut->uniteAllOfSchema($schemas, 'name');
     }
 
+    public function testGetReferencedValue_shouldReturnProperValue()
+    {
+        $reference                = '#/components/parameters/parameterName';
+        $expectedResult           = [
+            'required' => true,
+            'type'     => 'string',
+        ];
+        $documentation = [
+            'components' => [
+                'parameters' => [
+                    'parameterName' => $expectedResult,
+                ],
+            ],
+            'somethingElse' => 'other',
+        ];
+
+        $result = $this->getSut()->getReferencedValue($reference, $documentation);
+
+        $this->assertSame($expectedResult, $result);
+    }
+
     public function getSut(): SchemaHelper
     {
         return new SchemaHelper(new ClassHelper(new StringHelper()));
