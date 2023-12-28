@@ -52,11 +52,14 @@ class OrderApi
         $headers = array_merge(
             $this->defaultHeaders,
             [
-                'Content-Type'                              => 'application/json',
-                'Accept'                                    => 'application/json',
-                $this->configuration->getApiKeyHeaderName() => $this->configuration->getApiKey(),
+                'Content-Type' => 'application/json',
+                'Accept'       => 'application/json',
             ],
         );
+
+        if (!empty($this->configuration->getApiKeyHeaderName())) {
+            $headers[$this->configuration->getApiKeyHeaderName()] = $this->configuration->getApiKey();
+        }
 
         foreach ($request->getHeaderParameterGetters() as $parameterName => $getterName) {
             $headers[$parameterName] = $request->$getterName();
@@ -72,8 +75,8 @@ class OrderApi
         }
 
         $path .= strpos($path, '?') === false
-        ? '?' . http_build_query($queryParameters)
-        : '&' . http_build_query($queryParameters);
+            ? '?' . http_build_query($queryParameters)
+            : '&' . http_build_query($queryParameters);
 
         $request = $this->requestFactory->createRequest(
             'POST',
@@ -103,6 +106,7 @@ class OrderApi
                 200     => $this->getCreateOrderResponse200($responseCode, $responseBody),
                 201     => $this->getCreateOrderResponse201($responseCode, $responseBody),
                 default => $this->getCreateOrderResponse($responseCode, $responseBody),
+
             };
         }
     }
@@ -111,8 +115,8 @@ class OrderApi
     {
         $mapper = (new ArrayMapperFactory())->getMapper();
         $list   = (new OrderCreate200ResponseList())
-    ->setStatusCode($statusCode)
-    ->setBody($responseBody);
+            ->setStatusCode($statusCode)
+            ->setBody($responseBody);
 
         foreach (json_decode($responseBody, true) as $item) {
             $list->add($mapper->map($item, $list->getItemClass()));
@@ -124,14 +128,14 @@ class OrderApi
     private function getCreateOrderResponse201(int $statusCode, string $responseBody): OrderCreate201Response
     {
         $response = (new ArrayMapperFactory())
-    ->getMapper()
-    ->map(
-        empty($responseBody) ? [] : json_decode($responseBody, true),
-        OrderCreate201Response::class
-    );
+        ->getMapper()
+        ->map(
+            empty($responseBody) ? [] : json_decode($responseBody, true),
+            OrderCreate201Response::class
+        );
         $response
-    ->setStatusCode($statusCode)
-    ->setBody($responseBody);
+            ->setStatusCode($statusCode)
+            ->setBody($responseBody);
 
         return $response;
     }
@@ -139,7 +143,7 @@ class OrderApi
     private function getCreateOrderResponse(int $statusCode, string $responseBody): GeneralResponse
     {
         return (new GeneralResponse())
-        ->setStatusCode($statusCode)
-        ->setBody($responseBody);
+            ->setStatusCode($statusCode)
+            ->setBody($responseBody);
     }
 }

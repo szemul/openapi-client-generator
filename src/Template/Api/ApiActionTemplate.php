@@ -60,11 +60,14 @@ class ApiActionTemplate
                 \$headers = array_merge(
                     \$this->defaultHeaders,
                     [
-                        'Content-Type'                              => 'application/json',
-                        'Accept'                                    => 'application/json',
-                        \$this->configuration->getApiKeyHeaderName() => \$this->configuration->getApiKey(),
+                        'Content-Type' => 'application/json',
+                        'Accept'       => 'application/json',
                     ],
                 );
+                
+                if (!empty(\$this->configuration->getApiKeyHeaderName())) {
+                    \$headers[\$this->configuration->getApiKeyHeaderName()] = \$this->configuration->getApiKey();
+                }
 
                 foreach (\$request->getHeaderParameterGetters() as \$parameterName => \$getterName) {
                     \$headers[\$parameterName] = \$request->\$getterName();
