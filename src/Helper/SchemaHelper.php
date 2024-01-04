@@ -125,6 +125,19 @@ class SchemaHelper
         return $schemaNames;
     }
 
+    public function getReferencedValue(string $reference, array $documentation): array|int|string|bool
+    {
+        $reference  = str_replace('#/', '', $reference);
+        $arrayKeys  = explode('/', $reference);
+        $currentKey = array_shift($arrayKeys);
+
+        if (empty($arrayKeys)) {
+            return $documentation[$currentKey];
+        } else {
+            return $this->getReferencedValue(implode('/', $arrayKeys), $documentation[$currentKey]);
+        }
+    }
+
     private function unfoldAndUniteAllOfSchema(array $schemas, string $allOfSchemaName)
     {
         $unitedSchema = [];
