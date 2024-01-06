@@ -7,6 +7,7 @@ class OrderUpdateOrder
 {
     public function __construct()
     {
+
     }
 
     public function getPathParameterGetters(): array
