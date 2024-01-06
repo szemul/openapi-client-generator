@@ -62,7 +62,7 @@ class ModelGenerator implements GeneratorInterface
         }
     }
 
-    private function generateModel(string $schemaName, array $schema, bool $isResponse)
+    public function generateModel(string $modelName, array $schema, bool $isResponse): string
     {
         $propertyTemplates = [];
         $schemaType        = $schema['type'];
@@ -71,8 +71,8 @@ class ModelGenerator implements GeneratorInterface
             $className = $this->classHelper->getModelClassname(basename($schema['items']['$ref']));
             $template  = $this->templateFactory->getResponseListTemplate($className);
         } elseif ($schemaType === 'object') {
-            foreach ($schema['properties'] as $propertyName => $details) {
-                $fullPropertyName = $schemaName . '_' . $propertyName;
+            foreach ($schema['properties'] ?? [] as $propertyName => $details) {
+                $fullPropertyName = $modelName . '_' . $propertyName;
                 $type             = $this->typeMapper->mapApiDocDetailsToPropertyType($fullPropertyName, $details);
                 $description      = $details['description'] ?? null;
 
@@ -88,7 +88,7 @@ class ModelGenerator implements GeneratorInterface
                 }
             }
 
-            $template = $this->templateFactory->getModelTemplate($schemaName, $isResponse, ...$propertyTemplates);
+            $template = $this->templateFactory->getModelTemplate($modelName, $isResponse, ...$propertyTemplates);
         } else {
             throw new Exception('Unhandled type ' . $schemaType);
         }
@@ -97,6 +97,8 @@ class ModelGenerator implements GeneratorInterface
 
         $this->fileHandler->saveFile($filePath, (string)$template);
         $this->configuration->getClassPaths()->addModelClass($template->getClassName(true));
+
+        return $template->getClassName();
     }
 
     private function generateEnum(string $propertyName, array $details): void

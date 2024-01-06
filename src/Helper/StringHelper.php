@@ -31,6 +31,10 @@ class StringHelper
             $result = $matches[3] . '_' . $matches[1];
         }
 
+        if (ctype_digit($result)) {
+            $result = 'value_' . $result;
+        }
+
         return $result;
     }
 
