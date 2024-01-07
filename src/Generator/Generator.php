@@ -22,10 +22,12 @@ class Generator
 
     public function generate(): void
     {
+        echo 'Generating Client ...' . PHP_EOL;
         foreach ($this->getGenerators() as $generator) {
             $generator->generate();
         }
 
+        $this->checkSyntax();
         $this->fixCodingStandards();
         $this->copyDocumentation();
         $this->copyGitIgnore();
@@ -45,8 +47,27 @@ class Generator
         ];
     }
 
+    private function checkSyntax()
+    {
+        echo 'Validating syntax of generated code ...' . PHP_EOL;
+        $iterator = new \RecursiveDirectoryIterator($this->configuration->getPaths()->getTargetRootPath());
+
+        /** @var \SplFileInfo $file */
+        foreach (new \RecursiveIteratorIterator($iterator) as $file) {
+            $resultCode = null;
+            if ($file->getExtension() == 'php') {
+                $result = exec('php -l ' . $file->getRealPath(), result_code: $resultCode);
+
+                if ($resultCode !== 0) {
+                    throw new \RuntimeException($result);
+                }
+            }
+        }
+    }
+
     private function fixCodingStandards()
     {
+        echo 'Fixing coding standard ...' . PHP_EOL;
         $command = ROOT . '/vendor/bin/php-cs-fixer --config='
             . ROOT . '/.php-cs-fixer.generated.php fix '
             . $this->configuration->getPaths()->getTargetRootPath();
@@ -56,6 +77,7 @@ class Generator
 
     private function copyDocumentation(): void
     {
+        echo 'Copying documentation ...' . PHP_EOL;
         $destinationDirectory = $this->configuration->getPaths()->getTargetRootPath() . 'doc/';
         $yaml                 = Yaml::dump($this->configuration->getApiDoc(), 10);
 
@@ -65,6 +87,8 @@ class Generator
 
     private function copyGitIgnore(): void
     {
+        echo 'Copying git ignore file ...' . PHP_EOL;
+
         $this->fileHandler->copyFile(
             ROOT . '/.gitignore',
             $this->configuration->getPaths()->getTargetRootPath() . '.gitignore'

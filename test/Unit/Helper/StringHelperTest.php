@@ -12,6 +12,7 @@ class StringHelperTest extends TestCaseAbstract
     public static function constantProvider(): array
     {
         return [
+            ['0', 'VALUE_0'],
             ['word', 'WORD'],
             ['with spaces', 'WITH_SPACES'],
             ['special& char', 'SPECIAL_CHAR'],
@@ -27,7 +28,7 @@ class StringHelperTest extends TestCaseAbstract
     /**
      * @dataProvider constantProvider
      */
-    public function testConvertToConstantName($input, $expectedResult)
+    public function testConvertToConstantName(string $input, $expectedResult)
     {
         $result = $this->getSut()->convertToConstantName($input);
 
@@ -37,6 +38,7 @@ class StringHelperTest extends TestCaseAbstract
     public static function methodProvider(): array
     {
         return [
+            ['0', 'value0'],
             ['word', 'word'],
             ['with spaces in it', 'withSpacesInIt'],
             ['special& char', 'specialChar'],
@@ -60,6 +62,7 @@ class StringHelperTest extends TestCaseAbstract
     public static function classProvider(): array
     {
         return [
+            ['0', 'Value0'],
             ['word', 'Word'],
             ['with spaces in it', 'WithSpacesInIt'],
             ['special& char', 'SpecialChar'],

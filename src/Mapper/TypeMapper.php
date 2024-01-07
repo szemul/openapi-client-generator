@@ -139,6 +139,9 @@ class TypeMapper
             case 'boolean':
                 $type = PropertyType::bool();
                 break;
+
+            default:
+                throw new InvalidArgumentException("Unknown type $typeString");
         }
 
         return $type;

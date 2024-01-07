@@ -13,6 +13,7 @@ use Test\ArrayMapperFactory;
 use Test\Exception\Request400Exception;
 use Test\Exception\Request404Exception;
 use Test\Model\ActionParameter\OrderCreateOrder;
+use Test\Model\ActionParameter\OrderUpdateOrder;
 use Test\Model\GeneralResponse;
 use Test\Model\OrderCreate200ResponseList;
 use Test\Model\OrderCreate201Response;
@@ -111,6 +112,74 @@ class OrderApi
         }
     }
 
+    /**
+     * @return GeneralResponse => 204
+     */
+    public function updateOrder(OrderUpdateOrder $request): GeneralResponse
+    {
+        $path    = '/order/update';
+        $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
+        $headers = array_merge(
+            $this->defaultHeaders,
+            [
+                'Content-Type' => 'application/json',
+                'Accept'       => 'application/json',
+            ],
+        );
+
+        if (!empty($this->configuration->getApiKeyHeaderName())) {
+            $headers[$this->configuration->getApiKeyHeaderName()] = $this->configuration->getApiKey();
+        }
+
+        foreach ($request->getHeaderParameterGetters() as $parameterName => $getterName) {
+            $headers[$parameterName] = $request->$getterName();
+        }
+
+        foreach ($request->getPathParameterGetters() as $parameterName => $getterName) {
+            $path = str_replace('{' . $parameterName . '}', (string)$request->$getterName(), $path);
+        }
+
+        $queryParameters = [];
+        foreach ($request->getQueryParameterGetters() as $parameterName => $getterName) {
+            $queryParameters[$parameterName] = $request->$getterName();
+        }
+
+        $path .= strpos($path, '?') === false
+            ? '?' . http_build_query($queryParameters)
+            : '&' . http_build_query($queryParameters);
+
+        $request = $this->requestFactory->createRequest(
+            'POST',
+            $this->configuration->getHost() . $path,
+        );
+
+        foreach ($headers as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+        $request = $request->withBody($this->streamFactory->createStream($payload));
+
+        $response     = $this->httpClient->sendRequest($request);
+        $responseCode = $response->getStatusCode();
+        $responseBody = $response->getBody()->getContents();
+
+        if ($responseCode >= 400) {
+            $requestExceptionClass = '\Test\Exception\Request' . $responseCode . 'Exception';
+            $responseHeaders       = $response->getHeaders();
+
+            if (class_exists($requestExceptionClass)) {
+                throw new $requestExceptionClass($responseBody, $responseHeaders);
+            } else {
+                throw new RequestException($responseCode, $responseBody, $responseHeaders);
+            }
+        } else {
+            return match ($responseCode) {
+                204     => $this->getUpdateOrderResponse204($responseCode, $responseBody),
+                default => $this->getUpdateOrderResponse($responseCode, $responseBody),
+
+            };
+        }
+    }
+
     private function getCreateOrderResponse200(int $statusCode, string $responseBody): OrderCreate200ResponseList
     {
         $mapper = (new ArrayMapperFactory())->getMapper();
@@ -141,6 +210,28 @@ class OrderApi
     }
 
     private function getCreateOrderResponse(int $statusCode, string $responseBody): GeneralResponse
+    {
+        return (new GeneralResponse())
+            ->setStatusCode($statusCode)
+            ->setBody($responseBody);
+    }
+
+    private function getUpdateOrderResponse204(int $statusCode, string $responseBody): GeneralResponse
+    {
+        $response = (new ArrayMapperFactory())
+        ->getMapper()
+        ->map(
+            empty($responseBody) ? [] : json_decode($responseBody, true),
+            GeneralResponse::class
+        );
+        $response
+            ->setStatusCode($statusCode)
+            ->setBody($responseBody);
+
+        return $response;
+    }
+
+    private function getUpdateOrderResponse(int $statusCode, string $responseBody): GeneralResponse
     {
         return (new GeneralResponse())
             ->setStatusCode($statusCode)

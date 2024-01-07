@@ -22,7 +22,8 @@ class ActionParameterGenerator implements GeneratorInterface
         private readonly Factory $templateFactory,
         private readonly ParameterMapper $parameterMapper,
         private readonly ClassHelper $classHelper,
-        private readonly SchemaHelper $schemaHelper
+        private readonly SchemaHelper $schemaHelper,
+        private readonly ModelGenerator $modelGenerator
     ) {
         if (empty($configuration->getApiDoc()['paths'])) {
             throw new GeneratorNotNeededException();
@@ -42,8 +43,15 @@ class ActionParameterGenerator implements GeneratorInterface
                 $parameters = [];
 
                 if (!empty($method['requestBody']['content'])) {
-                    $requestModel          = $method['requestBody']['content']['application/json']['schema']['$ref'];
-                    $requestModelClassName = empty($requestModel) ? null : basename($requestModel);
+                    $schema = $method['requestBody']['content']['application/json']['schema'];
+
+                    if (!empty($schema['$ref'])) {
+                        $requestModel          = $schema['$ref'];
+                        $requestModelClassName = basename($requestModel);
+                    } else {
+                        $requestModel = $method['operationId'] . 'Request';
+                        $this->modelGenerator->generateModel($requestModel, $schema, false);
+                    }
                 }
 
                 if (!empty($method['parameters'])) {
@@ -70,10 +78,10 @@ class ActionParameterGenerator implements GeneratorInterface
 
     private function validateMethodDefinition(array $method): void
     {
-        if (empty($method['tags'][0])) {
-            throw new Exception('Tags are mandatory');
-        } elseif (empty($method['operationId'])) {
+        if (empty($method['operationId'])) {
             throw new Exception('operationId is mandatory');
+        } elseif (empty($method['tags'][0])) {
+            throw new Exception('Tags are mandatory for ' . $method['operationId']);
         }
     }
 }
