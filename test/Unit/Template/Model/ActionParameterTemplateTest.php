@@ -58,7 +58,7 @@ class ActionParameterTemplateTest extends TemplateTestCaseAbstract
     public function testToStringWhenModelClassNameGiven_shouldGenerateClass()
     {
         $pathParameter   = new Parameter('pathParam', ParameterType::path(), true, PropertyType::string(), 'Path');
-        $queryParameter  = new Parameter('queryParam', ParameterType::query(), true, PropertyType::string(), 'Query');
+        $queryParameter  = new Parameter('query_param', ParameterType::query(), true, PropertyType::string(), 'Query');
         $headerParameter = new Parameter('headerParam', ParameterType::header(), true, PropertyType::string(), 'Header');
 
         $result         = (string)$this->getSut('ModelClass', $pathParameter, $queryParameter, $headerParameter);
@@ -93,7 +93,7 @@ class ActionParameterTemplateTest extends TemplateTestCaseAbstract
             
                 public function getQueryParameterGetters(): array
                 {
-                    return ['queryParam' => 'getQueryQueryParam'];
+                    return ['query_param' => 'getQueryQueryParam'];
                 }
             
                 public function getHeaderParameterGetters(): array

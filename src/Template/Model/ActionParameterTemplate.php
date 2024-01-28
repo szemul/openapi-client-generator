@@ -114,8 +114,9 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         }
 
         foreach ($this->parameters as $parameter) {
-            $param     = $parameter->getPhpValueType() . ' $' . $this->stringHelper->convertToMethodOrVariableName($parameter->getName());
-            $setters[] = '$this->' . $this->getPropertyName($parameter) . ' = $' . $parameter->getName() . ';';
+            $variableName = $this->stringHelper->convertToMethodOrVariableName($parameter->getName());
+            $param        = $parameter->getPhpValueType() . ' $' . $variableName;
+            $setters[]    = '$this->' . $this->getPropertyName($parameter) . ' = $' . $variableName . ';';
 
             if ($parameter->isRequired()) {
                 $requiredParams[] = $param;
