@@ -38,6 +38,8 @@ class SchemaHelper
                 } elseif ($schema['type'] === 'array') {
                     $responseIsList = true;
                     $responseClass  = $this->classHelper->getListModelClassname(basename($schema['items']['$ref']));
+                } elseif ($schema['type'] === 'object') {
+                    $responseClass = $this->classHelper->getResponseClassName($actionDetails['operationId'], $statusCode);
                 }
             }
 

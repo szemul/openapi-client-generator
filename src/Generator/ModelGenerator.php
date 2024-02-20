@@ -37,6 +37,12 @@ class ModelGenerator implements GeneratorInterface
         $this->fileHandler->saveClassTemplateToFile($this->templateFactory->getResponseTraitTemplate());
         $this->generateResponseLists();
 
+        $this->generateModelsFromSchemas();
+        $this->generateModelsFromInlineResponses();
+    }
+
+    private function generateModelsFromSchemas(): void
+    {
         $schemas             = $this->configuration->getApiDoc()['components']['schemas'];
         $responseSchemaNames = $this->schemaHelper->getResponseSchemaNames($this->configuration->getApiDoc()['paths']);
 
@@ -58,6 +64,25 @@ class ModelGenerator implements GeneratorInterface
                 $isResponse = in_array($schemaName, $responseSchemaNames);
 
                 $this->generateModel($schemaName, $schema, $isResponse);
+            }
+        }
+    }
+
+    private function generateModelsFromInlineResponses(): void
+    {
+        $paths = $this->configuration->getApiDoc()['paths'];
+
+        foreach ($paths as $methods) {
+            foreach ($methods as $action) {
+                foreach ($action['responses'] as $statusCode => $response) {
+                    $schema     = $response['content']['application/json']['schema'] ?? [];
+                    $schemaType = $schema['type'] ?? null;
+
+                    if ($schemaType === 'object') {
+                        $responseClassName = $this->classHelper->getResponseClassName($action['operationId'], $statusCode);
+                        $this->generateModel($responseClassName, $schema, true);
+                    }
+                }
             }
         }
     }
