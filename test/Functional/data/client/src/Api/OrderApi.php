@@ -14,6 +14,7 @@ use Test\Exception\Request400Exception;
 use Test\Exception\Request404Exception;
 use Test\Model\ActionParameter\OrderCreateOrder;
 use Test\Model\ActionParameter\OrderUpdateOrder;
+use Test\Model\CreateOrderResponse202;
 use Test\Model\GeneralResponse;
 use Test\Model\OrderCreate200ResponseList;
 use Test\Model\OrderCreate201Response;
@@ -43,10 +44,11 @@ class OrderApi
     /**
      * @return OrderCreate200ResponseList => 200
      * @return OrderCreate201Response => 201
+     * @return CreateOrderResponse202 => 202
      * @throws Request400Exception when received 400 (Bad request, the request parameters are invalid)
      * @throws Request404Exception when received 404 (Path not found)
      */
-    public function createOrder(OrderCreateOrder $request): OrderCreate200ResponseList|OrderCreate201Response
+    public function createOrder(OrderCreateOrder $request): OrderCreate200ResponseList|OrderCreate201Response|CreateOrderResponse202
     {
         $path    = '/order/create';
         $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
@@ -106,6 +108,7 @@ class OrderApi
             return match ($responseCode) {
                 200     => $this->getCreateOrderResponse200($responseCode, $responseBody),
                 201     => $this->getCreateOrderResponse201($responseCode, $responseBody),
+                202     => $this->getCreateOrderResponse202($responseCode, $responseBody),
                 default => $this->getCreateOrderResponse($responseCode, $responseBody),
 
             };
@@ -201,6 +204,21 @@ class OrderApi
         ->map(
             empty($responseBody) ? [] : json_decode($responseBody, true),
             OrderCreate201Response::class
+        );
+        $response
+            ->setStatusCode($statusCode)
+            ->setBody($responseBody);
+
+        return $response;
+    }
+
+    private function getCreateOrderResponse202(int $statusCode, string $responseBody): CreateOrderResponse202
+    {
+        $response = (new ArrayMapperFactory())
+        ->getMapper()
+        ->map(
+            empty($responseBody) ? [] : json_decode($responseBody, true),
+            CreateOrderResponse202::class
         );
         $response
             ->setStatusCode($statusCode)

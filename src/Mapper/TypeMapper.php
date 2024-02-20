@@ -149,7 +149,10 @@ class TypeMapper
 
     public function getArrayItemType(PropertyType $type): ?string
     {
-        if (is_null($type->getArrayItemType())) {
+        if (
+            is_null($type->getArrayItemType())
+            || (string)$type->getArrayItemType() === PropertyType::ARRAY
+        ) {
             return null;
         } elseif ($type->getArrayItemType()->isScalar()) {
             return (string)$type->getArrayItemType();

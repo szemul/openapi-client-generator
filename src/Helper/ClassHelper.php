@@ -20,6 +20,11 @@ class ClassHelper
         return $this->stringHelper->convertToClassName(basename($reference));
     }
 
+    public function getResponseClassName(string $operationId, int $statusCode): string
+    {
+        return $this->stringHelper->convertToClassName("{$operationId}Response{$statusCode}");
+    }
+
     public function getInlineRequestModelClassname(string $operationId): string
     {
         return $this->stringHelper->convertToClassName($operationId . 'Request');

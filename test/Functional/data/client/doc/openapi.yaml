@@ -28,11 +28,22 @@ paths:
                 items:
                   $ref: '#/components/schemas/OrderCreate200Response'
         201:
-          description: 'Successful creation'
+          description: 'Successful creation 201'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderCreate201Response'
+        202:
+          description: 'Successful creation 202'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Message
         400:
           description: 'Bad request, the request parameters are invalid'
           content:
