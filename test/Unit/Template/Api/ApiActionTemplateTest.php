@@ -29,10 +29,11 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
         $responseClass = new ResponseClass(200, false, 'ResponseClass');
         $result        = (string)$this->getSut([$responseClass], []);
 
-        $expectedReturnType    = $responseClass->getModelClassName();
+        $expectedReturnType    = 'ResponseClass|GeneralResponse';
         $expectedDocumentation = <<<'DOC'
             /**
              * @return ResponseClass => 200
+             * @return GeneralResponse => default
              */
             DOC;
 
@@ -54,6 +55,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
         $expectedDocumentation = <<<'DOC'
             /**
              * @return ResponseListClass => 200
+             * @return GeneralResponse => default
              */
             DOC;
 
@@ -64,7 +66,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
             };
             RESPONSE;
 
-        $this->assertActionSame($expectedDocumentation, $responseClass->getModelClassName(), $expectedResultHandling, $result);
+        $this->assertActionSame($expectedDocumentation, 'ResponseListClass|GeneralResponse', $expectedResultHandling, $result);
     }
 
     public function testToStringWhenExceptionsGiven_shouldGenerateThrowsDocumentation()
@@ -75,6 +77,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
 
         $expectedDocumentation = <<<'DOC'
             /**
+             * @return GeneralResponse => default
              * @throws Exception400 when received 400 (Bad Request)
              * @throws Exception404 when received 404 (Not found)
              */
@@ -86,7 +89,7 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
             };
             RESPONSE;
 
-        $this->assertActionSame($expectedDocumentation, '', $expectedResultHandling, $result);
+        $this->assertActionSame($expectedDocumentation, 'GeneralResponse', $expectedResultHandling, $result);
     }
 
     public function testGetParameterFullClassName()
