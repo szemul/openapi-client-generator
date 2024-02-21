@@ -45,10 +45,11 @@ class OrderApi
      * @return OrderCreate200ResponseList => 200
      * @return OrderCreate201Response => 201
      * @return CreateOrderResponse202 => 202
+     * @return GeneralResponse => default
      * @throws Request400Exception when received 400 (Bad request, the request parameters are invalid)
      * @throws Request404Exception when received 404 (Path not found)
      */
-    public function createOrder(OrderCreateOrder $request): OrderCreate200ResponseList|OrderCreate201Response|CreateOrderResponse202
+    public function createOrder(OrderCreateOrder $request): OrderCreate200ResponseList|OrderCreate201Response|CreateOrderResponse202|GeneralResponse
     {
         $path    = '/order/create';
         $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
@@ -117,6 +118,7 @@ class OrderApi
 
     /**
      * @return GeneralResponse => 204
+     * @return GeneralResponse => default
      */
     public function updateOrder(OrderUpdateOrder $request): GeneralResponse
     {

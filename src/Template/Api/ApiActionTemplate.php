@@ -221,6 +221,7 @@ class ApiActionTemplate
 
             $documentationLines[] = '* @return ' . $responseClassName . ' => ' . $statusCode;
         }
+        $documentationLines[] = '* @return GeneralResponse => default';
 
         return $documentationLines;
     }
@@ -244,6 +245,7 @@ class ApiActionTemplate
 
             $returnTypes[] = $responseClassName;
         }
+        $returnTypes[] = 'GeneralResponse';
 
         return implode('|', array_unique($returnTypes));
     }
