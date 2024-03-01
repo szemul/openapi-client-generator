@@ -13,6 +13,7 @@ use Test\ArrayMapperFactory;
 use Test\Exception\Request400Exception;
 use Test\Exception\Request404Exception;
 use Test\Model\ActionParameter\OrderCreateOrder;
+use Test\Model\ActionParameter\OrderGetOrderList;
 use Test\Model\ActionParameter\OrderUpdateOrder;
 use Test\Model\CreateOrderResponse202;
 use Test\Model\GeneralResponse;
@@ -39,6 +40,75 @@ class OrderApi
         $this->requestFactory = $requestFactory;
         $this->streamFactory  = $streamFactory;
         $this->defaultHeaders = $defaultHeaders;
+    }
+
+    /**
+     * @return OrderCreate200ResponseList => 200
+     * @return GeneralResponse => default
+     */
+    public function getOrderList(OrderGetOrderList $request): OrderCreate200ResponseList|GeneralResponse
+    {
+        $path    = '/orders';
+        $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
+        $headers = array_merge(
+            $this->defaultHeaders,
+            [
+                'Content-Type' => 'application/json',
+                'Accept'       => 'application/json',
+            ],
+        );
+
+        if (!empty($this->configuration->getApiKeyHeaderName())) {
+            $headers[$this->configuration->getApiKeyHeaderName()] = $this->configuration->getApiKey();
+        }
+
+        foreach ($request->getHeaderParameterGetters() as $parameterName => $getterName) {
+            $headers[$parameterName] = $request->$getterName();
+        }
+
+        foreach ($request->getPathParameterGetters() as $parameterName => $getterName) {
+            $path = str_replace('{' . $parameterName . '}', (string)$request->$getterName(), $path);
+        }
+
+        $queryParameters = [];
+        foreach ($request->getQueryParameterGetters() as $parameterName => $getterName) {
+            $queryParameters[$parameterName] = $request->$getterName();
+        }
+
+        $path .= strpos($path, '?') === false
+            ? '?' . http_build_query($queryParameters)
+            : '&' . http_build_query($queryParameters);
+
+        $request = $this->requestFactory->createRequest(
+            'GET',
+            $this->configuration->getHost() . $path,
+        );
+
+        foreach ($headers as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+        $request = $request->withBody($this->streamFactory->createStream($payload));
+
+        $response     = $this->httpClient->sendRequest($request);
+        $responseCode = $response->getStatusCode();
+        $responseBody = $response->getBody()->getContents();
+
+        if ($responseCode >= 400) {
+            $requestExceptionClass = '\Test\Exception\Request' . $responseCode . 'Exception';
+            $responseHeaders       = $response->getHeaders();
+
+            if (class_exists($requestExceptionClass)) {
+                throw new $requestExceptionClass($responseBody, $responseHeaders);
+            } else {
+                throw new RequestException($responseCode, $responseBody, $responseHeaders);
+            }
+        } else {
+            return match ($responseCode) {
+                200     => $this->getGetOrderListResponse200($responseCode, $responseBody),
+                default => $this->getGetOrderListResponse($responseCode, $responseBody),
+
+            };
+        }
     }
 
     /**
@@ -183,6 +253,27 @@ class OrderApi
 
             };
         }
+    }
+
+    private function getGetOrderListResponse200(int $statusCode, string $responseBody): OrderCreate200ResponseList
+    {
+        $mapper = (new ArrayMapperFactory())->getMapper();
+        $list   = (new OrderCreate200ResponseList())
+            ->setStatusCode($statusCode)
+            ->setBody($responseBody);
+
+        foreach (json_decode($responseBody, true) as $item) {
+            $list->add($mapper->map($item, $list->getItemClass()));
+        }
+
+        return $list;
+    }
+
+    private function getGetOrderListResponse(int $statusCode, string $responseBody): GeneralResponse
+    {
+        return (new GeneralResponse())
+            ->setStatusCode($statusCode)
+            ->setBody($responseBody);
     }
 
     private function getCreateOrderResponse200(int $statusCode, string $responseBody): OrderCreate200ResponseList

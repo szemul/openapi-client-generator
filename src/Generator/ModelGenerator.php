@@ -39,6 +39,7 @@ class ModelGenerator implements GeneratorInterface
 
         $this->generateModelsFromSchemas();
         $this->generateModelsFromInlineResponses();
+        $this->generateModelsFromInlineRequestParameters();
     }
 
     private function generateModelsFromSchemas(): void
@@ -64,6 +65,26 @@ class ModelGenerator implements GeneratorInterface
                 $isResponse = in_array($schemaName, $responseSchemaNames);
 
                 $this->generateModel($schemaName, $schema, $isResponse);
+            }
+        }
+    }
+
+    private function generateModelsFromInlineRequestParameters(): void
+    {
+        $paths = $this->configuration->getApiDoc()['paths'];
+
+        foreach ($paths as $methods) {
+            foreach ($methods as $action) {
+                foreach ($action['parameters'] ?? [] as $parameter) {
+                    if (!empty($parameter['$ref']) || empty($parameter['schema'])) {
+                        continue;
+                    }
+                    $schema = $parameter['schema'];
+
+                    if (!empty($schema['enum'])) {
+                        $this->generateEnum($action['operationId'] . '_' . $parameter['name'], $schema);
+                    }
+                }
             }
         }
     }

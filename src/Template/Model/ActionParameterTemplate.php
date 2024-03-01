@@ -6,6 +6,7 @@ namespace Emul\OpenApiClientGenerator\Template\Model;
 
 use Emul\OpenApiClientGenerator\Entity\Parameter;
 use Emul\OpenApiClientGenerator\Entity\ParameterType;
+use Emul\OpenApiClientGenerator\Entity\PropertyType;
 use Emul\OpenApiClientGenerator\Helper\LocationHelper;
 use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Template\ClassTemplateAbstract;
@@ -95,7 +96,14 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
         foreach ($this->parameters as $parameter) {
             $propertyName = $this->getPropertyName($parameter);
-            $type         = $parameter->getPhpValueType();
+            $type         = $this->getType($parameter);
+
+            if ((string)$parameter->getValueType() === PropertyType::ARRAY) {
+                $itemType = $parameter->getValueType()->getArrayItemType();
+                $docType  = empty($itemType) ? 'array' : $itemType . '[]';
+                $result .= "/** @var $docType */" . PHP_EOL;
+            }
+
             $result .= 'private ' . $type . ' $' . $propertyName . ';' . PHP_EOL;
         }
 
@@ -115,7 +123,8 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
         foreach ($this->parameters as $parameter) {
             $variableName = $this->stringHelper->convertToMethodOrVariableName($parameter->getName());
-            $param        = $parameter->getPhpValueType() . ' $' . $variableName;
+            $type         = $this->getType($parameter);
+            $param        = $type . ' $' . $variableName;
             $setters[]    = '$this->' . $this->getPropertyName($parameter) . ' = $' . $variableName . ';';
 
             if ($parameter->isRequired()) {
@@ -127,8 +136,10 @@ class ActionParameterTemplate extends ClassTemplateAbstract
 
         $constructorParamList = implode(', ', array_merge($requiredParams, $optionalParams));
         $constructorBody      = implode(PHP_EOL, $setters);
+        $phpDoc               = $this->getParameterDoc(...$this->parameters);
 
         return <<<CONSTRUCTOR
+            {$phpDoc}
             public function __construct({$constructorParamList})
             {
                 {$constructorBody}
@@ -196,10 +207,31 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         }
 
         foreach ($this->parameters as $parameter) {
+            if ((string)$parameter->getValueType() === PropertyType::OBJECT) {
+                $returnType      = ($parameter->isRequired() ? '' : '?') . 'string';
+                $returnStatement = "return is_object(\$this->{$this->getPropertyName($parameter)}) ? (string)\$this->{$this->getPropertyName($parameter)} : null;";
+            } elseif ((string)$parameter->getValueType() === PropertyType::ARRAY) {
+                $returnType = $parameter->getPhpValueType();
+                $itemType   = $parameter->getValueType()->getArrayItemType()->isScalar()
+                    ? $parameter->getValueType()->getArrayItemType()
+                    : '\\' . $parameter->getValueType()->getArrayItemType()->getObjectClassname();
+
+                $returnStatement = <<<RETURN
+                    return array_map(
+                        fn($itemType \$item) => (string)\$item,
+                        \$this->{$this->getPropertyName($parameter)} ?? []
+                    );
+
+                    RETURN;
+            } else {
+                $returnType      = $parameter->getPhpValueType();
+                $returnStatement = "return \$this->{$this->getPropertyName($parameter)};";
+            }
+
             $result .= <<<GETTER
-                public function {$this->getPropertyGetterName($parameter)}(): {$parameter->getPhpValueType()}
+                public function {$this->getPropertyGetterName($parameter)}(): {$returnType}
                 {
-                    return \$this->{$this->getPropertyName($parameter)};
+                    {$returnStatement}
                 }
 
                 GETTER;
@@ -227,8 +259,16 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         }
 
         foreach ($this->parameters as $parameter) {
+            $type   = $this->getType($parameter);
+            $phpDoc = $this->getParameterDocLine($parameter, 'parameter');
+
+            $phpDoc = empty($phpDoc)
+                ? ''
+                : '/**' . PHP_EOL . $phpDoc . PHP_EOL . '*/';
+
             $result .= <<<SETTER
-                public function {$this->getPropertySetterName($parameter)}({$parameter->getPhpValueType()} \$parameter): self
+                {$phpDoc}
+                public function {$this->getPropertySetterName($parameter)}({$type} \$parameter): self
                 {
                     \$this->{$this->getPropertyName($parameter)} = \$parameter;
 
@@ -239,6 +279,50 @@ class ActionParameterTemplate extends ClassTemplateAbstract
         }
 
         return $result;
+    }
+
+    private function getType(Parameter $parameter): string
+    {
+        if ((string)$parameter->getValueType() === PropertyType::OBJECT) {
+            $type = empty($parameter->getValueType()->getObjectClassname())
+                ? 'object'
+                : '\\' . $parameter->getValueType()->getObjectClassname();
+
+            if (!$parameter->isRequired()) {
+                $type .= '|null';
+            }
+        } else {
+            $type = $parameter->getPhpValueType();
+        }
+
+        return $type;
+    }
+
+    private function getParameterDoc(Parameter ...$parameters): string
+    {
+        $phpDocLines = [];
+        foreach ($parameters as $parameter) {
+            $parameterDocLine = $this->getParameterDocLine($parameter, $parameter->getName());
+            if (!empty($parameterDocLine)) {
+                $phpDocLines[] = $parameterDocLine;
+            }
+        }
+
+        return empty($phpDocLines)
+            ? ''
+            : '/**' . PHP_EOL . implode(PHP_EOL, $phpDocLines) . PHP_EOL . '*/';
+    }
+
+    private function getParameterDocLine(Parameter $parameter, string $parameterName): string
+    {
+        if ((string)$parameter->getValueType() !== PropertyType::ARRAY) {
+            return '';
+        }
+        $variableName = $this->stringHelper->convertToMethodOrVariableName($parameterName);
+        $itemType     = $parameter->getValueType()->getArrayItemTypeString();
+        $docType      = empty($itemType) ? 'array' : $itemType . '[]';
+
+        return "* @var $docType $" . $variableName . PHP_EOL;
     }
 
     private function getPropertyName(Parameter $parameter): string
