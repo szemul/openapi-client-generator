@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Emul\OpenApiClientGenerator\Template\Model;
 
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
+use Emul\OpenApiClientGenerator\Helper\StringHelper;
 use Emul\OpenApiClientGenerator\Mapper\TypeMapper;
 
 class ModelPropertyTemplate
 {
     public function __construct(
         private readonly TypeMapper $typeMapper,
+        private readonly StringHelper $stringHelper,
         private readonly string $name,
         private readonly PropertyType $type,
         private readonly bool $isRequired,
@@ -22,6 +24,7 @@ class ModelPropertyTemplate
     {
         $propertyType = $this->typeMapper->mapModelPropertyTemplateToPhp($this);
         $docType      = $this->typeMapper->mapModelPropertyTemplateToDoc($this);
+        $name         = $this->stringHelper->convertToMethodOrVariableName($this->name);
 
         $varDoc = $docType;
         if (!empty($this->description)) {
@@ -32,14 +35,15 @@ class ModelPropertyTemplate
             /**
              * @var {$varDoc}
              */
-            protected {$propertyType} \${$this->name};
+            protected {$propertyType} \${$name};
             PROPERTY;
     }
 
     public function getGetter(): string
     {
         $documentation = '';
-        $getterName    = 'get' . ucfirst($this->name);
+        $name          = $this->stringHelper->convertToMethodOrVariableName($this->name);
+        $getterName    = 'get' . ucfirst($name);
         $returnType    = $this->isRequired ? '' : '?';
         $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
@@ -61,14 +65,14 @@ class ModelPropertyTemplate
             $getter = <<<GETTER
                 public function {$getterName}(): {$returnType}
                 {
-                    return \$this->{$this->name};
+                    return \$this->{$name};
                 }
                 GETTER;
         } else {
             $getter = <<<GETTER
                 public function {$getterName}(bool \$throwExceptionIfNotInitialized = false): {$returnType}
                 {
-                    return \$this->getPropertyValue('{$this->name}', \$throwExceptionIfNotInitialized);
+                    return \$this->getPropertyValue('{$name}', \$throwExceptionIfNotInitialized);
                 }
                 GETTER;
         }
@@ -78,9 +82,10 @@ class ModelPropertyTemplate
 
     public function getSetter(): string
     {
-        $setterName       = 'set' . ucfirst($this->name);
+        $name             = $this->stringHelper->convertToMethodOrVariableName($this->name);
+        $setterName       = 'set' . ucfirst($name);
         $ellipsisOperator = '';
-        $variableName     = '$' . $this->name;
+        $variableName     = '$' . $name;
 
         if ($this->type->isScalar()) {
             $type = (string)$this->type;
@@ -107,7 +112,7 @@ class ModelPropertyTemplate
         return <<<SETTER
             public function {$setterName}({$type} {$ellipsisOperator}{$variableName}): self
             {
-                \$this->{$this->name} = $variableName;
+                \$this->{$name} = $variableName;
             
                 return \$this;
             }

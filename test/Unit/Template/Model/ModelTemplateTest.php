@@ -142,6 +142,7 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
     {
         return new ModelPropertyTemplate(
             $this->typeMapper,
+            $this->stringHelper,
             $name,
             $type,
             $isRequired,

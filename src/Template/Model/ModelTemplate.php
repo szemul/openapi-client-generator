@@ -115,12 +115,13 @@ class ModelTemplate extends ClassTemplateAbstract
         $paramDocumentations = [];
 
         foreach ($this->properties as $property) {
+            $propertyName = $this->stringHelper->convertToMethodOrVariableName($property->getName());
             if ((string)$property->getType() === PropertyType::ARRAY) {
-                $paramDocumentations[] = $this->typeMapper->mapModelPropertyTemplateToDoc($property) . ' $' . $property->getName();
+                $paramDocumentations[] = $this->typeMapper->mapModelPropertyTemplateToDoc($property) . ' $' . $propertyName;
             }
 
-            $param          = $this->typeMapper->mapModelPropertyTemplateToPhp($property) . ' $' . $property->getName();
-            $paramSetters[] = '$this->' . $property->getName() . ' = $' . $property->getName() . ';';
+            $param          = $this->typeMapper->mapModelPropertyTemplateToPhp($property) . ' $' . $propertyName;
+            $paramSetters[] = '$this->' . $propertyName . ' = $' . $propertyName . ';';
 
             if ($property->isRequired()) {
                 $requiredParams[] = $param;
