@@ -53,7 +53,7 @@ class ApiActionTemplate
             /**
              {$documentation}
              */
-            public function {$this->actionName}({$this->parameterClassName} \$request): {$returnType}
+            public function {$this->actionName}({$this->parameterClassName} \$request, ?string \$overwriteUrl = null): {$returnType}
             {
                 \$path    = '{$this->url}';
                 \$payload = \$request->hasRequestModel() ? json_encode(\$request->getRequestModel()) : '';
@@ -85,11 +85,9 @@ class ApiActionTemplate
                 \$path .= strpos(\$path, '?') === false
                     ? '?' . http_build_query(\$queryParameters)
                     : '&' . http_build_query(\$queryParameters);
-
-                \$request = \$this->requestFactory->createRequest(
-                    '{$this->httpMethod->__toString()}',
-                    \$this->configuration->getHost() . \$path,
-                );
+                    
+                \$fullUrl = \$overwriteUrl ?? (\$this->configuration->getHost() . \$path);
+                \$request = \$this->requestFactory->createRequest('{$this->httpMethod->__toString()}', \$fullUrl);
 
                 foreach (\$headers as \$name => \$value) {
                     \$request = \$request->withHeader(\$name, \$value);
