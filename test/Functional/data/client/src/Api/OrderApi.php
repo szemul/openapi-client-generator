@@ -46,7 +46,7 @@ class OrderApi
      * @return OrderCreate200ResponseList => 200
      * @return GeneralResponse => default
      */
-    public function getOrderList(OrderGetOrderList $request): OrderCreate200ResponseList|GeneralResponse
+    public function getOrderList(OrderGetOrderList $request, ?string $overwriteUrl = null): OrderCreate200ResponseList|GeneralResponse
     {
         $path    = '/orders';
         $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
@@ -79,10 +79,8 @@ class OrderApi
             ? '?' . http_build_query($queryParameters)
             : '&' . http_build_query($queryParameters);
 
-        $request = $this->requestFactory->createRequest(
-            'GET',
-            $this->configuration->getHost() . $path,
-        );
+        $fullUrl = $overwriteUrl ?? ($this->configuration->getHost() . $path);
+        $request = $this->requestFactory->createRequest('GET', $fullUrl);
 
         foreach ($headers as $name => $value) {
             $request = $request->withHeader($name, $value);
@@ -119,7 +117,7 @@ class OrderApi
      * @throws Request400Exception when received 400 (Bad request, the request parameters are invalid)
      * @throws Request404Exception when received 404 (Path not found)
      */
-    public function createOrder(OrderCreateOrder $request): OrderCreate200ResponseList|OrderCreate201Response|CreateOrderResponse202|GeneralResponse
+    public function createOrder(OrderCreateOrder $request, ?string $overwriteUrl = null): OrderCreate200ResponseList|OrderCreate201Response|CreateOrderResponse202|GeneralResponse
     {
         $path    = '/order/create';
         $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
@@ -152,10 +150,8 @@ class OrderApi
             ? '?' . http_build_query($queryParameters)
             : '&' . http_build_query($queryParameters);
 
-        $request = $this->requestFactory->createRequest(
-            'POST',
-            $this->configuration->getHost() . $path,
-        );
+        $fullUrl = $overwriteUrl ?? ($this->configuration->getHost() . $path);
+        $request = $this->requestFactory->createRequest('POST', $fullUrl);
 
         foreach ($headers as $name => $value) {
             $request = $request->withHeader($name, $value);
@@ -190,7 +186,7 @@ class OrderApi
      * @return GeneralResponse => 204
      * @return GeneralResponse => default
      */
-    public function updateOrder(OrderUpdateOrder $request): GeneralResponse
+    public function updateOrder(OrderUpdateOrder $request, ?string $overwriteUrl = null): GeneralResponse
     {
         $path    = '/order/update';
         $payload = $request->hasRequestModel() ? json_encode($request->getRequestModel()) : '';
@@ -223,10 +219,8 @@ class OrderApi
             ? '?' . http_build_query($queryParameters)
             : '&' . http_build_query($queryParameters);
 
-        $request = $this->requestFactory->createRequest(
-            'POST',
-            $this->configuration->getHost() . $path,
-        );
+        $fullUrl = $overwriteUrl ?? ($this->configuration->getHost() . $path);
+        $request = $this->requestFactory->createRequest('POST', $fullUrl);
 
         foreach ($headers as $name => $value) {
             $request = $request->withHeader($name, $value);
