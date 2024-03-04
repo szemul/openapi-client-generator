@@ -43,6 +43,7 @@ class Factory
     ): ModelPropertyTemplate {
         return new ModelPropertyTemplate(
             $this->diContainer->get(TypeMapper::class),
+            $this->diContainer->get(StringHelper::class),
             $name,
             $type,
             $isRequired,

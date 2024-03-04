@@ -52,7 +52,7 @@ class StringHelperTest extends TestCaseAbstract
     /**
      * @dataProvider methodProvider
      */
-    public function testConvertToMethodName($input, $expectedResult)
+    public function testConvertToMethodOrVariableName($input, $expectedResult)
     {
         $result = $this->getSut()->convertToMethodOrVariableName($input);
 
