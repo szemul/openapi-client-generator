@@ -8,14 +8,14 @@ class OrderList extends ModelAbstract
     /**
      * @var \Test\Model\Order[]
      */
-    protected ?array $Orders;
+    protected ?array $orders;
 
     /**
-     * @param \Test\Model\Order[] $Orders
+     * @param \Test\Model\Order[] $orders
      */
-    public function __construct(?array $Orders = null)
+    public function __construct(?array $orders = null)
     {
-        $this->Orders = $Orders;
+        $this->orders = $orders;
     }
 
     /**
@@ -23,12 +23,12 @@ class OrderList extends ModelAbstract
      */
     public function getOrders(bool $throwExceptionIfNotInitialized = false): ?array
     {
-        return $this->getPropertyValue('Orders', $throwExceptionIfNotInitialized);
+        return $this->getPropertyValue('orders', $throwExceptionIfNotInitialized);
     }
 
-    public function setOrders(\Test\Model\Order ...$Orders): self
+    public function setOrders(\Test\Model\Order ...$orders): self
     {
-        $this->Orders = $Orders;
+        $this->orders = $orders;
 
         return $this;
     }
