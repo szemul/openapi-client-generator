@@ -14,7 +14,7 @@ use Emul\ArrayToClassMapper\Mapper;
 class ArrayMapperFactory
 {
     private Mapper $mapper;
-    private array $entityClasses = ['Test\\Model\\Enum\\OrderUpsertEventAction'];
+    private array $entityClasses = ['Test\\Model\\Enum\\OrderUpsertEventAction', 'Test\\Model\\Enum\\GetOrderListSort'];
 
     public function __construct()
     {

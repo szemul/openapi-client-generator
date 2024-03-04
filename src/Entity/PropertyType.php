@@ -37,6 +37,17 @@ class PropertyType
         return $this->arrayItemType;
     }
 
+    public function getArrayItemTypeString(): ?string
+    {
+        if (empty($this->getArrayItemType())) {
+            return null;
+        } elseif ($this->getArrayItemType()->isScalar()) {
+            return (string)$this->getArrayItemType();
+        } else {
+            return '\\' . $this->getArrayItemType()->getObjectClassname();
+        }
+    }
+
     public function getObjectClassname($fqcn = true): ?string
     {
         return $fqcn

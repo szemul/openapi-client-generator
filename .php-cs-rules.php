@@ -54,7 +54,7 @@ return [
     'phpdoc_single_line_var_spacing'              => true,
     'phpdoc_trim'                                 => true,
     'phpdoc_types'                                => true,
-    'phpdoc_var_without_name'                     => true,
+    'phpdoc_var_without_name'                     => false,
     'self_accessor'                               => true,
     'single_line_comment_style'                   => ['comment_types' => ['hash']],
     'single_quote'                                => true,

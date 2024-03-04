@@ -60,7 +60,7 @@ class ActionParameterGenerator implements GeneratorInterface
                             $parameterDetails = $this->schemaHelper->getReferencedValue($parameterDetails['$ref'], $this->configuration->getApiDoc());
                         }
 
-                        $parameters[] = $this->parameterMapper->mapParameter($parameterDetails);
+                        $parameters[] = $this->parameterMapper->mapParameter($method['operationId'], $parameterDetails);
                     }
                 }
 

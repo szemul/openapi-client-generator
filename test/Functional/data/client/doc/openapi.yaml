@@ -6,6 +6,30 @@ servers:
 - url: 'http://test.localdomain:80'
   description: 'Local DEV'
 paths:
+  /orders:
+    get:
+      tags:
+      - Order
+      description: 'Lists the orders'
+      operationId: getOrderList
+      parameters:
+      - in: query
+        name: sort
+        description: 'What to sort by'
+        schema:
+          type: string
+          enum:
+          - orderId
+          - createdAt
+      responses:
+        200:
+          description: 'List of the items'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderCreate200Response'
   /order/create:
     post:
       tags:
@@ -180,6 +204,23 @@ components:
           description: 'Id of the created order'
           type: integer
       type: object
+    OrderList:
+      type: object
+      properties:
+        Orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+    Order:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          description: 'Id of the created order'
+        createdAt:
+          type: string
+          format: datetime
+          description: 'Creation time of order'
     Error400:
       properties:
         errorCode:

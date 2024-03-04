@@ -116,11 +116,16 @@ class TypeMapper
         return $docType;
     }
 
-    public function mapParameterToPropertyType(array $parameterDetails): PropertyType
+    public function mapParameterToPropertyType(string $operationId, array $parameterDetails): PropertyType
     {
         if (empty($parameterDetails['schema'])) {
             throw new InvalidArgumentException('Unable to retrieve type of ' . $parameterDetails['name']);
+        } elseif (!empty($parameterDetails['schema']['enum'])) {
+            $enumName = $this->stringHelper->convertToClassName($operationId . '_' . $parameterDetails['name']);
+
+            return PropertyType::object($this->locationHelper->getEnumNamespace() . '\\' . $enumName);
         }
+
         $typeString = $parameterDetails['schema']['type'];
 
         switch ($typeString) {
@@ -138,6 +143,10 @@ class TypeMapper
 
             case 'boolean':
                 $type = PropertyType::bool();
+                break;
+
+            case 'array':
+                $type = $this->mapApiDocDetailsToPropertyType($parameterDetails['name'], $parameterDetails['schema']);
                 break;
 
             default:
