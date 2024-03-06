@@ -21,7 +21,7 @@ class StringHelper
         return $this->convertToCamelCase($this->convertToPhpName($string), true);
     }
 
-    private function convertToPhpName(string $string): string
+    public function convertToPhpName(string $string): string
     {
         $result = iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $string);
         $result = str_replace([' ', '-', '.'], '_', $result);

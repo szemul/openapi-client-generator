@@ -121,7 +121,7 @@ class ModelTemplate extends ClassTemplateAbstract
             }
 
             $param          = $this->typeMapper->mapModelPropertyTemplateToPhp($property) . ' $' . $propertyName;
-            $paramSetters[] = '$this->' . $propertyName . ' = $' . $propertyName . ';';
+            $paramSetters[] = '$this->' . $this->stringHelper->convertToPhpName($property->getName()) . ' = $' . $propertyName . ';';
 
             if ($property->isRequired()) {
                 $requiredParams[] = $param;
