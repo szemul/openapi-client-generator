@@ -45,14 +45,14 @@ class ModelPropertyTemplate
         $propertyName  = $this->stringHelper->convertToPhpName($this->name);
         $getterName    = 'get' . ucfirst($propertyName);
         $returnType    = $this->isRequired ? '' : '?';
-        $returnType    .= (string)$this->type === PropertyType::OBJECT
+        $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
             : (string)$this->type;
 
         if ((string)$this->type === PropertyType::ARRAY) {
             $arrayItemType = $this->typeMapper->getArrayItemType($this->type);
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
-            $docType       .= $this->isRequired ? '' : '|null';
+            $docType .= $this->isRequired ? '' : '|null';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}
