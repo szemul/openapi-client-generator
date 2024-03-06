@@ -24,7 +24,7 @@ class ModelPropertyTemplate
     {
         $propertyType = $this->typeMapper->mapModelPropertyTemplateToPhp($this);
         $docType      = $this->typeMapper->mapModelPropertyTemplateToDoc($this);
-        $name         = $this->stringHelper->convertToMethodOrVariableName($this->name);
+        $name         = $this->stringHelper->convertToPhpName($this->name);
 
         $varDoc = $docType;
         if (!empty($this->description)) {
@@ -42,8 +42,8 @@ class ModelPropertyTemplate
     public function getGetter(): string
     {
         $documentation = '';
-        $name          = $this->stringHelper->convertToMethodOrVariableName($this->name);
-        $getterName    = 'get' . ucfirst($name);
+        $propertyName  = $this->stringHelper->convertToPhpName($this->name);
+        $getterName    = 'get' . ucfirst($propertyName);
         $returnType    = $this->isRequired ? '' : '?';
         $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
@@ -65,14 +65,14 @@ class ModelPropertyTemplate
             $getter = <<<GETTER
                 public function {$getterName}(): {$returnType}
                 {
-                    return \$this->{$name};
+                    return \$this->{$propertyName};
                 }
                 GETTER;
         } else {
             $getter = <<<GETTER
                 public function {$getterName}(bool \$throwExceptionIfNotInitialized = false): {$returnType}
                 {
-                    return \$this->getPropertyValue('{$name}', \$throwExceptionIfNotInitialized);
+                    return \$this->getPropertyValue('{$propertyName}', \$throwExceptionIfNotInitialized);
                 }
                 GETTER;
         }
@@ -82,10 +82,10 @@ class ModelPropertyTemplate
 
     public function getSetter(): string
     {
-        $name             = $this->stringHelper->convertToMethodOrVariableName($this->name);
-        $setterName       = 'set' . ucfirst($name);
+        $propertyName     = $this->stringHelper->convertToPhpName($this->name);
+        $setterName       = 'set' . ucfirst($propertyName);
         $ellipsisOperator = '';
-        $variableName     = '$' . $name;
+        $parameterName    = '$' . $this->stringHelper->convertToMethodOrVariableName($this->name);
 
         if ($this->type->isScalar()) {
             $type = (string)$this->type;
@@ -110,9 +110,9 @@ class ModelPropertyTemplate
         }
 
         return <<<SETTER
-            public function {$setterName}({$type} {$ellipsisOperator}{$variableName}): self
+            public function {$setterName}({$type} {$ellipsisOperator}{$parameterName}): self
             {
-                \$this->{$name} = $variableName;
+                \$this->{$propertyName} = $parameterName;
             
                 return \$this;
             }
