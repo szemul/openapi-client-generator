@@ -94,13 +94,13 @@ class ApiActionTemplate
                 }
                 \$request = \$request->withBody(\$this->streamFactory->createStream(\$payload));
 
-                \$response     = \$this->httpClient->sendRequest(\$request);
-                \$responseCode = \$response->getStatusCode();
-                \$responseBody = \$response->getBody()->getContents();
+                \$this->lastResponse     = \$this->httpClient->sendRequest(\$request);
+                \$responseCode = \$this->lastResponse->getStatusCode();
+                \$responseBody = \$this->lastResponse->getBody()->getContents();
 
                 if (\$responseCode >= 400) {
                     \$requestExceptionClass = '\\{$this->locationHelper->getExceptionNamespace()}\Request' . \$responseCode . 'Exception';
-                    \$responseHeaders       = \$response->getHeaders();
+                    \$responseHeaders       = \$this->lastResponse->getHeaders();
 
                     if (class_exists(\$requestExceptionClass)) {
                         throw new \$requestExceptionClass(\$responseBody, \$responseHeaders);

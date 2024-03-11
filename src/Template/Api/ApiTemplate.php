@@ -51,6 +51,7 @@ class ApiTemplate extends ClassTemplateAbstract
             use Psr\Http\Client\ClientInterface;
             use Psr\Http\Message\RequestFactoryInterface;
             use Psr\Http\Message\StreamFactoryInterface;
+            use Psr\Http\Message\ResponseInterface as PsrResponse;            
             use {$this->locationHelper->getRootNamespace()}\Configuration;
             use {$this->locationHelper->getExceptionNamespace()}\RequestException;
             {$this->getImports()}
@@ -62,6 +63,8 @@ class ApiTemplate extends ClassTemplateAbstract
                 private RequestFactoryInterface \$requestFactory;
                 private StreamFactoryInterface  \$streamFactory;
                 private array                   \$defaultHeaders = [];
+                
+                private ?PsrResponse \$lastResponse = null;
 
                 public function __construct(
                     Configuration \$configuration,
@@ -75,6 +78,13 @@ class ApiTemplate extends ClassTemplateAbstract
                     \$this->requestFactory = \$requestFactory;
                     \$this->streamFactory  = \$streamFactory;
                     \$this->defaultHeaders = \$defaultHeaders;
+                }
+                
+                public function getLastResponse(): ?PsrResponse
+                {
+                    \$this->lastResponse->getBody()->rewind();
+
+                    return \$this->lastResponse;
                 }
             
             {$this->getActions()}

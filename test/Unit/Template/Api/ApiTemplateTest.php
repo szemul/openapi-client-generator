@@ -40,6 +40,7 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
             use Psr\Http\Client\ClientInterface;
             use Psr\Http\Message\RequestFactoryInterface;
             use Psr\Http\Message\StreamFactoryInterface;
+            use Psr\Http\Message\ResponseInterface as PsrResponse;
             use Root\Configuration;
             use Root\Exception\RequestException;
             use ActionParameter;
@@ -53,6 +54,8 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
                 private RequestFactoryInterface $requestFactory;
                 private StreamFactoryInterface  $streamFactory;
                 private array                   $defaultHeaders = [];
+                
+                private ?PsrResponse $lastResponse = null;
 
                 public function __construct(
                     Configuration $configuration,
@@ -66,6 +69,13 @@ class ApiTemplateTest extends TemplateTestCaseAbstract
                     $this->requestFactory = $requestFactory;
                     $this->streamFactory  = $streamFactory;
                     $this->defaultHeaders = $defaultHeaders;
+                }
+                
+                public function getLastResponse(): ?PsrResponse
+                {
+                    $this->lastResponse->getBody()->rewind();
+
+                    return $this->lastResponse;
                 }
             
             Action

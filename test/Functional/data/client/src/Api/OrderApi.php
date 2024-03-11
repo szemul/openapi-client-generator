@@ -7,6 +7,7 @@ namespace Test\Api;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\ResponseInterface as PsrResponse;
 use Test\Configuration;
 use Test\Exception\RequestException;
 use Test\ArrayMapperFactory;
@@ -28,6 +29,8 @@ class OrderApi
     private StreamFactoryInterface  $streamFactory;
     private array                   $defaultHeaders = [];
 
+    private ?PsrResponse $lastResponse = null;
+
     public function __construct(
         Configuration $configuration,
         ClientInterface $httpClient,
@@ -40,6 +43,13 @@ class OrderApi
         $this->requestFactory = $requestFactory;
         $this->streamFactory  = $streamFactory;
         $this->defaultHeaders = $defaultHeaders;
+    }
+
+    public function getLastResponse(): ?PsrResponse
+    {
+        $this->lastResponse->getBody()->rewind();
+
+        return $this->lastResponse;
     }
 
     /**
@@ -87,13 +97,13 @@ class OrderApi
         }
         $request = $request->withBody($this->streamFactory->createStream($payload));
 
-        $response     = $this->httpClient->sendRequest($request);
-        $responseCode = $response->getStatusCode();
-        $responseBody = $response->getBody()->getContents();
+        $this->lastResponse     = $this->httpClient->sendRequest($request);
+        $responseCode           = $this->lastResponse->getStatusCode();
+        $responseBody           = $this->lastResponse->getBody()->getContents();
 
         if ($responseCode >= 400) {
             $requestExceptionClass = '\Test\Exception\Request' . $responseCode . 'Exception';
-            $responseHeaders       = $response->getHeaders();
+            $responseHeaders       = $this->lastResponse->getHeaders();
 
             if (class_exists($requestExceptionClass)) {
                 throw new $requestExceptionClass($responseBody, $responseHeaders);
@@ -158,13 +168,13 @@ class OrderApi
         }
         $request = $request->withBody($this->streamFactory->createStream($payload));
 
-        $response     = $this->httpClient->sendRequest($request);
-        $responseCode = $response->getStatusCode();
-        $responseBody = $response->getBody()->getContents();
+        $this->lastResponse     = $this->httpClient->sendRequest($request);
+        $responseCode           = $this->lastResponse->getStatusCode();
+        $responseBody           = $this->lastResponse->getBody()->getContents();
 
         if ($responseCode >= 400) {
             $requestExceptionClass = '\Test\Exception\Request' . $responseCode . 'Exception';
-            $responseHeaders       = $response->getHeaders();
+            $responseHeaders       = $this->lastResponse->getHeaders();
 
             if (class_exists($requestExceptionClass)) {
                 throw new $requestExceptionClass($responseBody, $responseHeaders);
@@ -227,13 +237,13 @@ class OrderApi
         }
         $request = $request->withBody($this->streamFactory->createStream($payload));
 
-        $response     = $this->httpClient->sendRequest($request);
-        $responseCode = $response->getStatusCode();
-        $responseBody = $response->getBody()->getContents();
+        $this->lastResponse     = $this->httpClient->sendRequest($request);
+        $responseCode           = $this->lastResponse->getStatusCode();
+        $responseBody           = $this->lastResponse->getBody()->getContents();
 
         if ($responseCode >= 400) {
             $requestExceptionClass = '\Test\Exception\Request' . $responseCode . 'Exception';
-            $responseHeaders       = $response->getHeaders();
+            $responseHeaders       = $this->lastResponse->getHeaders();
 
             if (class_exists($requestExceptionClass)) {
                 throw new $requestExceptionClass($responseBody, $responseHeaders);
