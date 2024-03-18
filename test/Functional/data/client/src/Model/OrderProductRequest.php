@@ -10,11 +10,11 @@ class OrderProductRequest extends ModelAbstract
      */
     protected string $name;
     /**
-     * @var string Id of the extra product
+     * @var string|null Id of the extra product
      */
-    protected string $productId;
+    protected ?string $productId;
 
-    public function __construct(string $name, string $productId)
+    public function __construct(string $name, ?string $productId)
     {
         $this->name      = $name;
         $this->productId = $productId;
@@ -25,7 +25,7 @@ class OrderProductRequest extends ModelAbstract
         return $this->name;
     }
 
-    public function getProductId(): string
+    public function getProductId(): ?string
     {
         return $this->productId;
     }
@@ -37,7 +37,7 @@ class OrderProductRequest extends ModelAbstract
         return $this;
     }
 
-    public function setProductId(string $productId): self
+    public function setProductId(?string $productId): self
     {
         $this->productId = $productId;
 

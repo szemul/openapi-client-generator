@@ -144,6 +144,7 @@ components:
         productId:
           description: 'Id of the extra product'
           type: string
+          nullable: true
       type: object
     OrderSourceSystemRequest:
       required:

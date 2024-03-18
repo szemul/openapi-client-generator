@@ -16,7 +16,8 @@ class ModelPropertyTemplate
         private readonly string $name,
         private readonly PropertyType $type,
         private readonly bool $isRequired,
-        private readonly ?string $description = null
+        private readonly ?string $description = null,
+        private readonly bool $isNullable = false,
     ) {
     }
 
@@ -44,7 +45,7 @@ class ModelPropertyTemplate
         $documentation = '';
         $propertyName  = $this->stringHelper->convertToPhpName($this->name);
         $getterName    = 'get' . ucfirst($propertyName);
-        $returnType    = $this->isRequired ? '' : '?';
+        $returnType    = $this->isRequired && !$this->isNullable ? '' : '?';
         $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
             : (string)$this->type;
@@ -52,7 +53,7 @@ class ModelPropertyTemplate
         if ((string)$this->type === PropertyType::ARRAY) {
             $arrayItemType = $this->typeMapper->getArrayItemType($this->type);
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
-            $docType .= $this->isRequired ? '' : '|null';
+            $docType .= $this->isRequired && !$this->isNullable ? '' : '|null';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}
@@ -90,13 +91,13 @@ class ModelPropertyTemplate
         if ($this->type->isScalar()) {
             $type = (string)$this->type;
 
-            if (!$this->isRequired) {
+            if (!$this->isRequired || $this->isNullable) {
                 $type = '?' . $type;
             }
         } elseif ((string)$this->type === PropertyType::OBJECT) {
             $type = $this->type->getObjectClassname(false);
 
-            if (!$this->isRequired) {
+            if (!$this->isRequired || $this->isNullable) {
                 $type = '?' . $type;
             }
         } elseif ((string)$this->type === PropertyType::ARRAY) {
@@ -132,5 +133,10 @@ class ModelPropertyTemplate
     public function isRequired(): bool
     {
         return $this->isRequired;
+    }
+
+    public function isNullable(): bool
+    {
+        return $this->isNullable;
     }
 }

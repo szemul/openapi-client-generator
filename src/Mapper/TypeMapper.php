@@ -90,9 +90,9 @@ class TypeMapper
             $template->getType()->isScalar()
             || (string)$template->getType() === PropertyType::ARRAY
         ) {
-            $phpType = ($template->isRequired() ? '' : '?') . $template->getType();
+            $phpType = ($template->isRequired() && !$template->isNullable() ? '' : '?') . $template->getType();
         } elseif ((string)$template->getType() === PropertyType::OBJECT) {
-            $phpType = ($template->isRequired() ? '' : '?') . $template->getType()->getObjectClassname(false);
+            $phpType = ($template->isRequired() && !$template->isNullable() ? '' : '?') . $template->getType()->getObjectClassname(false);
         } else {
             throw new InvalidArgumentException('Unhandled property type: ' . $template->getType());
         }
@@ -103,9 +103,9 @@ class TypeMapper
     public function mapModelPropertyTemplateToDoc(ModelPropertyTemplate $template): string
     {
         if ($template->getType()->isScalar()) {
-            $docType = $template->getType() . ($template->isRequired() ? '' : '|null');
+            $docType = $template->getType() . ($template->isRequired() && !$template->isNullable() ? '' : '|null');
         } elseif ((string)$template->getType() === PropertyType::OBJECT) {
-            $docType = '\\' . $template->getType()->getObjectClassname() . ($template->isRequired() ? '' : '|null');
+            $docType = '\\' . $template->getType()->getObjectClassname() . ($template->isRequired() && !$template->isNullable() ? '' : '|null');
         } elseif ((string)$template->getType() === PropertyType::ARRAY) {
             $arrayItemType = $this->getArrayItemType($template->getType());
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';

@@ -119,6 +119,7 @@ class ModelGenerator implements GeneratorInterface
         } elseif ($schemaType === 'object') {
             foreach ($schema['properties'] ?? [] as $propertyName => $details) {
                 $fullPropertyName = $modelName . '_' . $propertyName;
+                $nullable         = (bool)($details['nullable'] ?? false);
                 $type             = $this->typeMapper->mapApiDocDetailsToPropertyType($fullPropertyName, $details);
                 $description      = $details['description'] ?? null;
 
@@ -127,6 +128,7 @@ class ModelGenerator implements GeneratorInterface
                     $type,
                     $this->isRequired($schema, $propertyName),
                     $description,
+                    $nullable,
                 );
 
                 if (!empty($details['enum'])) {
