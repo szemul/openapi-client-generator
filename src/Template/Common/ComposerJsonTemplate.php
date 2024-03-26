@@ -29,7 +29,7 @@ class ComposerJsonTemplate
                     "ext-json": "*",
                     "nesbot/carbon": "^2.0",
                     "emulgeator/enum": "^1.0",
-                    "emulgeator/array-to-class-mapper": "^0.1",
+                    "emulgeator/array-to-class-mapper": "^0.1|^1.0",
                     "psr/http-message": "^1.0",
                     "psr/http-client": "^1.0",
                     "psr/http-factory": "^1.0"
