@@ -24,7 +24,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 
     public function testToStringWhenScalarGiven_shouldGenerateProperty()
     {
-        $sut = $this->getSut(PropertyType::string(), true);
+        $sut = $this->getSut(PropertyType::string(), false);
 
         $this->expectPropertyMappedToPhpType($sut, 'string');
         $this->expectPropertyMappedToDocType($sut, 'docString');
@@ -42,7 +42,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 
     public function testToStringWhenDescriptionSet_shouldGenerateProperty()
     {
-        $sut = $this->getSut(PropertyType::string(), true, 'Description of the property');
+        $sut = $this->getSut(PropertyType::string(), false, 'Description of the property');
 
         $this->expectPropertyMappedToPhpType($sut, 'string');
         $this->expectPropertyMappedToDocType($sut, 'docString');
@@ -60,7 +60,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 
     public function testGetGetterWhenScalarGiven_shouldGenerateGetter()
     {
-        $sut = $this->getSut(PropertyType::string(), true);
+        $sut = $this->getSut(PropertyType::string(), false);
 
         $getter         = $sut->getGetter();
         $expectedResult = <<<'EXPECTED'
@@ -75,7 +75,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 
     public function testGetGetterWhenNullableGiven_shouldGenerateGetter()
     {
-        $sut = $this->getSut(PropertyType::string(), false);
+        $sut = $this->getSut(PropertyType::string(), true);
 
         $getter         = $sut->getGetter();
         $expectedResult = <<<'EXPECTED'
@@ -90,7 +90,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 
     public function testGetGetterWhenObjectGiven_shouldGenerateGetter()
     {
-        $sut = $this->getSut(PropertyType::object(CarbonInterface::class), true);
+        $sut = $this->getSut(PropertyType::object(CarbonInterface::class), false);
 
         $getter         = $sut->getGetter();
         $expectedResult = <<<'EXPECTED'
@@ -106,7 +106,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
     public function testGetGetterWhenArrayGiven_shouldGenerateGetterWithDoc()
     {
         $type = PropertyType::array(PropertyType::object(CarbonInterface::class));
-        $sut  = $this->getSut($type, false);
+        $sut  = $this->getSut($type, true);
 
         $this->expectArrayItemTypeRetrieved($type, 'Carbon\CarbonInterface');
 
@@ -126,7 +126,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 
     public function testGetSetterWhenScalarGiven_shouldGenerateSetter()
     {
-        $sut = $this->getSut(PropertyType::string(), true);
+        $sut = $this->getSut(PropertyType::string(), false);
 
         $setter         = $sut->getSetter();
         $expectedResult = <<<'EXPECTED'
@@ -143,7 +143,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 
     public function testGetSetterWhenNullable_shouldGenerateSetter()
     {
-        $sut = $this->getSut(PropertyType::string(), false);
+        $sut = $this->getSut(PropertyType::string(), true);
 
         $setter         = $sut->getSetter();
         $expectedResult = <<<'EXPECTED'
@@ -160,7 +160,7 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
 
     public function testGetSetterWhenObjectGiven_shouldGenerateSetter()
     {
-        $sut = $this->getSut(PropertyType::object(CarbonInterface::class), false);
+        $sut = $this->getSut(PropertyType::object(CarbonInterface::class), true);
 
         $setter         = $sut->getSetter();
         $expectedResult = <<<'EXPECTED'
@@ -222,14 +222,15 @@ class ModelPropertyTemplateTest extends TemplateTestCaseAbstract
             ->andReturn($expectedResult);
     }
 
-    private function getSut(PropertyType $type, bool $isRequired, ?string $description = null): ModelPropertyTemplate
+    private function getSut(PropertyType $type, bool $isNullable, ?string $description = null): ModelPropertyTemplate
     {
         return new ModelPropertyTemplate(
             $this->typeMapper,
             $this->stringHelper,
             $this->name,
             $type,
-            $isRequired,
+            true,
+            $isNullable,
             $description
         );
     }

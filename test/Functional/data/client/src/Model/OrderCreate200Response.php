@@ -6,21 +6,21 @@ namespace Test\Model;
 class OrderCreate200Response extends ModelAbstract
 {
     /**
-     * @var int|null Id of the task
+     * @var int Id of the task
      */
-    protected ?int $taskId;
+    protected int $taskId;
 
-    public function __construct(?int $taskId = null)
+    public function __construct()
     {
-        $this->taskId = $taskId;
+
     }
 
-    public function getTaskId(bool $throwExceptionIfNotInitialized = false): ?int
+    public function getTaskId(): int
     {
-        return $this->getPropertyValue('taskId', $throwExceptionIfNotInitialized);
+        return $this->taskId;
     }
 
-    public function setTaskId(?int $taskId): self
+    public function setTaskId(int $taskId): self
     {
         $this->taskId = $taskId;
 

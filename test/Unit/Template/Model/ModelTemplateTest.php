@@ -14,8 +14,8 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
     public function testToString_shouldGenerateClass()
     {
         $properties = [
-            $this->getPropertyTemplate('property1', PropertyType::int(), true, 'First'),
-            $this->getPropertyTemplate('property2', PropertyType::array(PropertyType::string()), false, 'Second'),
+            $this->getPropertyTemplate('property1', PropertyType::int(), false, 'First'),
+            $this->getPropertyTemplate('property2', PropertyType::array(PropertyType::string()), true, 'Second'),
         ];
         $sut        = $this->getSut(false, ...$properties);
 
@@ -82,7 +82,7 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
     public function testToStringWhenResponseGiven_shouldGenerateResponseClass()
     {
         $properties = [
-            $this->getPropertyTemplate('property1', PropertyType::int(), true, 'First'),
+            $this->getPropertyTemplate('property1', PropertyType::int(), false, 'First'),
         ];
         $sut        = $this->getSut(true, ...$properties);
 
@@ -138,14 +138,15 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
         $this->assertSame('Root\Model\Model', $className);
     }
 
-    private function getPropertyTemplate(string $name, PropertyType $type, bool $isRequired, ?string $description): ModelPropertyTemplate
+    private function getPropertyTemplate(string $name, PropertyType $type, bool $isNullable, ?string $description): ModelPropertyTemplate
     {
         return new ModelPropertyTemplate(
             $this->typeMapper,
             $this->stringHelper,
             $name,
             $type,
-            $isRequired,
+            true,
+            $isNullable,
             $description
         );
     }

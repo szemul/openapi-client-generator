@@ -116,6 +116,7 @@ components:
         friendlyId:
           description: 'Human readable id of the order'
           type: string
+          nullable: true
         currencyCode:
           description: 'Currency of the payment and prices'
           type: string
@@ -127,6 +128,7 @@ components:
         createdAt:
           type: string
           format: date-time
+          nullable: true
         orderId:
           description: 'Id of the order in the source system'
           type: string

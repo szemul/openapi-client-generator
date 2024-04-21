@@ -120,12 +120,14 @@ class ModelGenerator implements GeneratorInterface
             foreach ($schema['properties'] ?? [] as $propertyName => $details) {
                 $fullPropertyName = $modelName . '_' . $propertyName;
                 $type             = $this->typeMapper->mapApiDocDetailsToPropertyType($fullPropertyName, $details);
+                $isNullable       = $details['nullable'] ?? false;
                 $description      = $details['description'] ?? null;
 
                 $propertyTemplates[] = $this->templateFactory->getModelPropertyTemplate(
                     $propertyName,
                     $type,
                     $this->isRequired($schema, $propertyName),
+                    $isNullable,
                     $description,
                 );
 

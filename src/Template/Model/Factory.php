@@ -39,6 +39,7 @@ class Factory
         string $name,
         PropertyType $type,
         bool $isRequired,
+        bool $isNullable,
         ?string $description = null
     ): ModelPropertyTemplate {
         return new ModelPropertyTemplate(
@@ -47,6 +48,7 @@ class Factory
             $name,
             $type,
             $isRequired,
+            $isNullable,
             $description
         );
     }

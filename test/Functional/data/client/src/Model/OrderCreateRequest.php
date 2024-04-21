@@ -35,12 +35,10 @@ class OrderCreateRequest extends ModelAbstract
     /**
      * @param \Test\Model\OrderProductRequest[] $products
      */
-    public function __construct(string $currencyCode, array $products, string $orderId, OrderSourceSystemRequest $sourceSystem, ?string $friendlyId = null, ?CarbonInterface $createdAt = null)
+    public function __construct(string $currencyCode, array $products, string $orderId, OrderSourceSystemRequest $sourceSystem)
     {
-        $this->friendlyId   = $friendlyId;
         $this->currencyCode = $currencyCode;
         $this->products     = $products;
-        $this->createdAt    = $createdAt;
         $this->orderId      = $orderId;
         $this->sourceSystem = $sourceSystem;
     }

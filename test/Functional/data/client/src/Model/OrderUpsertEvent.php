@@ -16,9 +16,9 @@ class OrderUpsertEvent extends ModelAbstract
      */
     protected int $accountId;
     /**
-     * @var \Test\Model\Enum\OrderUpsertEventAction|null The action this entity describes
+     * @var \Test\Model\Enum\OrderUpsertEventAction The action this entity describes
      */
-    protected ?OrderUpsertEventAction $action;
+    protected OrderUpsertEventAction $action;
     /**
      * @var array Details of the order. The type depends on the action
      */
@@ -27,11 +27,10 @@ class OrderUpsertEvent extends ModelAbstract
     /**
      * @param array $order
      */
-    public function __construct(string $version, int $accountId, array $order, ?OrderUpsertEventAction $action = null)
+    public function __construct(string $version, int $accountId, array $order)
     {
         $this->version   = $version;
         $this->accountId = $accountId;
-        $this->action    = $action;
         $this->order     = $order;
     }
 
@@ -45,9 +44,9 @@ class OrderUpsertEvent extends ModelAbstract
         return $this->accountId;
     }
 
-    public function getAction(bool $throwExceptionIfNotInitialized = false): ?OrderUpsertEventAction
+    public function getAction(): OrderUpsertEventAction
     {
-        return $this->getPropertyValue('action', $throwExceptionIfNotInitialized);
+        return $this->action;
     }
 
     /**
@@ -72,7 +71,7 @@ class OrderUpsertEvent extends ModelAbstract
         return $this;
     }
 
-    public function setAction(?OrderUpsertEventAction $action): self
+    public function setAction(OrderUpsertEventAction $action): self
     {
         $this->action = $action;
 

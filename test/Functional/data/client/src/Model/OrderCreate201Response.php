@@ -7,21 +7,21 @@ class OrderCreate201Response extends ModelAbstract implements ResponseInterface
 {
     use ResponseTrait;
     /**
-     * @var int|null Id of the created order
+     * @var int Id of the created order
      */
-    protected ?int $id;
+    protected int $id;
 
-    public function __construct(?int $id = null)
+    public function __construct()
     {
-        $this->id = $id;
+
     }
 
-    public function getId(bool $throwExceptionIfNotInitialized = false): ?int
+    public function getId(): int
     {
-        return $this->getPropertyValue('id', $throwExceptionIfNotInitialized);
+        return $this->id;
     }
 
-    public function setId(?int $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
 
