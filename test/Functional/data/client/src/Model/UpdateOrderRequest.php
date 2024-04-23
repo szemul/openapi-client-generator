@@ -19,9 +19,9 @@ class UpdateOrderRequest extends ModelAbstract
         $this->currencyCode = $currencyCode;
     }
 
-    public function getFriendlyId(): string
+    public function getFriendlyId(bool $throwExceptionIfNotInitialized = false): ?string
     {
-        return $this->friendlyId;
+        return $this->getPropertyValue('friendlyId', $throwExceptionIfNotInitialized);
     }
 
     public function getCurrencyCode(): string

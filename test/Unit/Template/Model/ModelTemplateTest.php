@@ -14,8 +14,8 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
     public function testToString_shouldGenerateClass()
     {
         $properties = [
-            $this->getPropertyTemplate('property1', PropertyType::int(), false, 'First'),
-            $this->getPropertyTemplate('property2', PropertyType::array(PropertyType::string()), true, 'Second'),
+            $this->getPropertyTemplate('property1', PropertyType::int(), true, false, 'First'),
+            $this->getPropertyTemplate('property2', PropertyType::array(PropertyType::string()), true, true, 'Second'),
         ];
         $sut        = $this->getSut(false, ...$properties);
 
@@ -82,7 +82,8 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
     public function testToStringWhenResponseGiven_shouldGenerateResponseClass()
     {
         $properties = [
-            $this->getPropertyTemplate('property1', PropertyType::int(), false, 'First'),
+            $this->getPropertyTemplate('requiredProperty', PropertyType::int(), true, false, 'Required'),
+            $this->getPropertyTemplate('nonRequiredProperty', PropertyType::string(), false, false, 'Non Required'),
         ];
         $sut        = $this->getSut(true, ...$properties);
 
@@ -98,26 +99,42 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
                 use ResponseTrait;
                 
                 /**
-                 * @var int First
+                 * @var int Required
                  */
-                protected int $property1;
+                protected int $requiredProperty;
+                
+                /**
+                 * @var string Non Required
+                 */
+                protected string $nonRequiredProperty;
 
-                public function __construct(int $property1)
+                public function __construct(int $requiredProperty)
                 {
-                    $this->property1 = $property1;
+                    $this->requiredProperty = $requiredProperty;
                 }
 
-                public function getProperty1(): int
+                public function getRequiredProperty(): int
                 {
-                    return $this->property1;
+                    return $this->requiredProperty;
+                }
+                
+                public function getNonRequiredProperty(bool $throwExceptionIfNotInitialized = false): ?string
+                {
+                    return $this->getPropertyValue('nonRequiredProperty', $throwExceptionIfNotInitialized);
                 }
             
-                public function setProperty1(int $property1): self
+                public function setRequiredProperty(int $requiredProperty): self
                 {
-                    $this->property1 = $property1;
+                    $this->requiredProperty = $requiredProperty;
             
                     return $this;
                 }
+                
+                public function setNonRequiredProperty(string $nonRequiredProperty): self
+                {
+                    $this->nonRequiredProperty = $nonRequiredProperty;
+                    return $this;
+                }                
             }
             EXPECTED;
 
@@ -138,14 +155,14 @@ class ModelTemplateTest extends TemplateTestCaseAbstract
         $this->assertSame('Root\Model\Model', $className);
     }
 
-    private function getPropertyTemplate(string $name, PropertyType $type, bool $isNullable, ?string $description): ModelPropertyTemplate
+    private function getPropertyTemplate(string $name, PropertyType $type, bool $isRequired, bool $isNullable, ?string $description): ModelPropertyTemplate
     {
         return new ModelPropertyTemplate(
             $this->typeMapper,
             $this->stringHelper,
             $name,
             $type,
-            true,
+            $isRequired,
             $isNullable,
             $description
         );

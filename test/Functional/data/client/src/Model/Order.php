@@ -14,9 +14,10 @@ class Order extends ModelAbstract
      */
     protected string $createdAt;
 
-    public function __construct()
+    public function __construct(int $orderId, string $createdAt)
     {
-
+        $this->orderId   = $orderId;
+        $this->createdAt = $createdAt;
     }
 
     public function getOrderId(): int

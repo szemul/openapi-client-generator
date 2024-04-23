@@ -16,9 +16,9 @@ class CreateOrderResponse202 extends ModelAbstract implements ResponseInterface
 
     }
 
-    public function getId(): string
+    public function getId(bool $throwExceptionIfNotInitialized = false): ?string
     {
-        return $this->id;
+        return $this->getPropertyValue('id', $throwExceptionIfNotInitialized);
     }
 
     public function setId(string $id): self

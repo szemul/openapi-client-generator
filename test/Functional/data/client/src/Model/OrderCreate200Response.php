@@ -10,9 +10,9 @@ class OrderCreate200Response extends ModelAbstract
      */
     protected int $taskId;
 
-    public function __construct()
+    public function __construct(int $taskId)
     {
-
+        $this->taskId = $taskId;
     }
 
     public function getTaskId(): int

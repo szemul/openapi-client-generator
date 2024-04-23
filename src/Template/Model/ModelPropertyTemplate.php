@@ -42,10 +42,11 @@ class ModelPropertyTemplate
 
     public function getGetter(): string
     {
+        $isNullable    = $this->isNullable || !$this->isRequired;
         $documentation = '';
         $propertyName  = $this->stringHelper->convertToPhpName($this->name);
         $getterName    = 'get' . ucfirst($propertyName);
-        $returnType    = $this->isNullable ? '?' : '';
+        $returnType    = $isNullable ? '?' : '';
         $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
             : (string)$this->type;
@@ -53,7 +54,7 @@ class ModelPropertyTemplate
         if ((string)$this->type === PropertyType::ARRAY) {
             $arrayItemType = $this->typeMapper->getArrayItemType($this->type);
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
-            $docType .= $this->isNullable ? '|null' : '';
+            $docType .= $isNullable ? '|null' : '';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}
@@ -62,7 +63,7 @@ class ModelPropertyTemplate
                 DOCUMENTATION;
         }
 
-        if ($this->isNullable) {
+        if ($isNullable) {
             $getter = <<<GETTER
                 public function {$getterName}(bool \$throwExceptionIfNotInitialized = false): {$returnType}
                 {

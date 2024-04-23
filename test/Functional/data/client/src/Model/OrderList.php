@@ -10,9 +10,12 @@ class OrderList extends ModelAbstract
      */
     protected array $Orders;
 
-    public function __construct()
+    /**
+     * @param \Test\Model\Order[] $orders
+     */
+    public function __construct(array $orders)
     {
-
+        $this->Orders = $orders;
     }
 
     /**

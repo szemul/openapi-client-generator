@@ -18,9 +18,14 @@ class Error404 extends ModelAbstract
      */
     protected array $params;
 
-    public function __construct()
+    /**
+     * @param array $params
+     */
+    public function __construct(string $errorCode, string $errorMessage, array $params)
     {
-
+        $this->errorCode    = $errorCode;
+        $this->errorMessage = $errorMessage;
+        $this->params       = $params;
     }
 
     public function getErrorCode(): string

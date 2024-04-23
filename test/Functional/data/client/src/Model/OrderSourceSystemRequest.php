@@ -28,13 +28,11 @@ class OrderSourceSystemRequest extends ModelAbstract
      */
     protected string $failedCallbackUrl;
 
-    public function __construct(int $accountId, string $name, CarbonInterface $pushDeadline, string $successCallbackUrl, string $failedCallbackUrl)
+    public function __construct(int $accountId, string $name, CarbonInterface $pushDeadline)
     {
-        $this->accountId          = $accountId;
-        $this->name               = $name;
-        $this->pushDeadline       = $pushDeadline;
-        $this->successCallbackUrl = $successCallbackUrl;
-        $this->failedCallbackUrl  = $failedCallbackUrl;
+        $this->accountId    = $accountId;
+        $this->name         = $name;
+        $this->pushDeadline = $pushDeadline;
     }
 
     public function getAccountId(): int
@@ -52,14 +50,14 @@ class OrderSourceSystemRequest extends ModelAbstract
         return $this->pushDeadline;
     }
 
-    public function getSuccessCallbackUrl(): string
+    public function getSuccessCallbackUrl(bool $throwExceptionIfNotInitialized = false): ?string
     {
-        return $this->successCallbackUrl;
+        return $this->getPropertyValue('successCallbackUrl', $throwExceptionIfNotInitialized);
     }
 
-    public function getFailedCallbackUrl(): string
+    public function getFailedCallbackUrl(bool $throwExceptionIfNotInitialized = false): ?string
     {
-        return $this->failedCallbackUrl;
+        return $this->getPropertyValue('failedCallbackUrl', $throwExceptionIfNotInitialized);
     }
 
     public function setAccountId(int $accountId): self

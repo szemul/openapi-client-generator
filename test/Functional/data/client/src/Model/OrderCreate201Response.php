@@ -11,9 +11,9 @@ class OrderCreate201Response extends ModelAbstract implements ResponseInterface
      */
     protected int $id;
 
-    public function __construct()
+    public function __construct(int $id)
     {
-
+        $this->id = $id;
     }
 
     public function getId(): int

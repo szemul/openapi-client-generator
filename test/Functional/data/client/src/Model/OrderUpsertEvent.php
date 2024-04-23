@@ -27,10 +27,11 @@ class OrderUpsertEvent extends ModelAbstract
     /**
      * @param array $order
      */
-    public function __construct(string $version, int $accountId, array $order)
+    public function __construct(string $version, int $accountId, OrderUpsertEventAction $action, array $order)
     {
         $this->version   = $version;
         $this->accountId = $accountId;
+        $this->action    = $action;
         $this->order     = $order;
     }
 
