@@ -6,54 +6,54 @@ namespace Test\Model;
 class Error404 extends ModelAbstract
 {
     /**
-     * @var string|null The code of the error
+     * @var string The code of the error
      */
-    protected ?string $errorCode;
+    protected string $errorCode;
     /**
-     * @var string|null Description of the error
+     * @var string Description of the error
      */
-    protected ?string $errorMessage;
+    protected string $errorMessage;
     /**
      * @var array List of the invalid params where the property is the parameter name and the value is the describing the issue
      */
-    protected ?array $params;
+    protected array $params;
 
     /**
      * @param array $params
      */
-    public function __construct(?string $errorCode = null, ?string $errorMessage = null, ?array $params = null)
+    public function __construct(string $errorCode, string $errorMessage, array $params)
     {
         $this->errorCode    = $errorCode;
         $this->errorMessage = $errorMessage;
         $this->params       = $params;
     }
 
-    public function getErrorCode(bool $throwExceptionIfNotInitialized = false): ?string
+    public function getErrorCode(): string
     {
-        return $this->getPropertyValue('errorCode', $throwExceptionIfNotInitialized);
+        return $this->errorCode;
     }
 
-    public function getErrorMessage(bool $throwExceptionIfNotInitialized = false): ?string
+    public function getErrorMessage(): string
     {
-        return $this->getPropertyValue('errorMessage', $throwExceptionIfNotInitialized);
+        return $this->errorMessage;
     }
 
     /**
-     * @return array|null
+     * @return array
      */
-    public function getParams(bool $throwExceptionIfNotInitialized = false): ?array
+    public function getParams(): array
     {
-        return $this->getPropertyValue('params', $throwExceptionIfNotInitialized);
+        return $this->params;
     }
 
-    public function setErrorCode(?string $errorCode): self
+    public function setErrorCode(string $errorCode): self
     {
         $this->errorCode = $errorCode;
 
         return $this;
     }
 
-    public function setErrorMessage(?string $errorMessage): self
+    public function setErrorMessage(string $errorMessage): self
     {
         $this->errorMessage = $errorMessage;
 

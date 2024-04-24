@@ -7,13 +7,13 @@ class CreateOrderResponse202 extends ModelAbstract implements ResponseInterface
 {
     use ResponseTrait;
     /**
-     * @var string|null Message
+     * @var string Message
      */
-    protected ?string $id;
+    protected string $id;
 
-    public function __construct(?string $id = null)
+    public function __construct()
     {
-        $this->id = $id;
+
     }
 
     public function getId(bool $throwExceptionIfNotInitialized = false): ?string
@@ -21,7 +21,7 @@ class CreateOrderResponse202 extends ModelAbstract implements ResponseInterface
         return $this->getPropertyValue('id', $throwExceptionIfNotInitialized);
     }
 
-    public function setId(?string $id): self
+    public function setId(string $id): self
     {
         $this->id = $id;
 

@@ -13,11 +13,11 @@ class ModelPropertyTemplate
     public function __construct(
         private readonly TypeMapper $typeMapper,
         private readonly StringHelper $stringHelper,
-        private readonly string $name,
-        private readonly PropertyType $type,
-        private readonly bool $isRequired,
-        private readonly ?string $description = null,
-        private readonly bool $isNullable = false,
+        public readonly string $name,
+        public readonly PropertyType $type,
+        public readonly bool $isRequired,
+        public readonly bool $isNullable,
+        public readonly ?string $description = null
     ) {
     }
 
@@ -42,10 +42,11 @@ class ModelPropertyTemplate
 
     public function getGetter(): string
     {
+        $isNullable    = $this->isNullable || !$this->isRequired;
         $documentation = '';
         $propertyName  = $this->stringHelper->convertToPhpName($this->name);
         $getterName    = 'get' . ucfirst($propertyName);
-        $returnType    = $this->isRequired && !$this->isNullable ? '' : '?';
+        $returnType    = $isNullable ? '?' : '';
         $returnType .= (string)$this->type === PropertyType::OBJECT
             ? $this->type->getObjectClassname(false)
             : (string)$this->type;
@@ -53,7 +54,7 @@ class ModelPropertyTemplate
         if ((string)$this->type === PropertyType::ARRAY) {
             $arrayItemType = $this->typeMapper->getArrayItemType($this->type);
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
-            $docType .= $this->isRequired && !$this->isNullable ? '' : '|null';
+            $docType .= $isNullable ? '|null' : '';
             $documentation = <<<DOCUMENTATION
                 /**
                  * @return {$docType}
@@ -62,18 +63,18 @@ class ModelPropertyTemplate
                 DOCUMENTATION;
         }
 
-        if ($this->isRequired) {
-            $getter = <<<GETTER
-                public function {$getterName}(): {$returnType}
-                {
-                    return \$this->{$propertyName};
-                }
-                GETTER;
-        } else {
+        if ($isNullable) {
             $getter = <<<GETTER
                 public function {$getterName}(bool \$throwExceptionIfNotInitialized = false): {$returnType}
                 {
                     return \$this->getPropertyValue('{$propertyName}', \$throwExceptionIfNotInitialized);
+                }
+                GETTER;
+        } else {
+            $getter = <<<GETTER
+                public function {$getterName}(): {$returnType}
+                {
+                    return \$this->{$propertyName};
                 }
                 GETTER;
         }
@@ -91,13 +92,13 @@ class ModelPropertyTemplate
         if ($this->type->isScalar()) {
             $type = (string)$this->type;
 
-            if (!$this->isRequired || $this->isNullable) {
+            if ($this->isNullable) {
                 $type = '?' . $type;
             }
         } elseif ((string)$this->type === PropertyType::OBJECT) {
             $type = $this->type->getObjectClassname(false);
 
-            if (!$this->isRequired || $this->isNullable) {
+            if ($this->isNullable) {
                 $type = '?' . $type;
             }
         } elseif ((string)$this->type === PropertyType::ARRAY) {
@@ -118,25 +119,5 @@ class ModelPropertyTemplate
                 return \$this;
             }
             SETTER;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getType(): PropertyType
-    {
-        return $this->type;
-    }
-
-    public function isRequired(): bool
-    {
-        return $this->isRequired;
-    }
-
-    public function isNullable(): bool
-    {
-        return $this->isNullable;
     }
 }

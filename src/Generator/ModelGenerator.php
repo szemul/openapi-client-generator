@@ -121,12 +121,14 @@ class ModelGenerator implements GeneratorInterface
                 $fullPropertyName = $modelName . '_' . $propertyName;
                 $nullable         = (bool)($details['nullable'] ?? false);
                 $type             = $this->typeMapper->mapApiDocDetailsToPropertyType($fullPropertyName, $details);
+                $isNullable       = $details['nullable'] ?? false;
                 $description      = $details['description'] ?? null;
 
                 $propertyTemplates[] = $this->templateFactory->getModelPropertyTemplate(
                     $propertyName,
                     $type,
                     $this->isRequired($schema, $propertyName),
+                    $isNullable,
                     $description,
                     $nullable,
                 );

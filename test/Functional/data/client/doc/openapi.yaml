@@ -116,6 +116,7 @@ components:
         friendlyId:
           description: 'Human readable id of the order'
           type: string
+          nullable: true
         currencyCode:
           description: 'Currency of the payment and prices'
           type: string
@@ -127,6 +128,7 @@ components:
         createdAt:
           type: string
           format: date-time
+          nullable: true
         orderId:
           description: 'Id of the order in the source system'
           type: string
@@ -144,15 +146,12 @@ components:
         productId:
           description: 'Id of the extra product'
           type: string
-          nullable: true
       type: object
     OrderSourceSystemRequest:
       required:
       - accountId
       - name
       - pushDeadline
-      - successCallbackUrl
-      - failedCallbackUrl
       properties:
         accountId:
           description: 'Id of the source account'
@@ -174,6 +173,7 @@ components:
       required:
       - version
       - accountId
+      - action
       - order
       properties:
         version:
@@ -194,18 +194,24 @@ components:
           type: object
       type: object
     OrderCreate200Response:
+      required:
+      - taskId
       properties:
         taskId:
           description: 'Id of the task'
           type: integer
       type: object
     OrderCreate201Response:
+      required:
+      - id
       properties:
         id:
           description: 'Id of the created order'
           type: integer
       type: object
     OrderList:
+      required:
+      - Orders
       type: object
       properties:
         Orders:
@@ -213,6 +219,9 @@ components:
           items:
             $ref: '#/components/schemas/Order'
     Order:
+      required:
+      - orderId
+      - createdAt
       type: object
       properties:
         orderId:
@@ -223,6 +232,10 @@ components:
           format: datetime
           description: 'Creation time of order'
     Error400:
+      required:
+      - errorCode
+      - errorMessage
+      - params
       properties:
         errorCode:
           type: string
@@ -235,6 +248,10 @@ components:
           description: 'List of the invalid params where the property is the parameter name and the value is the describing the issue'
       type: object
     Error404:
+      required:
+      - errorCode
+      - errorMessage
+      - params
       properties:
         errorCode:
           type: string

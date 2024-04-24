@@ -8,7 +8,6 @@ use Emul\OpenApiClientGenerator\Entity\Parameter;
 use Emul\OpenApiClientGenerator\Entity\ParameterType;
 use Emul\OpenApiClientGenerator\Entity\PropertyType;
 use Emul\OpenApiClientGenerator\Template\Model\ActionParameterTemplate;
-use Emul\OpenApiClientGenerator\Template\Model\ModelPropertyTemplate;
 use Emul\OpenApiClientGenerator\Test\Unit\Template\TemplateTestCaseAbstract;
 
 class ActionParameterTemplateTest extends TemplateTestCaseAbstract
@@ -171,17 +170,6 @@ class ActionParameterTemplateTest extends TemplateTestCaseAbstract
         $className = $this->getSut(null)->getClassName(true);
 
         $this->assertSame('Root\Model\ActionParameter\ParameterClass', $className);
-    }
-
-    private function getPropertyTemplate(string $name, PropertyType $type, bool $isRequired, ?string $description): ModelPropertyTemplate
-    {
-        return new ModelPropertyTemplate(
-            $this->typeMapper,
-            $name,
-            $type,
-            $isRequired,
-            $description
-        );
     }
 
     private function getSut(?string $requestModelClassName, Parameter ...$parameters): ActionParameterTemplate

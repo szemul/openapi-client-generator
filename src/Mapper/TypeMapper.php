@@ -86,15 +86,17 @@ class TypeMapper
 
     public function mapModelPropertyTemplateToPhp(ModelPropertyTemplate $template): string
     {
+        $nullablePrefix = $template->isNullable ? '?' : '';
+
         if (
-            $template->getType()->isScalar()
-            || (string)$template->getType() === PropertyType::ARRAY
+            $template->type->isScalar()
+            || (string)$template->type === PropertyType::ARRAY
         ) {
-            $phpType = ($template->isRequired() && !$template->isNullable() ? '' : '?') . $template->getType();
-        } elseif ((string)$template->getType() === PropertyType::OBJECT) {
-            $phpType = ($template->isRequired() && !$template->isNullable() ? '' : '?') . $template->getType()->getObjectClassname(false);
+            $phpType = $nullablePrefix . $template->type;
+        } elseif ((string)$template->type === PropertyType::OBJECT) {
+            $phpType = ($nullablePrefix) . $template->type->getObjectClassname(false);
         } else {
-            throw new InvalidArgumentException('Unhandled property type: ' . $template->getType());
+            throw new InvalidArgumentException('Unhandled property type: ' . $template->type);
         }
 
         return $phpType;
@@ -102,15 +104,17 @@ class TypeMapper
 
     public function mapModelPropertyTemplateToDoc(ModelPropertyTemplate $template): string
     {
-        if ($template->getType()->isScalar()) {
-            $docType = $template->getType() . ($template->isRequired() && !$template->isNullable() ? '' : '|null');
-        } elseif ((string)$template->getType() === PropertyType::OBJECT) {
-            $docType = '\\' . $template->getType()->getObjectClassname() . ($template->isRequired() && !$template->isNullable() ? '' : '|null');
-        } elseif ((string)$template->getType() === PropertyType::ARRAY) {
-            $arrayItemType = $this->getArrayItemType($template->getType());
+        $nullableSuffix = $template->isNullable ? '|null' : '';
+
+        if ($template->type->isScalar()) {
+            $docType = $template->type . $nullableSuffix;
+        } elseif ((string)$template->type === PropertyType::OBJECT) {
+            $docType = '\\' . $template->type->getObjectClassname() . ($nullableSuffix);
+        } elseif ((string)$template->type === PropertyType::ARRAY) {
+            $arrayItemType = $this->getArrayItemType($template->type);
             $docType       = empty($arrayItemType) ? 'array' : $arrayItemType . '[]';
         } else {
-            throw new InvalidArgumentException('Unhandled property type: ' . $template->getType());
+            throw new InvalidArgumentException('Unhandled property type: ' . $template->type);
         }
 
         return $docType;

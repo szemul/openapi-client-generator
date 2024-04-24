@@ -39,8 +39,8 @@ class Factory
         string $name,
         PropertyType $type,
         bool $isRequired,
-        ?string $description = null,
-        bool $nullable = false,
+        bool $isNullable,
+        ?string $description = null
     ): ModelPropertyTemplate {
         return new ModelPropertyTemplate(
             $this->diContainer->get(TypeMapper::class),
@@ -48,8 +48,8 @@ class Factory
             $name,
             $type,
             $isRequired,
-            $description,
-            $nullable,
+            $isNullable,
+            $description
         );
     }
 

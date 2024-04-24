@@ -71,8 +71,8 @@ class ModelTemplate extends ClassTemplateAbstract
         $result  = '';
 
         foreach ($this->properties as $property) {
-            if ((string)$property->getType() === PropertyType::OBJECT) {
-                $classes[] = $property->getType()->getObjectClassname();
+            if ((string)$property->type === PropertyType::OBJECT) {
+                $classes[] = $property->type->getObjectClassname();
             }
         }
 
@@ -115,18 +115,21 @@ class ModelTemplate extends ClassTemplateAbstract
         $paramDocumentations = [];
 
         foreach ($this->properties as $property) {
-            $propertyName = $this->stringHelper->convertToMethodOrVariableName($property->getName());
-            if ((string)$property->getType() === PropertyType::ARRAY) {
+            if (!$property->isRequired) {
+                continue;
+            }
+            $propertyName = $this->stringHelper->convertToMethodOrVariableName($property->name);
+            if ((string)$property->type === PropertyType::ARRAY) {
                 $paramDocumentations[] = $this->typeMapper->mapModelPropertyTemplateToDoc($property) . ' $' . $propertyName;
             }
 
             $param          = $this->typeMapper->mapModelPropertyTemplateToPhp($property) . ' $' . $propertyName;
-            $paramSetters[] = '$this->' . $this->stringHelper->convertToPhpName($property->getName()) . ' = $' . $propertyName . ';';
+            $paramSetters[] = '$this->' . $this->stringHelper->convertToPhpName($property->name) . ' = $' . $propertyName . ';';
 
-            if ($property->isRequired()) {
-                $requiredParams[] = $param;
-            } else {
+            if ($property->isNullable) {
                 $optionalParams[] = $param . ' = null';
+            } else {
+                $requiredParams[] = $param;
             }
         }
 
