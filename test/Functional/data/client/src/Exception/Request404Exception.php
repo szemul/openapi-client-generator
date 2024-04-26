@@ -5,9 +5,9 @@ namespace Test\Exception;
 
 class Request404Exception extends RequestException
 {
-    public function __construct(string $responseBody, array $responseHeaders)
+    public function __construct(string $responseBody, array $responseHeaders, string $requestUrl, string $requestMethod, string $requestBody, array $requestHeaders)
     {
-        parent::__construct(404, $responseBody, $responseHeaders);
+        parent::__construct(404, $responseBody, $responseHeaders, $requestUrl, $requestMethod, $requestBody, $requestHeaders);
     }
 
     /**

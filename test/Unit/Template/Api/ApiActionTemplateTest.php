@@ -176,9 +176,9 @@ class ApiActionTemplateTest extends TemplateTestCaseAbstract
                     \$responseHeaders       = \$response->getHeaders();
             
                     if (class_exists(\$requestExceptionClass)) {
-                        throw new \$requestExceptionClass(\$responseBody, \$responseHeaders);
+                        throw new \$requestExceptionClass(\$responseBody, \$responseHeaders, \$fullUrl, 'POST', \$payload, \$headers);
                     } else {
-                        throw new RequestException(\$responseCode, \$responseBody, \$responseHeaders);
+                        throw new RequestException(\$responseCode, \$responseBody, \$responseHeaders, \$fullUrl, 'POST', \$payload, \$headers);
                     }
                 } else {
                     $expectedResponseHandling

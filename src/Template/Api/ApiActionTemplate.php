@@ -103,9 +103,9 @@ class ApiActionTemplate
                     \$responseHeaders       = \$response->getHeaders();
 
                     if (class_exists(\$requestExceptionClass)) {
-                        throw new \$requestExceptionClass(\$responseBody, \$responseHeaders);
+                        throw new \$requestExceptionClass(\$responseBody, \$responseHeaders, \$fullUrl, '{$this->httpMethod->__toString()}', \$payload, \$headers);
                     } else {
-                        throw new RequestException(\$responseCode, \$responseBody, \$responseHeaders);
+                        throw new RequestException(\$responseCode, \$responseBody, \$responseHeaders, \$fullUrl, '{$this->httpMethod->__toString()}', \$payload, \$headers);
                     }
                 } else {
                     {$responseHandling}

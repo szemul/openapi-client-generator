@@ -33,9 +33,9 @@ class RequestCodeExceptionTemplateTest extends TemplateTestCaseAbstract
             
             class Request400Exception extends RequestException
             {
-                public function __construct(string $responseBody, array $responseHeaders)
+                public function __construct(string $responseBody, array $responseHeaders, string $requestUrl, string $requestMethod, string $requestBody, array $requestHeaders)
                 {
-                    parent::__construct(400, $responseBody, $responseHeaders);
+                    parent::__construct(400, $responseBody, $responseHeaders, $requestUrl, $requestMethod, $requestBody, $requestHeaders);
                 }
             
             getter
