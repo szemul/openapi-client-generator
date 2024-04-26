@@ -40,9 +40,9 @@ class RequestCodeExceptionTemplate extends ClassTemplateAbstract
             
             class {$this->getClassName()} extends RequestException
             {
-                public function __construct(string \$responseBody, array \$responseHeaders)
+                public function __construct(string \$responseBody, array \$responseHeaders, string \$requestUrl, string \$requestMethod, string \$requestBody, array \$requestHeaders)
                 {
-                    parent::__construct({$this->errorCode}, \$responseBody, \$responseHeaders);
+                    parent::__construct({$this->errorCode}, \$responseBody, \$responseHeaders, \$requestUrl, \$requestMethod, \$requestBody, \$requestHeaders);
                 }
             
             {$getters}
