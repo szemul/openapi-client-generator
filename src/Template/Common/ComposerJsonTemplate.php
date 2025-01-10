@@ -27,7 +27,7 @@ class ComposerJsonTemplate
                 "require": {
                     "php": ">=8.0",
                     "ext-json": "*",
-                    "nesbot/carbon": "^2.0",
+                    "nesbot/carbon": "^2.0|^3.0",
                     "emulgeator/enum": "^1.0",
                     "emulgeator/array-to-class-mapper": "^0.1|^1.0",
                     "psr/http-message": "^1.0",
